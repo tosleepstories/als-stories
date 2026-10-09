@@ -426,6 +426,7 @@
       box-shadow: 0 12px 24px -8px rgba(224, 128, 106, 0.9);
     }
 
+    .btn-start.btn-camera { background: linear-gradient(135deg, #5b6fb0 0%, #3e4f8f 100%); box-shadow: 0 8px 20px -8px rgba(91, 111, 176, 0.8); }
     .btn-start:disabled {
       background: rgba(255, 255, 255, 0.10);
       color: var(--muted);
@@ -963,10 +964,7 @@
     .nav-langs { display: flex; gap: 4px; justify-self: end; grid-column: 3; grid-row: 1; }
     .nav-langs .lang-btn { padding: 6px 10px; }
     @media (max-width: 700px) { .nav-langs { grid-column: 1 / -1; grid-row: auto; justify-self: center; } }
-      .camera-toggle { display: flex; gap: 12px; align-items: flex-start; margin: 0 auto 22px; padding: 14px 18px; border-radius: 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(244,213,141,0.18); color: var(--cream); cursor: pointer; }
-    .camera-toggle input { width: 22px; height: 22px; margin-top: 2px; accent-color: var(--moon); flex: none; }
-    .camera-toggle small { color: var(--muted); }
-    #cam-pip { display: none; position: fixed; top: 132px; right: 16px; width: 200px; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 12px; border: 2px solid var(--moon); box-shadow: 0 8px 24px rgba(0,0,0,0.5); transform: scaleX(-1); z-index: 150; background: #000; }
+      #cam-pip { display: none; position: fixed; top: 132px; right: 16px; width: 200px; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 12px; border: 2px solid var(--moon); box-shadow: 0 8px 24px rgba(0,0,0,0.5); transform: scaleX(-1); z-index: 150; background: #000; }
     body.reader-active #cam-pip.on { display: block; }
     @media (max-width: 700px) { #cam-pip { width: 112px; top: var(--cam-pip-top, 236px); right: 10px; } }
     @media (max-width: 700px) { body.cam-on .title-block { padding-right: 122px; min-height: 96px; } }
@@ -1016,10 +1014,6 @@
       </p>
     </div>
 
-    <label class="camera-toggle" for="camera-toggle">
-      <input type="checkbox" id="camera-toggle">
-      <span><strong id="ui-camera-toggle">Also record my camera (optional)</strong><br><small id="ui-camera-hint">Your face appears in a small window in the top-right corner of the video.</small></span>
-    </label>
 
     <div class="picker-heading" id="ui-picker-heading">Choose a story</div>
     <div class="story-cards" id="story-cards">
@@ -1105,8 +1099,8 @@ const LANG_LABELS = { english: 'English', portuguese: 'Português', spanish: 'Es
 
 const UI_STRINGS = {
   english: {
-    cameraToggle: 'Also record my camera (optional)',
-    cameraHint: 'Your face appears in a small window in the top-right corner of the video.',
+    recordVoice: 'Record voice',
+    recordCamera: 'Record with camera',
     cameraDenied: 'Camera not available or not allowed. Recording your voice only.',
     sceneLabel: 'Scene',
     welcomeTitle: 'Your voice, their story',
@@ -1137,8 +1131,8 @@ const UI_STRINGS = {
     postDownloadRedirect: 'Your recording is downloading. Taking you to the homepage…',
   },
   portuguese: {
-    cameraToggle: 'Gravar também a minha câmara (opcional)',
-    cameraHint: 'O seu rosto aparece numa pequena janela no canto superior direito do vídeo.',
+    recordVoice: 'Gravar voz',
+    recordCamera: 'Gravar com câmara',
     cameraDenied: 'Câmara indisponível ou não autorizada. Vamos gravar só a sua voz.',
     sceneLabel: 'Cena',
     welcomeTitle: 'A sua voz, a história deles',
@@ -1169,8 +1163,8 @@ const UI_STRINGS = {
     postDownloadRedirect: 'A sua gravação está a descarregar. A voltar à página inicial…',
   },
   spanish: {
-    cameraToggle: 'Grabar también mi cámara (opcional)',
-    cameraHint: 'Tu cara aparece en una pequeña ventana en la esquina superior derecha del vídeo.',
+    recordVoice: 'Grabar voz',
+    recordCamera: 'Grabar con cámara',
     cameraDenied: 'Cámara no disponible o no permitida. Se grabará solo tu voz.',
     sceneLabel: 'Escena',
     welcomeTitle: 'Tu voz, su cuento',
@@ -1201,8 +1195,8 @@ const UI_STRINGS = {
     postDownloadRedirect: 'Tu grabación se está descargando. Volviendo a la página de inicio…',
   },
   italian: {
-    cameraToggle: 'Registra anche la mia fotocamera (facoltativo)',
-    cameraHint: 'Il tuo volto appare in una piccola finestra nell’angolo in alto a destra del video.',
+    recordVoice: 'Registra la voce',
+    recordCamera: 'Registra con la fotocamera',
     cameraDenied: 'Fotocamera non disponibile o non consentita. Registro solo la tua voce.',
     sceneLabel: 'Scena',
     welcomeTitle: 'La tua voce, la loro storia',
@@ -1233,8 +1227,8 @@ const UI_STRINGS = {
     postDownloadRedirect: 'La registrazione è in download. Torno alla pagina iniziale…',
   },
   german: {
-    cameraToggle: 'Auch meine Kamera aufnehmen (optional)',
-    cameraHint: 'Dein Gesicht erscheint in einem kleinen Fenster oben rechts im Video.',
+    recordVoice: 'Stimme aufnehmen',
+    recordCamera: 'Mit Kamera aufnehmen',
     cameraDenied: 'Kamera nicht verfügbar oder nicht erlaubt. Es wird nur deine Stimme aufgenommen.',
     sceneLabel: 'Szene',
     welcomeTitle: 'Deine Stimme, ihre Geschichte',
@@ -1285,8 +1279,6 @@ function updateUiLang() {
   }
   set('ui-privacy', ui('privacy'));
   set('ui-picker-heading', ui('pickStory'));
-  set('ui-camera-toggle', ui('cameraToggle'));
-  set('ui-camera-hint', ui('cameraHint'));
   set('countdown-hint', ui('countdownHint'));
   set('btn-back-stories', ui('backStories'));
   set('ui-btn-pause', ui('pause'));
@@ -1326,9 +1318,9 @@ let camComposite = false;
 let camScenes = [];
 const CAM_W = 1280, CAM_H = 720;
 
+let wantCamera = false;  // set by the card button: 'Record with camera' (true) or 'Record voice' (false)
 function cameraWanted() {
-  const el = document.getElementById('camera-toggle');
-  return !!(el && el.checked);
+  return wantCamera;
 }
 
 function releaseCamera() {
@@ -1354,8 +1346,6 @@ async function ensureCamera() {
     return true;
   } catch {
     camStream = null;
-    const el = document.getElementById('camera-toggle');
-    if (el) el.checked = false;
     alert(ui('cameraDenied'));
     return false;
   }
@@ -1373,12 +1363,14 @@ window.addEventListener('resize', placeCameraPreview);
 
 async function loadSceneImages(story) {
   const scenes = (story.scenes || []).filter(s => s.image);
-  camScenes = await Promise.all(scenes.map(s => new Promise(resolve => {
+  const loadOne = (s, attempt = 0) => new Promise(resolve => {
     const img = new Image();
     img.onload = () => resolve({ start: s.videoOffset || 0, img });
-    img.onerror = () => resolve(null);
-    img.src = s.image;
-  })));
+    // retry once after a short pause (a slow or dropped request must not silently disable the camera overlay)
+    img.onerror = () => attempt < 1 ? setTimeout(() => resolve(loadOne(s, attempt + 1)), 800) : resolve(null);
+    img.src = attempt ? s.image + (s.image.includes('?') ? '&' : '?') + 'r=' + Date.now() : s.image;
+  });
+  camScenes = await Promise.all(scenes.map(s => loadOne(s)));
   camScenes = camScenes.filter(Boolean).sort((a, b) => a.start - b.start);
   return camScenes.length > 0;
 }
@@ -1530,8 +1522,9 @@ function buildPicker() {
         <div class="card-title">${story.title}</div>
         <div class="card-meta">${durationEl}</div>
       </div>
-      <div class="card-footer" style="justify-content:flex-end">
-        <button class="btn-start" ${ready ? `onclick="startStory(${story.id})"` : 'disabled'}>● ${ui('startRecording')}</button>
+      <div class="card-footer" style="justify-content:flex-end;flex-wrap:wrap">
+        <button class="btn-start btn-voice" ${ready ? `onclick="startStory(${story.id}, false)"` : 'disabled'}>● ${ui('recordVoice')}</button>
+        <button class="btn-start btn-camera" ${ready ? `onclick="startStory(${story.id}, true)"` : 'disabled'}>📷 ${ui('recordCamera')}</button>
       </div>
     `;
 
@@ -1604,9 +1597,10 @@ function endPlayback() {
   isRecordingPaused = false;
 }
 
-function startStory(storyId) {
+function startStory(storyId, withCamera = false) {
   const story = currentStories.find(s => s.id === storyId);
   if (!story || !isStoryReady(story)) return;
+  wantCamera = !!withCamera;
   currentStory = story;
   void beginStoryWithMic(story);
 }
