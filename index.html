@@ -2244,7 +2244,7 @@ async function finishRecording() {
     if (latestRecUrl) URL.revokeObjectURL(latestRecUrl);
     latestRecUrl = URL.createObjectURL(blob);
     const sid = currentStory ? currentStory.id : 'story';
-    latestRecFilename = `my-reading-${currentStory ? currentStory.slug : sid}.${ext}`;
+    latestRecFilename = recFilename(currentStory ? currentStory.slug : sid, ext);
     recordingHasVideo = hasVideo;
   }
 
@@ -2254,6 +2254,12 @@ async function finishRecording() {
   updateReaderControls();
   updateTimeDisplay(lastRecordedDuration || getStoryTime());
   if (latestRecUrl) downloadRecording();
+}
+
+// Unique download name per recording: <story-slug>-YYYY-MM-DD-HHMMSS.<ext> (local time), so phones never ask to replace an earlier file
+function recFilename(slug, ext) {
+  const d = new Date(), p = n => String(n).padStart(2, '0');
+  return `${slug}-${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}.${ext}`;
 }
 
 function cleanupRecording(discard, keepMic = false) {
@@ -2275,7 +2281,7 @@ function downloadRecording() {
   if (!latestRecUrl) return;
   const a = document.createElement('a');
   a.href = latestRecUrl;
-  a.download = latestRecFilename || 'my-reading.webm';
+  a.download = latestRecFilename || recFilename(currentStory ? currentStory.slug : 'story', 'webm');
   document.body.appendChild(a);
   a.click();
   a.remove();
