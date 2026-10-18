@@ -1316,7 +1316,8 @@ let camStream = null;
 let camDrawTimer = null;
 let camComposite = false;
 let camScenes = [];
-const CAM_W = 1280, CAM_H = 720;
+const CAM_W = 720, CAM_H = 1280;   // 'Record with camera': upright video (camera top, picture + caption bottom)
+const SQ_SIZE = 1080;               // 'Record voice': square video (picture top, caption below)
 
 let wantCamera = false;  // set by the card button: 'Record with camera' (true) or 'Record voice' (false)
 function cameraWanted() {
@@ -1394,31 +1395,117 @@ function pickCameraMime() {
   return candidates.find(t => MediaRecorder.isTypeSupported(t)) || '';
 }
 
-// Story picture full-frame + mirrored webcam in the top-right corner, drawn onto a canvas.
+
+// Story text on the pictures, same style and timing as the captions burned into the story videos
+// (tools/build_data.py CAP): white bold sans, black outline, translucent black box, centred low.
+const CAP = { size: 36, min: 26, maxw: 0.88, lines: 3, lh: 1.32, pad: 15, stroke: 4, bottom: 0.06, alpha: 100 };
+const CAP_FONT = "Arial, 'Liberation Sans', 'Helvetica Neue', Helvetica, sans-serif";
+function captionAt(t) {
+  const caps = (currentStory && currentStory.captions) || [];
+  for (const c of caps) { if (t >= c.start && t < c.end) return c.text; if (c.start > t) break; }
+  return '';
+}
+// o (optional): { size, min, top, bottom } - bigger text for the upright/square videos, centred in the band top..bottom
+function drawCaption(ctx, text, W, H, o = {}) {
+  if (!text) return;
+  const k = (o.size || CAP.size) / CAP.size, minSize = o.min || CAP.min;
+  let size = o.size || CAP.size, lines;
+  const wrap = () => {
+    const out = []; let cur = '';
+    for (const w of text.split(/\s+/).filter(Boolean)) {
+      const trial = cur ? cur + ' ' + w : w;
+      if (ctx.measureText(trial).width <= W * CAP.maxw || !cur) cur = trial; else { out.push(cur); cur = w; }
+    }
+    if (cur) out.push(cur);
+    return out;
+  };
+  for (;;) { ctx.font = `bold ${size}px ${CAP_FONT}`; lines = wrap(); if (lines.length <= CAP.lines || size <= minSize) break; size -= 2; }
+  const lh = Math.round(size * CAP.lh), pad = Math.round(CAP.pad * k);
+  const tw = Math.max(...lines.map(l => ctx.measureText(l).width));
+  const bw = tw + pad * 4, bh = lh * lines.length + pad * 3, x0 = (W - bw) / 2;
+  const y0 = typeof o.top === 'number' ? o.top + Math.max(0, (o.bottom - o.top - bh) / 2) : H * (1 - CAP.bottom) - bh;
+  ctx.save();
+  ctx.fillStyle = `rgba(0,0,0,${CAP.alpha / 255})`; ctx.fillRect(x0, y0, bw, bh);
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
+  ctx.lineWidth = Math.round(CAP.stroke * k) * 2; ctx.strokeStyle = '#000'; ctx.fillStyle = '#fff';
+  lines.forEach((l, i) => { const y = y0 + pad * 1.5 + i * lh + lh / 2; ctx.strokeText(l, W / 2, y); ctx.fillText(l, W / 2, y); });
+  ctx.restore();
+}
+
+// Blurred, darkened cover-fill of a picture (downscale + upscale; no ctx.filter, which older Safari lacks).
+const blurCache = new Map();
+function blurredFill(img, w, h) {
+  const key = img.src + '|' + w + 'x' + h;
+  if (blurCache.has(key)) return blurCache.get(key);
+  const small = document.createElement('canvas');
+  small.width = 24; small.height = Math.max(1, Math.round(24 * h / w));
+  const sctx = small.getContext('2d');
+  const sc = Math.max(small.width / img.width, small.height / img.height);
+  const dw = img.width * sc, dh = img.height * sc;
+  sctx.drawImage(img, (small.width - dw) / 2, (small.height - dh) / 2, dw, dh);
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  const cctx = c.getContext('2d');
+  cctx.imageSmoothingEnabled = true; cctx.imageSmoothingQuality = 'high';
+  cctx.drawImage(small, 0, 0, w, h);
+  cctx.fillStyle = 'rgba(8,10,28,0.55)'; cctx.fillRect(0, 0, w, h);
+  blurCache.set(key, c);
+  return c;
+}
+
+// Story picture full width with the caption in a band beneath it, on a blurred fill (shared by both layouts).
+function drawPictureAndCaption(ctx, t, x, y, w, h, picTop, capSize, capMin) {
+  const still = sceneImageAt(t);
+  const ph = Math.round(w * 9 / 16);
+  if (still) {
+    ctx.drawImage(blurredFill(still, w, h), x, y, w, h);
+    ctx.drawImage(still, x, y + picTop, w, ph);
+  } else {
+    ctx.fillStyle = '#000'; ctx.fillRect(x, y, w, h);
+  }
+  ctx.save(); ctx.translate(x, 0);
+  drawCaption(ctx, captionAt(t), w, y + h, { size: capSize, min: capMin, top: y + picTop + ph, bottom: y + h });
+  ctx.restore();
+}
+
+// 'Record with camera': upright 720x1280 - mirrored front camera filling the top half, thin gold divider,
+// story picture full width below with the caption in a band beneath it.
 function startCameraComposite() {
   const canvas = document.createElement('canvas');
   canvas.width = CAM_W; canvas.height = CAM_H;
   const ctx = canvas.getContext('2d');
   const pip = document.getElementById('cam-pip');
-  const pw = Math.round(CAM_W * 0.25), ph = Math.round(pw * 3 / 4), m = 24, x = CAM_W - pw - m, y = m;
+  const half = Math.round(CAM_H / 2);
   const draw = () => {
     ctx.fillStyle = '#000'; ctx.fillRect(0, 0, CAM_W, CAM_H);
-    const still = sceneImageAt(getStoryTime());
-    if (still) ctx.drawImage(still, 0, 0, CAM_W, CAM_H);
+    const now = getStoryTime();
     if (pip && pip.readyState >= 2 && pip.videoWidth) {
-      const vw = pip.videoWidth, vh = pip.videoHeight, want = 4 / 3;
+      const vw = pip.videoWidth, vh = pip.videoHeight, want = CAM_W / half;
       let sw = vw, sh = vh, sx = 0, sy = 0;
       if (vw / vh > want) { sw = vh * want; sx = (vw - sw) / 2; } else { sh = vw / want; sy = (vh - sh) / 2; }
       ctx.save();
-      ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x, y, pw, ph, 16) : ctx.rect(x, y, pw, ph); ctx.clip();
-      ctx.translate(x + pw, y); ctx.scale(-1, 1);
-      ctx.drawImage(pip, sx, sy, sw, sh, 0, 0, pw, ph);
+      ctx.translate(CAM_W, 0); ctx.scale(-1, 1);
+      ctx.drawImage(pip, sx, sy, sw, sh, 0, 0, CAM_W, half);
       ctx.restore();
-      ctx.lineWidth = 4; ctx.strokeStyle = '#f4d58d';
-      ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x, y, pw, ph, 16) : ctx.rect(x, y, pw, ph); ctx.stroke();
     }
+    drawPictureAndCaption(ctx, now, 0, half, CAM_W, CAM_H - half, 0, 36, 27);
+    ctx.fillStyle = '#f4d58d'; ctx.fillRect(0, half - 2, CAM_W, 4);
   };
   draw();
+  if (camDrawTimer) clearInterval(camDrawTimer);
+  camDrawTimer = setInterval(draw, 1000 / 24);
+  return canvas.captureStream(24);
+}
+
+// 'Record voice': square video - story picture full width at the top, caption in a band below on a blurred fill.
+// Timing comes from the hidden story video (it keeps playing muted; its end stops the recording).
+function startVoiceComposite() {
+  const canvas = document.createElement('canvas');
+  canvas.width = SQ_SIZE; canvas.height = SQ_SIZE;
+  const ctx = canvas.getContext('2d');
+  const draw = () => drawPictureAndCaption(ctx, getStoryTime(), 0, 0, SQ_SIZE, SQ_SIZE, Math.round(SQ_SIZE * 0.022), 64, 46);
+  draw();
+  if (camDrawTimer) clearInterval(camDrawTimer);
   camDrawTimer = setInterval(draw, 1000 / 24);
   return canvas.captureStream(24);
 }
@@ -1609,7 +1696,7 @@ async function beginStoryWithMic(story) {
   const micOk = await ensureMicrophone();
   if (!micOk) return;
   await ensureCamera();
-  if (camStream) await loadSceneImages(story);
+  await loadSceneImages(story);  // pictures for the drawn recording (camera and voice)
   try {
     await prepareStoryVideo(story);
   } catch {
@@ -2059,6 +2146,10 @@ async function startRecording() {
     }
   }
 
+  // Voice mode: draw the square video on a canvas (timed by the story video); old path only if that's impossible
+  const sqMime = !useCamera && camScenes.length ? pickCameraMime() : '';
+  const useSquare = !!(sqMime && typeof HTMLCanvasElement.prototype.captureStream === 'function');
+
   const videoMime = pickVideoMime();
   const canCaptureVideo = !!(videoMime && typeof storyVideoEl.captureStream === 'function');
   let recordStream;
@@ -2071,6 +2162,14 @@ async function startRecording() {
       ...micStream.getAudioTracks(),
     ]);
     mimeType = camMime;
+    recordingHasVideo = true;
+  } else if (useSquare) {
+    const composite = startVoiceComposite();
+    recordStream = new MediaStream([
+      ...composite.getVideoTracks(),
+      ...micStream.getAudioTracks(),
+    ]);
+    mimeType = sqMime;
     recordingHasVideo = true;
   } else if (canCaptureVideo) {
     const captured = storyVideoEl.captureStream(24);
