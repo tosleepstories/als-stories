@@ -1454,12 +1454,14 @@ function blurredFill(img, w, h) {
 }
 
 // Story picture full width with the caption in a band beneath it, on a blurred fill (shared by both layouts).
-function drawPictureAndCaption(ctx, t, x, y, w, h, picTop, capSize, capMin) {
+// picAspect (optional): narrower than the 16:9 picture = show its middle part, sides cropped (camera layout uses 4:3).
+function drawPictureAndCaption(ctx, t, x, y, w, h, picTop, capSize, capMin, picAspect = 16 / 9) {
   const still = sceneImageAt(t);
-  const ph = Math.round(w * 9 / 16);
+  const ph = Math.round(w / picAspect);
   if (still) {
     ctx.drawImage(blurredFill(still, w, h), x, y, w, h);
-    ctx.drawImage(still, x, y + picTop, w, ph);
+    const sw = Math.min(still.width, still.height * picAspect), sh = sw / picAspect;
+    ctx.drawImage(still, (still.width - sw) / 2, (still.height - sh) / 2, sw, sh, x, y + picTop, w, ph);
   } else {
     ctx.fillStyle = '#000'; ctx.fillRect(x, y, w, h);
   }
@@ -1468,14 +1470,14 @@ function drawPictureAndCaption(ctx, t, x, y, w, h, picTop, capSize, capMin) {
   ctx.restore();
 }
 
-// 'Record with camera': upright 720x1280 - mirrored front camera filling the top half, thin gold divider,
-// story picture full width below with the caption in a band beneath it.
+// 'Record with camera': upright 720x1280 - mirrored front camera in the top third (422 px), thin gold divider,
+// story picture below (720x540, middle 75% of its width) with the caption in a band beneath it.
 function startCameraComposite() {
   const canvas = document.createElement('canvas');
   canvas.width = CAM_W; canvas.height = CAM_H;
   const ctx = canvas.getContext('2d');
   const pip = document.getElementById('cam-pip');
-  const half = Math.round(CAM_H / 2);
+  const half = 422;  // camera band height (33%)
   const draw = () => {
     ctx.fillStyle = '#000'; ctx.fillRect(0, 0, CAM_W, CAM_H);
     const now = getStoryTime();
@@ -1488,7 +1490,7 @@ function startCameraComposite() {
       ctx.drawImage(pip, sx, sy, sw, sh, 0, 0, CAM_W, half);
       ctx.restore();
     }
-    drawPictureAndCaption(ctx, now, 0, half, CAM_W, CAM_H - half, 0, 36, 27);
+    drawPictureAndCaption(ctx, now, 0, half, CAM_W, CAM_H - half, 0, 36, 27, 4 / 3);
     ctx.fillStyle = '#f4d58d'; ctx.fillRect(0, half - 2, CAM_W, 4);
   };
   draw();
