@@ -108,6 +108,10 @@
 
     .nav-primary { display: contents; }
 
+    /* Stories menu link target: keep the heading clear of the sticky nav */
+    #stories { scroll-margin-top: 90px; }
+    @media (max-width: 700px) { #stories { scroll-margin-top: 140px; } }
+
     .nav-logo {
       grid-column: 1;
       grid-row: 1;
@@ -1016,7 +1020,7 @@
     <a class="nav-logo" href="./"><span>Story Voices</span></a>
   </div>
   <div class="nav-links">
-    <a class="page-link active" href="./">Stories</a>
+    <a class="page-link active" href="./#stories" onclick="return scrollToStories()">Stories</a>
     <a class="page-link" href="privacy.html">Privacy</a>
   </div>
   <div class="nav-langs" role="group" aria-label="Language"><button type="button" class="lang-btn active" onclick="setLegacyLang('en', this)" aria-label="English">EN</button><button type="button" class="lang-btn" onclick="setLegacyLang('pt', this)" aria-label="Português">PT</button><button type="button" class="lang-btn" onclick="setLegacyLang('es', this)" aria-label="Español">ES</button><button type="button" class="lang-btn" onclick="setLegacyLang('it', this)" aria-label="Italiano">IT</button><button type="button" class="lang-btn" onclick="setLegacyLang('de', this)" aria-label="Deutsch">DE</button></div>
@@ -1038,6 +1042,7 @@
     </div>
 
 
+    <div id="stories"></div>
     <div class="picker-heading" id="ui-picker-heading">Choose a story</div>
     <div class="story-cards" id="story-cards">
       <!-- Populated by JS -->
@@ -1299,6 +1304,14 @@ const POST_DOWNLOAD_REDIRECT_MS = 6000;
 function ui(key) {
   const s = UI_STRINGS[currentLang] || UI_STRINGS.english;
   return s[key] || UI_STRINGS.english[key] || key;
+}
+
+function scrollToStories() {
+  const el = document.getElementById('stories');
+  if (!el) return true;
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (history.replaceState) history.replaceState(null, '', '#stories');
+  return false;
 }
 
 function updateUiLang() {
@@ -2350,7 +2363,9 @@ document.addEventListener('keydown', e => {
 <script src='https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'></script><script>kofiWidgetOverlay.draw('alstosleepstories', {'type':'floating-chat','floating-chat.donateButton.text':'Donate','floating-chat.donateButton.background-color':'#f573ae','floating-chat.donateButton.text-color':'#fff'});</script>
 <script>
 updateUiLang();
-refreshPickerForLang();
+refreshPickerForLang().then(() => { if (location.hash === '#stories') scrollToStories(); });
 </script>
+<script data-goatcounter="https://alsstories.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
