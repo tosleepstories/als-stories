@@ -525,6 +525,9 @@
       overflow: hidden;
     }
 
+    /* Hide the Ko-fi floating button while a story is open */
+    body.reader-active [id^="kofi-widget-overlay-"] { display: none !important; }
+
     .reader-fixed-header {
       flex-shrink: 0;
       background: rgba(12, 17, 40, 0.96);
@@ -891,6 +894,21 @@
 
     .loading-overlay.show { display: flex; }
 
+    /* ── END-OF-STORY SUPPORT NOTE ── */
+    .end-support { display: none; margin-top: 10px; font-size: 0.92rem; color: var(--muted); }
+    .end-support.show { display: block; }
+    .end-support p { margin: 0 0 10px; }
+    .end-support-btn {
+      display: inline-block;
+      padding: 7px 18px;
+      border-radius: 999px;
+      background: #f573ae;
+      color: #fff;
+      font-size: 0.88rem;
+      text-decoration: none;
+    }
+    .end-support-btn:hover { opacity: 0.9; }
+
     .spinner {
       width: 40px; height: 40px;
       border: 3px solid rgba(244, 213, 141, 0.18);
@@ -978,6 +996,10 @@
 <div class="loading-overlay" id="loading">
   <div class="spinner"></div>
   <span>Loading story…</span>
+  <div class="end-support" id="end-support">
+    <p id="ui-end-support">If this helped, you can support the site</p>
+    <a class="end-support-btn" id="ui-end-support-btn" href="https://ko-fi.com/alstosleepstories" target="_blank" rel="noopener">Donate</a>
+  </div>
 </div>
 
 <!-- COUNTDOWN -->
@@ -995,7 +1017,6 @@
   </div>
   <div class="nav-links">
     <a class="page-link active" href="./">Stories</a>
-    <a class="page-link" id="ui-nav-donate" href="about.html">Donate</a>
     <a class="page-link" href="privacy.html">Privacy</a>
   </div>
   <div class="nav-langs" role="group" aria-label="Language"><button type="button" class="lang-btn active" onclick="setLegacyLang('en', this)" aria-label="English">EN</button><button type="button" class="lang-btn" onclick="setLegacyLang('pt', this)" aria-label="Português">PT</button><button type="button" class="lang-btn" onclick="setLegacyLang('es', this)" aria-label="Español">ES</button><button type="button" class="lang-btn" onclick="setLegacyLang('it', this)" aria-label="Italiano">IT</button><button type="button" class="lang-btn" onclick="setLegacyLang('de', this)" aria-label="Deutsch">DE</button></div>
@@ -1132,6 +1153,7 @@ const UI_STRINGS = {
     videoLoadFailed: 'Could not load the story video. Please refresh and try again.',
     preparingVideo: 'Preparing your video…',
     postDownloadRedirect: 'Your recording is downloading. Taking you to the homepage…',
+    endSupport: 'If this helped, you can support the site',
   },
   portuguese: {
     recordVoice: 'Gravar voz',
@@ -1165,6 +1187,7 @@ const UI_STRINGS = {
     videoLoadFailed: 'Não foi possível carregar o vídeo da história. Atualize a página e tente de novo.',
     preparingVideo: 'A preparar o seu vídeo…',
     postDownloadRedirect: 'A sua gravação está a descarregar. A voltar à página inicial…',
+    endSupport: 'Se isto ajudou, pode apoiar o site',
   },
   spanish: {
     recordVoice: 'Grabar voz',
@@ -1198,6 +1221,7 @@ const UI_STRINGS = {
     videoLoadFailed: 'No se pudo cargar el vídeo del cuento. Recarga la página e inténtalo de nuevo.',
     preparingVideo: 'Preparando tu vídeo…',
     postDownloadRedirect: 'Tu grabación se está descargando. Volviendo a la página de inicio…',
+    endSupport: 'Si te ha servido, puedes apoyar el sitio',
   },
   italian: {
     recordVoice: 'Registra la voce',
@@ -1231,6 +1255,7 @@ const UI_STRINGS = {
     videoLoadFailed: 'Impossibile caricare il video della storia. Ricarica la pagina e riprova.',
     preparingVideo: 'Preparazione del video…',
     postDownloadRedirect: 'La registrazione è in download. Torno alla pagina iniziale…',
+    endSupport: 'Se ti è stato utile, puoi sostenere il sito',
   },
   german: {
     recordVoice: 'Stimme aufnehmen',
@@ -1264,11 +1289,12 @@ const UI_STRINGS = {
     videoLoadFailed: 'Das Video der Geschichte konnte nicht geladen werden. Bitte lade die Seite neu.',
     preparingVideo: 'Dein Video wird vorbereitet…',
     postDownloadRedirect: 'Deine Aufnahme wird heruntergeladen. Zurück zur Startseite…',
+    endSupport: 'Wenn es geholfen hat, kannst du die Seite unterstützen',
   }
 };
 
 const HOME_URL = './';
-const POST_DOWNLOAD_REDIRECT_MS = 2500;
+const POST_DOWNLOAD_REDIRECT_MS = 6000;
 
 function ui(key) {
   const s = UI_STRINGS[currentLang] || UI_STRINGS.english;
@@ -1278,7 +1304,12 @@ function ui(key) {
 function updateUiLang() {
   const set = (id, text) => { const el = document.getElementById(id); if (el) el.textContent = text; };
   set('ui-welcome-title', ui('welcomeTitle'));
-  set('ui-nav-donate', ui('navDonate'));
+  set('ui-end-support', ui('endSupport'));
+  set('ui-end-support-btn', ui('navDonate'));
+  // Ko-fi floating button lives in same-origin iframes; relabel it per language
+  document.querySelectorAll('.floatingchat-container, .floatingchat-container-mobi').forEach(fr => {
+    try { fr.contentDocument.querySelectorAll('.floatingchat-donate-button span').forEach(el => { el.textContent = ui('navDonate'); }); } catch { /* noop */ }
+  });
   const welcomeBodyEl = document.getElementById('ui-welcome-body');
   if (welcomeBodyEl) {
     const html = ui('welcomeBodyHtml');
@@ -2044,6 +2075,8 @@ function redirectToHomeAfterDownload() {
   if (loadingEl) {
     if (loadingText) loadingText.textContent = ui('postDownloadRedirect');
     if (spinner) spinner.style.display = 'none';
+    const endSupport = document.getElementById('end-support');
+    if (endSupport) endSupport.classList.add('show');
     loadingEl.classList.add('show');
   }
   window.setTimeout(() => {
@@ -2313,6 +2346,9 @@ document.addEventListener('keydown', e => {
   }
 });
 
+</script>
+<script src='https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'></script><script>kofiWidgetOverlay.draw('alstosleepstories', {'type':'floating-chat','floating-chat.donateButton.text':'Donate','floating-chat.donateButton.background-color':'#f573ae','floating-chat.donateButton.text-color':'#fff'});</script>
+<script>
 updateUiLang();
 refreshPickerForLang();
 </script>
