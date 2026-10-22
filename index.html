@@ -113,7 +113,7 @@
 
     /* Stories menu link target: keep the heading clear of the sticky nav */
     #stories { scroll-margin-top: 90px; }
-    @media (max-width: 700px) { #stories { scroll-margin-top: 140px; } }
+    @media (max-width: 700px) { #stories { scroll-margin-top: 127px; } }
 
     .nav-logo {
       grid-column: 1;
@@ -132,6 +132,8 @@
       border-radius: 14px;
       box-shadow: 0 0 0 1px rgba(244, 213, 141, 0.25), 0 6px 18px rgba(0, 0, 0, 0.35);
     }
+
+    .nav-logo img.nav-lamp { height: 34px; width: 34px; border-radius: 8px; object-fit: contain; }
 
     .nav-logo span {
       font-family: var(--font-display);
@@ -954,6 +956,12 @@
       }
       .nav-logo img { height: 42px; width: 42px; border-radius: 12px; }
       .nav-logo span { display: none; }
+      .nav-logo { gap: 8px; }
+      .nav-logo img.nav-lamp { height: 28px; width: 28px; border-radius: 7px; }
+      /* Phone: lamp and menu share one row; language switch (if any) on its own row */
+      nav { flex-direction: row; flex-wrap: wrap; justify-content: center; align-items: center; column-gap: 12px; row-gap: 10px; }
+      .nav-primary { width: auto; margin-right: auto; justify-content: flex-start; }
+      .nav-langs { flex-basis: 100%; justify-content: center; }
       .back-link { padding: 7px 14px; font-size: 0.85rem; }
       .nav-links { gap: 2px; padding: 3px; }
       .lang-btn { padding: 6px 10px; font-size: 0.8rem; }
@@ -1005,7 +1013,7 @@
   <span>Loading story…</span>
   <div class="end-support" id="end-support">
     <p id="ui-end-support">If this helped, you can support the site</p>
-    <a class="end-support-btn" id="ui-end-support-btn" href="https://ko-fi.com/alstosleepstories" target="_blank" rel="noopener">Donate</a>
+    <a class="end-support-btn" id="ui-end-support-btn" href="https://ko-fi.com/alstosleepstories" target="_blank" rel="noopener" onclick="return endDonateClick()">Donate</a>
   </div>
 </div>
 
@@ -1020,7 +1028,7 @@
 <!-- NAV -->
 <nav>
   <div class="nav-primary">
-    <a class="nav-logo" href="./"><span>Story Voices</span></a>
+    <a class="nav-logo" href="./"><img class="nav-lamp" src="logo-header.png" alt="" width="34" height="34"><span>Story Voices</span></a>
   </div>
   <div class="nav-links">
     <a class="page-link active" href="./#stories" onclick="return scrollToStories()">Stories</a>
@@ -1439,6 +1447,13 @@ function sceneImageAt(t) {
 
 function pickCameraMime() {
   if (!window.MediaRecorder) return '';
+  // Android Chrome: MP4/H.264 from canvas.captureStream can stall after a few seconds (picture freezes, audio continues),
+  // so prefer WebM there. iPhone and others keep MP4 first.
+  if (/Android/i.test(navigator.userAgent)) {
+    const webm = ['video/webm;codecs=vp8,opus', 'video/webm;codecs=vp9,opus', 'video/webm'];
+    const pick = webm.find(t => MediaRecorder.isTypeSupported(t));
+    if (pick) return pick;
+  }
   const candidates = [
     'video/mp4;codecs=avc1.42E01E,mp4a.40.2',
     'video/mp4;codecs=avc1.4D401E,mp4a.40.2',
@@ -2095,9 +2110,31 @@ function redirectToHomeAfterDownload() {
     if (endSupport) endSupport.classList.add('show');
     loadingEl.classList.add('show');
   }
-  window.setTimeout(() => {
+  redirectHomeTimer = window.setTimeout(() => {
     window.location.href = HOME_URL;
   }, POST_DOWNLOAD_REDIRECT_MS);
+}
+
+// End-of-story Donate: cancel the auto-return, show the stories view in-page and open the Ko-fi panel
+let redirectHomeTimer = null;
+function endDonateClick() {
+  if (redirectHomeTimer) { clearTimeout(redirectHomeTimer); redirectHomeTimer = null; }
+  const loadingEl = document.getElementById('loading');
+  if (loadingEl) loadingEl.classList.remove('show');
+  const endSupport = document.getElementById('end-support');
+  if (endSupport) endSupport.classList.remove('show');
+  backToStories();  // removes reader-active so the Ko-fi button and panel are visible again
+  let opened = false;
+  document.querySelectorAll('.floatingchat-container, .floatingchat-container-mobi').forEach(fr => {
+    if (opened || fr.getBoundingClientRect().width === 0) return;
+    try {
+      const btn = fr.contentDocument.querySelector('.floatingchat-donate-button');
+      if (btn) { btn.click(); opened = true; }
+    } catch { /* noop */ }
+  });
+  // No widget available: open Ko-fi in this same tab (reliable on iPhone Safari, no popup blocking)
+  if (!opened) window.location.href = 'https://ko-fi.com/alstosleepstories';
+  return false;
 }
 
 async function muxAudioWithStoryVideo(audioBlob, audioMime) {
