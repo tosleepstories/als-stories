@@ -1447,13 +1447,6 @@ function sceneImageAt(t) {
 
 function pickCameraMime() {
   if (!window.MediaRecorder) return '';
-  // Android Chrome: MP4/H.264 from canvas.captureStream can stall after a few seconds (picture freezes, audio continues),
-  // so prefer WebM there. iPhone and others keep MP4 first.
-  if (/Android/i.test(navigator.userAgent)) {
-    const webm = ['video/webm;codecs=vp8,opus', 'video/webm;codecs=vp9,opus', 'video/webm'];
-    const pick = webm.find(t => MediaRecorder.isTypeSupported(t));
-    if (pick) return pick;
-  }
   const candidates = [
     'video/mp4;codecs=avc1.42E01E,mp4a.40.2',
     'video/mp4;codecs=avc1.4D401E,mp4a.40.2',
@@ -1542,13 +1535,23 @@ function drawPictureAndCaption(ctx, t, x, y, w, h, picTop, capSize, capMin, picA
 
 // 'Record with camera': upright 720x1280 - mirrored front camera in the top third (422 px), thin gold divider,
 // story picture below (720x540, middle 75% of its width) with the caption in a band beneath it.
+const IS_ANDROID = /Android/i.test(navigator.userAgent);
 function startCameraComposite() {
   const canvas = document.createElement('canvas');
-  canvas.width = CAM_W; canvas.height = CAM_H;
+  // Android: smaller canvas (540x960, same layout scaled 0.75) so the phone's encoder and GPU readback keep up
+  const scale = IS_ANDROID ? 0.75 : 1;
+  canvas.width = Math.round(CAM_W * scale); canvas.height = Math.round(CAM_H * scale);
+  if (IS_ANDROID) {
+    // keep the canvas in the document (practically invisible) so Chrome keeps producing frames from it
+    canvas.style.cssText = 'position:fixed;left:0;top:0;width:2px;height:2px;opacity:0.01;pointer-events:none;z-index:-1;';
+    document.body.appendChild(canvas);
+  }
   const ctx = canvas.getContext('2d');
   const pip = document.getElementById('cam-pip');
   const half = 422;  // camera band height (33%)
+  let track = null;
   const draw = () => {
+    ctx.setTransform(scale, 0, 0, scale, 0, 0);
     ctx.fillStyle = '#000'; ctx.fillRect(0, 0, CAM_W, CAM_H);
     const now = getStoryTime();
     if (pip && pip.readyState >= 2 && pip.videoWidth) {
@@ -1562,11 +1565,15 @@ function startCameraComposite() {
     }
     drawPictureAndCaption(ctx, now, 0, half, CAM_W, CAM_H - half, 0, 36, 27, 4 / 3);
     ctx.fillStyle = '#f4d58d'; ctx.fillRect(0, half - 2, CAM_W, 4);
+    // Android: push each drawn frame explicitly instead of relying on the 24 fps auto-capture
+    if (track && typeof track.requestFrame === 'function') track.requestFrame();
   };
+  const stream = IS_ANDROID ? canvas.captureStream(0) : canvas.captureStream(24);
+  if (IS_ANDROID) track = stream.getVideoTracks()[0] || null;
   draw();
   if (camDrawTimer) clearInterval(camDrawTimer);
   camDrawTimer = setInterval(draw, 1000 / 24);
-  return canvas.captureStream(24);
+  return stream;
 }
 
 // 'Record voice': square video - story picture full width at the top, caption in a band below on a blurred fill.
@@ -2287,10 +2294,11 @@ async function startRecording() {
 
   recChunks = [];
   const recOptions = { mimeType, audioBitsPerSecond: 128000 };
-  if (recordingHasVideo) recOptions.videoBitsPerSecond = 2500000;
+  if (recordingHasVideo) recOptions.videoBitsPerSecond = (useCamera && IS_ANDROID) ? 1500000 : 2500000;
   recorder = new MediaRecorder(recordStream, recOptions);
   recorder.ondataavailable = e => { if (e.data && e.data.size > 0) recChunks.push(e.data); };
   recorder.onstop = () => { void finishRecording(); };
+  recorder.onerror = e => console.error('MediaRecorder error:', e && e.error);
   recorder.start(250);
   isRecording = true;
   recStartMs = performance.now();
