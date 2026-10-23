@@ -1017,7 +1017,7 @@
   <span>Loading story…</span>
   <div class="end-support" id="end-support">
     <p id="ui-end-support">If this helped, you can support the site</p>
-    <a class="end-support-btn" id="ui-end-support-btn" href="https://ko-fi.com/alstosleepstories" target="_blank" rel="noopener" onclick="return endDonateClick()">Donate</a>
+    <a class="end-support-btn" id="ui-end-support-btn" href="https://ko-fi.com/alsounds" target="_blank" rel="noopener" onclick="return endDonateClick()">Donate</a>
   </div>
 </div>
 
@@ -2144,7 +2144,7 @@ function endDonateClick() {
     } catch { /* noop */ }
   });
   // No widget available: open Ko-fi in this same tab (reliable on iPhone Safari, no popup blocking)
-  if (!opened) window.location.href = 'https://ko-fi.com/alstosleepstories';
+  if (!opened) window.location.href = 'https://ko-fi.com/alsounds';
   return false;
 }
 
@@ -2412,7 +2412,7 @@ document.addEventListener('keydown', e => {
 });
 
 </script>
-<script src='https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'></script><script>kofiWidgetOverlay.draw('alstosleepstories', {'type':'floating-chat','floating-chat.donateButton.text':'Donate','floating-chat.donateButton.background-color':'#f573ae','floating-chat.donateButton.text-color':'#fff'});</script>
+<script src='https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'></script><script>kofiWidgetOverlay.draw('alsounds', {'type':'floating-chat','floating-chat.donateButton.text':'Donate','floating-chat.donateButton.background-color':'#f573ae','floating-chat.donateButton.text-color':'#fff'});</script>
 <script>
 updateUiLang();
 refreshPickerForLang().then(() => { if (location.hash === '#stories') scrollToStories(); });
