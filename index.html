@@ -1007,6 +1007,94 @@
     body.reader-active #cam-pip.on { display: block; }
     @media (max-width: 700px) { #cam-pip { width: 112px; top: var(--cam-pip-top, 236px); right: 10px; } }
     @media (max-width: 700px) { body.cam-on .title-block { padding-right: 122px; min-height: 96px; } }
+
+    /* ── FEEDBACK BOX ── */
+    .feedback-box {
+      scroll-margin-top: 100px;
+      margin-top: 48px;
+      background:
+        radial-gradient(420px 220px at 0% 0%, rgba(244, 213, 141, 0.10), transparent 70%),
+        linear-gradient(160deg, var(--night-700) 0%, var(--night-800) 100%);
+      border: 1px solid rgba(244, 213, 141, 0.16);
+      border-radius: 20px;
+      padding: 28px 30px 26px;
+      box-shadow: var(--shadow-card);
+    }
+    .feedback-box h2 {
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: 1.45rem;
+      color: var(--cream);
+      margin-bottom: 14px;
+      line-height: 1.25;
+    }
+    .feedback-box textarea {
+      width: 100%;
+      min-height: 110px;
+      resize: vertical;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(247, 239, 223, 0.18);
+      background: rgba(12, 17, 40, 0.55);
+      color: var(--cream);
+      font-family: var(--font-body);
+      font-size: 0.98rem;
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+    .feedback-box textarea::placeholder { color: rgba(185, 191, 220, 0.7); }
+    .feedback-box textarea:focus {
+      outline: none;
+      border-color: rgba(244, 213, 141, 0.55);
+      box-shadow: 0 0 0 2px rgba(244, 213, 141, 0.18);
+    }
+    .feedback-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .feedback-box .btn-feedback-send {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 11px 22px;
+      background: linear-gradient(135deg, var(--coral) 0%, var(--coral-deep) 100%);
+      border: none;
+      border-radius: 999px;
+      color: #fff;
+      font-family: var(--font-body);
+      font-weight: 700;
+      font-size: 0.92rem;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
+      box-shadow: 0 8px 20px -8px rgba(224, 128, 106, 0.8);
+    }
+    .feedback-box .btn-feedback-send:hover:not(:disabled) {
+      filter: brightness(1.06);
+      transform: translateY(-1px);
+    }
+    .feedback-box .btn-feedback-send:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+      filter: none;
+    }
+    .feedback-status {
+      font-size: 0.92rem;
+      color: var(--muted);
+      min-height: 1.2em;
+    }
+    .feedback-status.ok { color: #bfe8cf; }
+    .feedback-status.err { color: #ffb4a6; }
+    @media (max-width: 640px) {
+      .feedback-box { padding: 22px 18px 20px; margin-top: 36px; border-radius: 16px; }
+      .feedback-box h2 { font-size: 1.28rem; }
+    }
+    .visually-hidden {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
   </style>
 </head>
 <body>
@@ -1062,6 +1150,20 @@
     <div class="story-cards" id="story-cards">
       <!-- Populated by JS -->
     </div>
+
+    <div class="feedback-box" id="feedback-box">
+      <h2 id="ui-feedback-title">Give your feedback here</h2>
+      <form id="feedback-form" novalidate>
+        <input type="hidden" name="source" value="ALSounds feedback" />
+        <label class="visually-hidden" for="feedback-text" id="ui-feedback-label">Feedback</label>
+        <textarea id="feedback-text" name="feedback" rows="4" maxlength="4000" required placeholder="Your feedback…"></textarea>
+        <div class="feedback-actions">
+          <button type="submit" class="btn-feedback-send" id="ui-feedback-send">Send</button>
+          <p class="feedback-status" id="feedback-status" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+    </div>
+
 
   </div>
 </div>
@@ -1174,6 +1276,14 @@ const UI_STRINGS = {
     preparingVideo: 'Preparing your video…',
     postDownloadRedirect: 'Your recording is downloading. Taking you to the homepage…',
     endSupport: 'If this helped, you can support the site',
+    feedbackTitle: 'Give your feedback here',
+    feedbackLabel: 'Feedback',
+    feedbackPlaceholder: 'Your feedback…',
+    feedbackSend: 'Send',
+    feedbackSending: 'Sending…',
+    feedbackThanks: 'Thank you — your feedback was sent.',
+    feedbackError: 'Sorry, something went wrong. Please try again.',
+    feedbackEmpty: 'Please write a short message first.',
   },
   portuguese: {
     recordVoice: 'Gravar voz',
@@ -1208,6 +1318,14 @@ const UI_STRINGS = {
     preparingVideo: 'A preparar o seu vídeo…',
     postDownloadRedirect: 'A sua gravação está a descarregar. A voltar à página inicial…',
     endSupport: 'Se isto ajudou, pode apoiar o site',
+    feedbackTitle: 'Deixe aqui o seu feedback',
+    feedbackLabel: 'Feedback',
+    feedbackPlaceholder: 'O seu feedback…',
+    feedbackSend: 'Enviar',
+    feedbackSending: 'A enviar…',
+    feedbackThanks: 'Obrigado — o seu feedback foi enviado.',
+    feedbackError: 'Pedimos desculpa, algo correu mal. Tente de novo.',
+    feedbackEmpty: 'Escreva primeiro uma mensagem curta.',
   },
   spanish: {
     recordVoice: 'Grabar voz',
@@ -1242,6 +1360,14 @@ const UI_STRINGS = {
     preparingVideo: 'Preparando tu vídeo…',
     postDownloadRedirect: 'Tu grabación se está descargando. Volviendo a la página de inicio…',
     endSupport: 'Si te ha servido, puedes apoyar el sitio',
+    feedbackTitle: 'Deja aquí tu opinión',
+    feedbackLabel: 'Comentario',
+    feedbackPlaceholder: 'Tu opinión…',
+    feedbackSend: 'Enviar',
+    feedbackSending: 'Enviando…',
+    feedbackThanks: 'Gracias — tu comentario se ha enviado.',
+    feedbackError: 'Lo sentimos, algo ha fallado. Inténtalo de nuevo.',
+    feedbackEmpty: 'Escribe primero un mensaje breve.',
   },
   italian: {
     recordVoice: 'Registra la voce',
@@ -1276,6 +1402,14 @@ const UI_STRINGS = {
     preparingVideo: 'Preparazione del video…',
     postDownloadRedirect: 'La registrazione è in download. Torno alla pagina iniziale…',
     endSupport: 'Se ti è stato utile, puoi sostenere il sito',
+    feedbackTitle: 'Lascia qui il tuo feedback',
+    feedbackLabel: 'Feedback',
+    feedbackPlaceholder: 'Il tuo feedback…',
+    feedbackSend: 'Invia',
+    feedbackSending: 'Invio…',
+    feedbackThanks: 'Grazie — il tuo feedback è stato inviato.',
+    feedbackError: 'Spiacenti, qualcosa è andato storto. Riprova.',
+    feedbackEmpty: 'Scrivi prima un breve messaggio.',
   },
   german: {
     recordVoice: 'Stimme aufnehmen',
@@ -1310,6 +1444,14 @@ const UI_STRINGS = {
     preparingVideo: 'Dein Video wird vorbereitet…',
     postDownloadRedirect: 'Deine Aufnahme wird heruntergeladen. Zurück zur Startseite…',
     endSupport: 'Wenn es geholfen hat, kannst du die Seite unterstützen',
+    feedbackTitle: 'Gib hier dein Feedback',
+    feedbackLabel: 'Feedback',
+    feedbackPlaceholder: 'Dein Feedback…',
+    feedbackSend: 'Senden',
+    feedbackSending: 'Wird gesendet…',
+    feedbackThanks: 'Danke — dein Feedback wurde gesendet.',
+    feedbackError: 'Leider ist etwas schiefgelaufen. Bitte versuche es erneut.',
+    feedbackEmpty: 'Schreib bitte zuerst eine kurze Nachricht.',
   }
 };
 
@@ -1346,6 +1488,11 @@ function updateUiLang() {
   }
   set('ui-privacy', ui('privacy'));
   set('ui-picker-heading', ui('pickStory'));
+  set('ui-feedback-title', ui('feedbackTitle'));
+  set('ui-feedback-label', ui('feedbackLabel'));
+  set('ui-feedback-send', ui('feedbackSend'));
+  const feedbackTa = document.getElementById('feedback-text');
+  if (feedbackTa) feedbackTa.placeholder = ui('feedbackPlaceholder');
   set('countdown-hint', ui('countdownHint'));
   set('btn-back-stories', ui('backStories'));
   set('ui-btn-pause', ui('pause'));
@@ -2414,6 +2561,59 @@ document.addEventListener('keydown', e => {
 </script>
 <script src='https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'></script><script>kofiWidgetOverlay.draw('alsounds', {'type':'floating-chat','floating-chat.donateButton.text':'Donate','floating-chat.donateButton.background-color':'#f573ae','floating-chat.donateButton.text-color':'#fff'});</script>
 <script>
+
+const FORMINIT_FEEDBACK_URL = 'https://forminit.com/f/v3afphxfq0n';
+let feedbackSending = false;
+
+function setFeedbackStatus(message, kind) {
+  const el = document.getElementById('feedback-status');
+  if (!el) return;
+  el.textContent = message || '';
+  el.className = 'feedback-status' + (kind ? ' ' + kind : '');
+}
+
+async function submitFeedback(event) {
+  event.preventDefault();
+  if (feedbackSending) return;
+  const form = document.getElementById('feedback-form');
+  const ta = document.getElementById('feedback-text');
+  const btn = document.getElementById('ui-feedback-send');
+  if (!form || !ta || !btn) return;
+  const feedback = String(ta.value || '').trim();
+  if (!feedback) {
+    setFeedbackStatus(ui('feedbackEmpty'), 'err');
+    ta.focus();
+    return;
+  }
+
+  feedbackSending = true;
+  btn.disabled = true;
+  btn.textContent = ui('feedbackSending');
+  setFeedbackStatus('');
+  try {
+    const data = new FormData();
+    data.set('fi-text-feedback', feedback);
+    data.set('fi-text-source', 'ALSounds feedback');
+    const res = await fetch(FORMINIT_FEEDBACK_URL, { method: 'POST', body: data });
+    let payload = null;
+    try { payload = await res.json(); } catch { /* non-JSON */ }
+    if (!res.ok || (payload && payload.success === false) || (payload && payload.error)) {
+      throw new Error((payload && (payload.message || payload.error)) || ('HTTP ' + res.status));
+    }
+    ta.value = '';
+    setFeedbackStatus(ui('feedbackThanks'), 'ok');
+  } catch (err) {
+    console.error('Feedback submit failed', err);
+    setFeedbackStatus(ui('feedbackError'), 'err');
+  } finally {
+    feedbackSending = false;
+    btn.disabled = false;
+    btn.textContent = ui('feedbackSend');
+  }
+}
+
+document.getElementById('feedback-form').addEventListener('submit', submitFeedback);
+
 updateUiLang();
 refreshPickerForLang().then(() => { if (location.hash === '#stories') scrollToStories(); });
 </script>
