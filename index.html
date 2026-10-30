@@ -687,6 +687,16 @@
 
     .word.future { color: rgba(247, 239, 223, 0.86); }
 
+
+    html[dir="rtl"] {
+      --font-display: 'Segoe UI', Tahoma, 'Noto Naskh Arabic', 'Arabic Typesetting', Arial, sans-serif;
+      --font-body: 'Segoe UI', Tahoma, 'Noto Naskh Arabic', Arial, sans-serif;
+    }
+    html[dir="rtl"] .scene-text { text-align: right; }
+    html[dir="rtl"] .title-block .scene-text,
+    html[dir="rtl"] .title-block .scene-title { text-align: center; }
+    html[dir="rtl"] .scene-title { letter-spacing: 0; text-transform: none; }
+
     /* ── CONTROLS BAR (top of reader) ── */
     .controls-bar {
       display: flex;
@@ -1126,7 +1136,7 @@
     <a class="page-link active" href="./#stories" onclick="return scrollToStories()">Stories</a>
     <a class="page-link" href="privacy.html">Privacy</a>
   </div>
-  <div class="nav-langs" role="group" aria-label="Language"><button type="button" class="lang-btn active" onclick="setLegacyLang('en', this)" aria-label="English">EN</button><button type="button" class="lang-btn" onclick="setLegacyLang('pt', this)" aria-label="Português">PT</button><button type="button" class="lang-btn" onclick="setLegacyLang('es', this)" aria-label="Español">ES</button><button type="button" class="lang-btn" onclick="setLegacyLang('it', this)" aria-label="Italiano">IT</button><button type="button" class="lang-btn" onclick="setLegacyLang('de', this)" aria-label="Deutsch">DE</button></div>
+  <div class="nav-langs" role="group" aria-label="Language"><button type="button" class="lang-btn active" onclick="setLegacyLang('en', this)" aria-label="English">EN</button><button type="button" class="lang-btn" onclick="setLegacyLang('pt', this)" aria-label="Português">PT</button><button type="button" class="lang-btn" onclick="setLegacyLang('es', this)" aria-label="Español">ES</button><button type="button" class="lang-btn" onclick="setLegacyLang('it', this)" aria-label="Italiano">IT</button><button type="button" class="lang-btn" onclick="setLegacyLang('de', this)" aria-label="Deutsch">DE</button><button type="button" class="lang-btn" onclick="setLegacyLang('ar', this)" aria-label="العربية">AR</button></div>
 </nav>
 
 <!-- PICKER VIEW -->
@@ -1232,15 +1242,15 @@
 <!-- Story data loaded per language via fetch (see script below) -->
 
 <script>
-const DATA_VERSION = '20261007b';
+const DATA_VERSION = '20261030a';
 const TITLE_CARD_SEC = 3;
-const LEGACY_LANGS = ['english', 'portuguese', 'spanish', 'italian', 'german'];
+const LEGACY_LANGS = ['english', 'portuguese', 'spanish', 'italian', 'german', 'arabic'];
 const STORIES_CACHE = {};
 let currentStories = [];
 
-const NAV_TO_LANG = { en: 'english', pt: 'portuguese', es: 'spanish', it: 'italian', de: 'german' };
+const NAV_TO_LANG = { en: 'english', pt: 'portuguese', es: 'spanish', it: 'italian', de: 'german', ar: 'arabic' };
 
-const LANG_LABELS = { english: 'English', portuguese: 'Português', spanish: 'Español', italian: 'Italiano', german: 'Deutsch' };
+const LANG_LABELS = { english: 'English', portuguese: 'Português', spanish: 'Español', italian: 'Italiano', german: 'Deutsch', arabic: 'العربية' };
 
 const UI_STRINGS = {
   english: {
@@ -1452,6 +1462,48 @@ const UI_STRINGS = {
     feedbackThanks: 'Danke — dein Feedback wurde gesendet.',
     feedbackError: 'Leider ist etwas schiefgelaufen. Bitte versuche es erneut.',
     feedbackEmpty: 'Schreib bitte zuerst eine kurze Nachricht.',
+  },
+  arabic: {
+    recordVoice: 'تسجيل الصوت',
+    recordCamera: 'تسجيل فيديو',
+    cameraDenied: 'الكاميرا غير متاحة أو غير مسموح بها. سيتم تسجيل صوتك فقط.',
+    sceneLabel: 'صفحة',
+    navDonate: 'تبرّع',
+    welcomeTitle: 'صوتك، قصتهم',
+    welcomeBodyHtml: '<p>شُخّصت بإصابتي بالتصلب الجانبي الضموري (ALS) عام 2021، وأنا في السادسة والثلاثين. صنعت هذا الموقع ليكون أقرب شيء إلى قراءة قصة قبل النوم عندما لا يعود بإمكانك ذلك.</p><p>كيف يعمل: اختر قصة، اضغط على تسجيل الصوت أو تسجيل فيديو، اقرأ مع النص، ثم حمّل الفيديو.</p><picture><source srcset="assets/example-video.webp" type="image/webp"><img class="example-video" src="assets/example-video.jpg" width="520" height="925" alt="مثال لفيديو جاهز على هاتف: كاميرا القارئ في الأعلى، وصورة القصة والترجمة في الأسفل" loading="lazy"></picture><p>صُمم لمرضى التصلب الجانبي الضموري، لكن لا تتردد في استخدامه إن كنت لن تستطيع القراءة بصوتك لأي سبب كان.</p><p>أقدّر خصوصيتي وخصوصيتك. لذلك لا حاجة لتسجيل الدخول، ولا أحفظ تسجيلاتك أبداً. كل شيء يبقى على هاتفك أو حاسوبك، ولا يراه أحد إلا من تختار أن تشاركه معهم.</p><p>إن كانت هناك قصة تود رؤيتها هنا، أو كانت لغتك غير متوفرة، أخبرني وسأحاول إضافتها. لا مانع لدي من إضافة لغة حتى لو كانت لشخص واحد. فقط راسلني على <a href="mailto:hello@alsounds.com">hello@alsounds.com</a>.</p>',
+    privacy: '🔒 تسجيلك لا يغادر جهازك أبداً.',
+    pickStory: 'اختر قصة',
+    storyLabel: 'قصة',
+    startRecording: 'سجّل القصة',
+    titleIntro: 'اقرأ العنوان بصوت عالٍ',
+    pause: 'إيقاف مؤقت',
+    resume: 'متابعة',
+    ready: 'جاهز',
+    saved: 'تم التنزيل',
+    comingSoon: 'قريباً…',
+    countdownHint: 'استعد — يبدأ التسجيل عند انتهاء العدّ التنازلي',
+    backStories: '← القصص',
+    scenes: 'صفحات',
+    recording: '● جارٍ التسجيل…',
+    stopSave: 'إيقاف وتنزيل',
+    loading: 'جارٍ تحميل القصة…',
+    noStories: 'لا توجد قصص بعد باللغة {lang}.',
+    confirmBack: 'إيقاف التسجيل والعودة إلى القصص؟',
+    recordUnsupported: 'هذا المتصفح لا يدعم التسجيل.',
+    noFormat: 'لم يُعثر على تنسيق تسجيل مدعوم.',
+    micDenied: 'رُفض الوصول إلى الميكروفون. يرجى السماح بالوصول إلى الميكروفون للتسجيل.',
+    videoLoadFailed: 'تعذّر تحميل فيديو القصة. يرجى تحديث الصفحة والمحاولة مجدداً.',
+    preparingVideo: 'جارٍ تجهيز الفيديو…',
+    postDownloadRedirect: 'جارٍ تنزيل تسجيلك. نعود بك إلى الصفحة الرئيسية…',
+    endSupport: 'إن ساعدك هذا، يمكنك دعم الموقع',
+    feedbackTitle: 'أضف ملاحظاتك هنا',
+    feedbackLabel: 'ملاحظات',
+    feedbackPlaceholder: 'ملاحظاتك…',
+    feedbackSend: 'إرسال',
+    feedbackSending: 'جارٍ الإرسال…',
+    feedbackThanks: 'شكراً — تم إرسال ملاحظاتك.',
+    feedbackError: 'عذراً، حدث خطأ. يرجى المحاولة مجدداً.',
+    feedbackEmpty: 'اكتب رسالة قصيرة أولاً.',
   }
 };
 
@@ -1499,6 +1551,12 @@ function updateUiLang() {
   set('ui-btn-stop', ui('stopSave'));
   const loadingEl = document.querySelector('#loading span');
   if (loadingEl) loadingEl.textContent = ui('loading');
+  const isRtl = currentLang === 'arabic';
+  const navCode = Object.entries(NAV_TO_LANG).find(([, v]) => v === currentLang);
+  document.documentElement.lang = isRtl ? 'ar' : (navCode ? navCode[0] : 'en');
+  document.documentElement.dir = isRtl ? 'rtl' : 'ltr';
+  const karaoke = document.getElementById('karaoke-area');
+  if (karaoke) karaoke.dir = isRtl ? 'rtl' : 'ltr';
   updateReaderControls();
 }
 
@@ -1613,7 +1671,7 @@ function pickCameraMime() {
 // Story text on the pictures, same style and timing as the captions burned into the story videos
 // (tools/build_data.py CAP): white bold sans, black outline, translucent black box, centred low.
 const CAP = { size: 36, min: 26, maxw: 0.88, lines: 3, lh: 1.32, pad: 15, stroke: 4, bottom: 0.06, alpha: 100 };
-const CAP_FONT = "Arial, 'Liberation Sans', 'Helvetica Neue', Helvetica, sans-serif";
+const CAP_FONT = "Arial, Tahoma, 'Segoe UI', 'Noto Naskh Arabic', 'Liberation Sans', 'Helvetica Neue', Helvetica, sans-serif";
 function captionAt(t) {
   const caps = (currentStory && currentStory.captions) || [];
   for (const c of caps) { if (t >= c.start && t < c.end) return c.text; if (c.start > t) break; }
@@ -1639,6 +1697,8 @@ function drawCaption(ctx, text, W, H, o = {}) {
   const bw = tw + pad * 4, bh = lh * lines.length + pad * 3, x0 = (W - bw) / 2;
   const y0 = typeof o.top === 'number' ? o.top + Math.max(0, (o.bottom - o.top - bh) / 2) : H * (1 - CAP.bottom) - bh;
   ctx.save();
+  if (currentLang === 'arabic') ctx.direction = 'rtl';
+  else ctx.direction = 'ltr';
   ctx.fillStyle = `rgba(0,0,0,${CAP.alpha / 255})`; ctx.fillRect(x0, y0, bw, bh);
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
   ctx.lineWidth = Math.round(CAP.stroke * k) * 2; ctx.strokeStyle = '#000'; ctx.fillStyle = '#fff';
@@ -2089,6 +2149,7 @@ function buildKaraoke(variant) {
 
     const textEl = document.createElement('div');
     textEl.className = 'scene-text';
+    if (currentLang === 'arabic') textEl.dir = 'rtl';
     const offset = scene.videoOffset || 0;
 
     (scene.words || []).forEach((w, wi) => {
