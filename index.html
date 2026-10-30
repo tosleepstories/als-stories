@@ -1410,10 +1410,10 @@
         <span class="time-display" id="time-display">0:00 / 0:00</span>
       </div>
       <div class="control-buttons">
-        <button type="button" class="btn-pause-main" id="btn-pause" onclick="togglePauseRecording()" disabled>
+        <button type="button" class="btn-pause-main" id="btn-pause" onclick="onPauseOrDoneClick()" disabled>
           ⏸ <span id="ui-btn-pause">Pause</span>
         </button>
-        <button type="button" class="btn-stop-main" id="btn-stop" onclick="stopRecording()" disabled>
+        <button type="button" class="btn-stop-main" id="btn-stop" onclick="onStopOrSaveClick()" disabled>
           ■ <span id="ui-btn-stop">Stop &amp; download</span>
         </button>
       </div>
@@ -1497,6 +1497,9 @@ const UI_STRINGS = {
     scenes: 'pages',
     recording: '● Recording…',
     stopSave: 'Stop & download',
+    saveVideo: 'Save video',
+    done: 'Done',
+    readyToSave: 'Recording ready — tap Save video',
     loading: 'Loading story…',
     noStories: 'No stories available in {lang} yet.',
     confirmBack: 'Stop recording and go back to stories?',
@@ -1556,6 +1559,9 @@ const UI_STRINGS = {
     scenes: 'páginas',
     recording: '● A gravar…',
     stopSave: 'Parar e descarregar',
+    saveVideo: 'Guardar vídeo',
+    done: 'Concluir',
+    readyToSave: 'Gravação pronta — toque em Guardar vídeo',
     loading: 'A carregar a história…',
     noStories: 'Ainda não há histórias em {lang}.',
     confirmBack: 'Parar a gravação e voltar às histórias?',
@@ -1615,6 +1621,9 @@ const UI_STRINGS = {
     scenes: 'páginas',
     recording: '● Grabando…',
     stopSave: 'Parar y descargar',
+    saveVideo: 'Guardar vídeo',
+    done: 'Listo',
+    readyToSave: 'Grabación lista — toca Guardar vídeo',
     loading: 'Cargando el cuento…',
     noStories: 'Aún no hay cuentos en {lang}.',
     confirmBack: '¿Parar la grabación y volver a los cuentos?',
@@ -1674,6 +1683,9 @@ const UI_STRINGS = {
     scenes: 'pagine',
     recording: '● Registrazione…',
     stopSave: 'Ferma e scarica',
+    saveVideo: 'Salva video',
+    done: 'Fatto',
+    readyToSave: 'Registrazione pronta — tocca Salva video',
     loading: 'Caricamento della storia…',
     noStories: 'Non ci sono ancora storie in {lang}.',
     confirmBack: 'Fermare la registrazione e tornare alle storie?',
@@ -1733,6 +1745,9 @@ const UI_STRINGS = {
     scenes: 'Seiten',
     recording: '● Aufnahme läuft…',
     stopSave: 'Stopp & herunterladen',
+    saveVideo: 'Video speichern',
+    done: 'Fertig',
+    readyToSave: 'Aufnahme fertig — tippe auf Video speichern',
     loading: 'Geschichte wird geladen…',
     noStories: 'Noch keine Geschichten auf {lang}.',
     confirmBack: 'Aufnahme beenden und zurück zu den Geschichten?',
@@ -1792,6 +1807,9 @@ const UI_STRINGS = {
     scenes: 'صفحات',
     recording: '● جارٍ التسجيل…',
     stopSave: 'إيقاف وتنزيل',
+    saveVideo: 'حفظ الفيديو',
+    done: 'تم',
+    readyToSave: 'التسجيل جاهز — اضغط حفظ الفيديو',
     loading: 'جارٍ تحميل القصة…',
     noStories: 'لا توجد قصص بعد باللغة {lang}.',
     confirmBack: 'إيقاف التسجيل والعودة إلى القصص؟',
@@ -1902,7 +1920,10 @@ let isRecording = false;
 let recStartMs = 0;
 let recElapsedSec = 0;
 let latestRecUrl = null;
+let latestRecBlob = null;
 let latestRecFilename = '';
+let iosAwaitingSave = false;
+let iosNeedsDone = false;
 let discardBlob = false;
 let storyVideoEl = null;
 let recordingHasVideo = false;
@@ -2080,6 +2101,9 @@ function drawPictureAndCaption(ctx, t, x, y, w, h, picTop, capSize, capMin, picA
 // 'Record with camera': upright 720x1280 - mirrored front camera in the top third (422 px), thin gold divider,
 // story picture below (720x540, middle 75% of its width) with the caption in a band beneath it.
 const IS_ANDROID = /Android/i.test(navigator.userAgent);
+// iPhone/iPod, iPad, and iPadOS desktop-UA with touch
+const IS_IOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 function startCameraComposite() {
   const canvas = document.createElement('canvas');
   // Android: smaller canvas (540x960, same layout scaled 0.75) so the phone's encoder and GPU readback keep up
@@ -2289,6 +2313,22 @@ function updateReaderControls() {
     stopBtn.classList.add('recording-active');
     document.getElementById('ui-btn-pause').textContent = isRecordingPaused ? ui('resume') : ui('pause');
     document.getElementById('ui-btn-stop').textContent = ui('stopSave');
+  } else if (iosAwaitingSave || iosNeedsDone) {
+    label.textContent = iosNeedsDone ? ui('saved') : ui('readyToSave');
+    label.classList.remove('idle');
+    pauseBtn.disabled = false;
+    stopBtn.disabled = iosNeedsDone; // Done is on pause; Save stays until Done-only
+    if (iosNeedsDone) {
+      stopBtn.disabled = true;
+      stopBtn.classList.remove('recording-active');
+      document.getElementById('ui-btn-pause').textContent = ui('done');
+      document.getElementById('ui-btn-stop').textContent = ui('saveVideo');
+    } else {
+      stopBtn.disabled = false;
+      stopBtn.classList.add('recording-active');
+      document.getElementById('ui-btn-pause').textContent = ui('done');
+      document.getElementById('ui-btn-stop').textContent = ui('saveVideo');
+    }
   } else if (latestRecUrl) {
     label.textContent = ui('saved');
     label.classList.add('idle');
@@ -2378,7 +2418,10 @@ async function launchReader(story) {
   if (animFrame) cancelAnimationFrame(animFrame);
   cleanupRecording(true, true);
   latestRecUrl = null;
+  latestRecBlob = null;
   latestRecFilename = '';
+  iosAwaitingSave = false;
+  iosNeedsDone = false;
   isRecordingPaused = false;
   recTotalPausedMs = 0;
 
@@ -2902,6 +2945,7 @@ async function finishRecording() {
 
     const ext = extForRecording(blob.type || mime, hasVideo);
     if (latestRecUrl) URL.revokeObjectURL(latestRecUrl);
+    latestRecBlob = blob;
     latestRecUrl = URL.createObjectURL(blob);
     const sid = currentStory ? currentStory.id : 'story';
     latestRecFilename = recFilename(currentStory ? currentStory.slug : sid, ext);
@@ -2911,9 +2955,24 @@ async function finishRecording() {
   discardBlob = false;
   recChunks = [];
   recorder = null;
-  updateReaderControls();
   updateTimeDisplay(lastRecordedDuration || getStoryTime());
-  if (latestRecUrl) downloadRecording();
+  if (latestRecUrl) {
+    if (IS_IOS) {
+      // iOS: keep a user gesture for share/save — no auto-download / auto-redirect.
+      iosAwaitingSave = true;
+      iosNeedsDone = false;
+      updateReaderControls();
+    } else {
+      iosAwaitingSave = false;
+      iosNeedsDone = false;
+      updateReaderControls();
+      downloadRecording();
+    }
+  } else {
+    iosAwaitingSave = false;
+    iosNeedsDone = false;
+    updateReaderControls();
+  }
 }
 
 // Unique download name per recording: <story-slug>-YYYY-MM-DD-HHMMSS.<ext> (local time), so phones never ask to replace an earlier file
@@ -2936,6 +2995,95 @@ function cleanupRecording(discard, keepMic = false) {
   if (!keepMic) releaseMicrophone();
   recChunks = [];
   recorder = null;
+}
+
+
+function onStopOrSaveClick() {
+  if (iosNeedsDone) return;
+  if (iosAwaitingSave) {
+    void saveIosRecording();
+    return;
+  }
+  stopRecording();
+}
+
+function onPauseOrDoneClick() {
+  if (iosAwaitingSave || iosNeedsDone) {
+    iosAwaitingSave = false;
+    iosNeedsDone = false;
+    redirectToHomeAfterDownload();
+    return;
+  }
+  togglePauseRecording();
+}
+
+function buildRecordingFile() {
+  const blob = latestRecBlob;
+  if (!blob) return null;
+  let name = latestRecFilename || 'story.mp4';
+  let type = blob.type || '';
+  // Prefer mp4 type/name when the blob is mp4 (or unknown video on iOS).
+  if (/mp4|m4a|aac|quicktime/i.test(type) || (!type && recordingHasVideo)) {
+    type = type && /mp4/i.test(type) ? type : (recordingHasVideo ? 'video/mp4' : 'audio/mp4');
+    if (!/\.mp4$/i.test(name) && !/\.m4a$/i.test(name)) {
+      name = name.replace(/\.[^.]+$/, '') + (recordingHasVideo ? '.mp4' : '.m4a');
+    }
+  } else if (!type) {
+    type = recordingHasVideo ? 'video/mp4' : 'application/octet-stream';
+  }
+  try {
+    return new File([blob], name, { type: type });
+  } catch {
+    return new File([blob], name);
+  }
+}
+
+function triggerAnchorDownloadOnly() {
+  if (!latestRecUrl) return;
+  const a = document.createElement('a');
+  a.href = latestRecUrl;
+  a.download = latestRecFilename || recFilename(currentStory ? currentStory.slug : 'story', 'webm');
+  a.rel = 'noopener';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  // Also try opening the blob URL (some iOS builds ignore download=).
+  try {
+    const opened = window.open(latestRecUrl, '_blank');
+    if (!opened) {
+      // last resort: navigate same tab is too destructive; skip
+    }
+  } catch { /* noop */ }
+}
+
+async function saveIosRecording() {
+  if (!latestRecBlob && !latestRecUrl) return;
+  const file = buildRecordingFile();
+  if (!file) {
+    triggerAnchorDownloadOnly();
+    iosAwaitingSave = false;
+    iosNeedsDone = true;
+    updateReaderControls();
+    return;
+  }
+  try {
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({ files: [file], title: file.name });
+      iosAwaitingSave = false;
+      iosNeedsDone = false;
+      redirectToHomeAfterDownload();
+      return;
+    }
+  } catch (err) {
+    // User cancelled the share sheet — keep Save video available.
+    if (err && err.name === 'AbortError') return;
+    console.error('iOS share failed', err);
+  }
+  // Fallback: <a download> / open blob, then require Done (no auto-redirect).
+  triggerAnchorDownloadOnly();
+  iosAwaitingSave = false;
+  iosNeedsDone = true;
+  updateReaderControls();
 }
 
 function downloadRecording() {
