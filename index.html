@@ -438,6 +438,198 @@
     }
 
     .btn-start.btn-voice { background: linear-gradient(135deg, #5b6fb0 0%, #3e4f8f 100%); box-shadow: 0 8px 20px -8px rgba(91, 111, 176, 0.8); }
+
+    .btn-start.btn-eleven {
+      background: transparent;
+      color: var(--moon);
+      border: 1px solid rgba(244, 213, 141, 0.45);
+      box-shadow: none;
+      font-size: 0.84rem;
+      padding: 9px 16px;
+    }
+    .btn-start.btn-eleven:hover:not(:disabled) {
+      background: rgba(244, 213, 141, 0.12);
+      border-color: var(--moon);
+      filter: none;
+      box-shadow: none;
+    }
+    .eleven-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 600;
+      background: rgba(8, 11, 28, 0.88);
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .eleven-modal.show { display: flex; }
+    .eleven-modal-box {
+      width: min(420px, 100%);
+      background: linear-gradient(180deg, var(--night-700) 0%, var(--night-800) 100%);
+      border: 1px solid rgba(247, 239, 223, 0.14);
+      border-radius: 18px;
+      padding: 26px 24px 22px;
+      box-shadow: var(--shadow-card);
+    }
+    .eleven-modal-box h2 {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      color: var(--cream);
+      margin-bottom: 14px;
+    }
+    .eleven-modal-box label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      margin: 12px 0 6px;
+    }
+    .eleven-field-row {
+      display: flex;
+      gap: 8px;
+      align-items: stretch;
+      margin-top: 6px;
+      margin-bottom: 12px;
+    }
+    .eleven-field-row input {
+      flex: 1;
+      min-width: 0;
+      margin: 0;
+    }
+    .eleven-paste {
+      flex-shrink: 0;
+      background: rgba(247, 239, 223, 0.08);
+      border: 1px solid rgba(247, 239, 223, 0.22);
+      color: var(--cream);
+      border-radius: 10px;
+      padding: 0 12px;
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .eleven-paste:hover { border-color: rgba(224, 128, 106, 0.55); }
+    .eleven-modal-box input {
+      width: 100%;
+      padding: 11px 13px;
+      border-radius: 10px;
+      border: 1px solid rgba(247, 239, 223, 0.18);
+      background: rgba(0, 0, 0, 0.25);
+      color: var(--cream);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+    }
+    .eleven-modal-box input:focus {
+      outline: none;
+      border-color: rgba(244, 213, 141, 0.55);
+    }
+    .eleven-note {
+      margin-top: 12px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+    .eleven-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+      align-items: center;
+    }
+    .eleven-actions .btn-eleven-go {
+      display: inline-flex;
+      align-items: center;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--coral) 0%, var(--coral-deep) 100%);
+      color: #fff;
+      font-family: var(--font-body);
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    .eleven-actions .btn-eleven-cancel,
+    .eleven-actions .btn-eleven-forget {
+      background: transparent;
+      border: 1px solid rgba(247, 239, 223, 0.22);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 9px 14px;
+      font-family: var(--font-body);
+      font-size: 0.84rem;
+      cursor: pointer;
+    }
+    .eleven-actions .btn-eleven-forget { margin-inline-start: auto; }
+    .eleven-error {
+      margin-top: 10px;
+      font-size: 0.85rem;
+      color: #f0a090;
+      min-height: 1.2em;
+      white-space: pre-wrap;
+      line-height: 1.45;
+    }
+    .eleven-error:not(:empty) {
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: rgba(224, 128, 106, 0.12);
+      border: 1px solid rgba(224, 128, 106, 0.35);
+    }
+    .eleven-error-dismiss {
+      display: none;
+      margin-top: 8px;
+      background: transparent;
+      border: 1px solid rgba(247, 239, 223, 0.22);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+    .eleven-error:not(:empty) + .eleven-error-dismiss { display: inline-flex; }
+
+    .eleven-guide {
+      margin-top: 14px;
+      border: 1px solid rgba(247, 239, 223, 0.14);
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.18);
+      padding: 0 12px;
+    }
+    .eleven-guide > summary {
+      cursor: pointer;
+      list-style: none;
+      padding: 11px 4px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--moon);
+      user-select: none;
+    }
+    .eleven-guide > summary::-webkit-details-marker { display: none; }
+    .eleven-guide > summary::before {
+      content: '▸ ';
+      display: inline-block;
+      transition: transform 0.15s;
+    }
+    .eleven-guide[open] > summary::before { content: '▾ '; }
+    .eleven-guide-body {
+      padding: 0 4px 12px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    .eleven-guide-body ol {
+      margin: 6px 0 0;
+      padding-inline-start: 1.2em;
+    }
+    .eleven-guide-body li { margin: 6px 0; }
+    .eleven-guide-body a {
+      color: var(--accent);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
     .btn-start:disabled {
       background: rgba(255, 255, 255, 0.10);
       color: var(--muted);
@@ -1127,6 +1319,35 @@
   <div class="countdown-hint" id="countdown-hint">Follow the highlighted words — read aloud at your own pace</div>
 </div>
 
+
+<!-- ElevenLabs voice settings (key stays in this browser only) -->
+<div class="eleven-modal" id="eleven-modal" role="dialog" aria-modal="true" aria-labelledby="eleven-modal-title">
+  <div class="eleven-modal-box">
+    <h2 id="eleven-modal-title">ElevenLabs voice</h2>
+    <label for="eleven-api-key" id="eleven-key-label">API key</label>
+    <div class="eleven-field-row">
+      <input type="password" id="eleven-api-key" autocomplete="off" spellcheck="false" placeholder="sk_...">
+      <button type="button" class="eleven-paste" id="eleven-paste-key" onclick="pasteIntoElevenField('eleven-api-key')">Paste</button>
+    </div>
+    <label for="eleven-voice-id" id="eleven-voice-label">Voice ID</label>
+    <div class="eleven-field-row">
+      <input type="text" id="eleven-voice-id" autocomplete="off" spellcheck="false" placeholder="Voice ID">
+      <button type="button" class="eleven-paste" id="eleven-paste-voice" onclick="pasteIntoElevenField('eleven-voice-id')">Paste</button>
+    </div>
+    <p class="eleven-note" id="eleven-key-note">Your key stays on your device. It is never sent to ALSounds.</p>
+    <details class="eleven-guide" id="eleven-guide" open>
+      <summary id="eleven-guide-summary">How to find these</summary>
+      <div class="eleven-guide-body" id="eleven-guide-body"></div>
+    </details>
+    <p class="eleven-error" id="eleven-error" role="status" aria-live="polite"></p>
+    <div class="eleven-actions">
+      <button type="button" class="btn-eleven-go" id="eleven-save" onclick="confirmElevenLabsSettings()">Save &amp; continue</button>
+      <button type="button" class="btn-eleven-cancel" id="eleven-cancel" onclick="closeElevenLabsModal()">Cancel</button>
+      <button type="button" class="btn-eleven-forget" id="eleven-forget" onclick="forgetElevenLabsKey()">Forget key</button>
+    </div>
+  </div>
+</div>
+
 <!-- NAV -->
 <nav>
   <div class="nav-primary">
@@ -1242,7 +1463,7 @@
 <!-- Story data loaded per language via fetch (see script below) -->
 
 <script>
-const DATA_VERSION = '20261030a';
+const DATA_VERSION = '20261030c';
 const TITLE_CARD_SEC = 3;
 const LEGACY_LANGS = ['english', 'portuguese', 'spanish', 'italian', 'german', 'arabic'];
 const STORIES_CACHE = {};
@@ -1294,6 +1515,23 @@ const UI_STRINGS = {
     feedbackThanks: 'Thank you — your feedback was sent.',
     feedbackError: 'Sorry, something went wrong. Please try again.',
     feedbackEmpty: 'Please write a short message first.',
+    elevenLabsVoice: 'Use my ElevenLabs voice',
+    elevenLabsTitle: 'ElevenLabs voice',
+    elevenLabsKeyLabel: 'API key',
+    elevenLabsVoiceLabel: 'Voice ID',
+    elevenLabsKeyNote: 'Your key stays on your device. It is never sent to ALSounds.',
+    elevenLabsSave: 'Save & continue',
+    elevenLabsCancel: 'Cancel',
+    elevenLabsForget: 'Forget key',
+    elevenLabsGenerating: 'Generating speech…',
+    elevenLabsError: 'Could not generate speech. Check your API key and voice ID.',
+    elevenLabsMissing: 'Enter your ElevenLabs API key and voice ID.',
+    elevenLabsKeyPlaceholder: 'sk_...',
+    elevenLabsPaste: 'Paste',
+    elevenLabsClipboardBlocked: 'Clipboard blocked — paste with Ctrl+V (or long-press on mobile).',
+    elevenLabsVoicePlaceholder: 'Voice ID',
+    elevenLabsGuideSummary: 'How to find these',
+    elevenLabsGuideHtml: '<ol><li><strong>API key</strong><ol><li>Open <a href="https://elevenlabs.io/app/settings/api-keys" target="_blank" rel="noopener">API Keys</a>.</li><li>Click <strong>Create key</strong>.</li><li>Set <strong>Text to Speech</strong> to <strong>Access</strong>.</li><li>Copy the key (starts with <code>sk_</code>) and paste it here.</li></ol></li><li><strong>Voice ID</strong><ol><li>Open <a href="https://elevenlabs.io/app/voice-lab" target="_blank" rel="noopener">My Voices</a>.</li><li>Click <strong>More actions</strong> (⋯) on your voice.</li><li>Click <strong>Copy voice ID</strong>.</li><li>Paste it here.</li></ol></li></ol>',
   },
   portuguese: {
     recordVoice: 'Gravar voz',
@@ -1336,6 +1574,23 @@ const UI_STRINGS = {
     feedbackThanks: 'Obrigado — o seu feedback foi enviado.',
     feedbackError: 'Pedimos desculpa, algo correu mal. Tente de novo.',
     feedbackEmpty: 'Escreva primeiro uma mensagem curta.',
+    elevenLabsVoice: 'Usar a minha voz ElevenLabs',
+    elevenLabsTitle: 'Voz ElevenLabs',
+    elevenLabsKeyLabel: 'Chave da API',
+    elevenLabsVoiceLabel: 'ID da voz',
+    elevenLabsKeyNote: 'A chave fica só no seu dispositivo. Nunca é enviada para o ALSounds.',
+    elevenLabsSave: 'Guardar e continuar',
+    elevenLabsCancel: 'Cancelar',
+    elevenLabsForget: 'Esquecer chave',
+    elevenLabsGenerating: 'A gerar a fala…',
+    elevenLabsError: 'Não foi possível gerar a fala. Verifique a chave da API e o ID da voz.',
+    elevenLabsMissing: 'Introduza a chave da API ElevenLabs e o ID da voz.',
+    elevenLabsKeyPlaceholder: 'sk_...',
+    elevenLabsPaste: 'Colar',
+    elevenLabsClipboardBlocked: 'Área de transferência bloqueada — cole com Ctrl+V (ou pressione longamente no telemóvel).',
+    elevenLabsVoicePlaceholder: 'ID da voz',
+    elevenLabsGuideSummary: 'Como encontrar estes dados',
+    elevenLabsGuideHtml: '<ol><li><strong>Chave da API</strong><ol><li>Abra <a href="https://elevenlabs.io/app/settings/api-keys" target="_blank" rel="noopener">API Keys</a>.</li><li>Clique em <strong>Create key</strong>.</li><li>Defina <strong>Text to Speech</strong> como <strong>Access</strong>.</li><li>Copie a chave (começa por <code>sk_</code>) e cole-a aqui.</li></ol></li><li><strong>ID da voz</strong><ol><li>Abra <a href="https://elevenlabs.io/app/voice-lab" target="_blank" rel="noopener">My Voices</a>.</li><li>Clique em <strong>More actions</strong> (⋯) na sua voz.</li><li>Clique em <strong>Copy voice ID</strong>.</li><li>Cole-o aqui.</li></ol></li></ol>',
   },
   spanish: {
     recordVoice: 'Grabar voz',
@@ -1378,6 +1633,23 @@ const UI_STRINGS = {
     feedbackThanks: 'Gracias — tu comentario se ha enviado.',
     feedbackError: 'Lo sentimos, algo ha fallado. Inténtalo de nuevo.',
     feedbackEmpty: 'Escribe primero un mensaje breve.',
+    elevenLabsVoice: 'Usar mi voz de ElevenLabs',
+    elevenLabsTitle: 'Voz de ElevenLabs',
+    elevenLabsKeyLabel: 'Clave de API',
+    elevenLabsVoiceLabel: 'ID de voz',
+    elevenLabsKeyNote: 'Tu clave se queda en tu dispositivo. Nunca se envía a ALSounds.',
+    elevenLabsSave: 'Guardar y continuar',
+    elevenLabsCancel: 'Cancelar',
+    elevenLabsForget: 'Olvidar clave',
+    elevenLabsGenerating: 'Generando el habla…',
+    elevenLabsError: 'No se pudo generar el habla. Revisa tu clave de API y el ID de voz.',
+    elevenLabsMissing: 'Introduce tu clave de API de ElevenLabs y el ID de voz.',
+    elevenLabsKeyPlaceholder: 'sk_...',
+    elevenLabsPaste: 'Pegar',
+    elevenLabsClipboardBlocked: 'Portapapeles bloqueado — pega con Ctrl+V (o mantén pulsado en el móvil).',
+    elevenLabsVoicePlaceholder: 'ID de voz',
+    elevenLabsGuideSummary: 'Cómo encontrarlos',
+    elevenLabsGuideHtml: '<ol><li><strong>Clave de API</strong><ol><li>Abre <a href="https://elevenlabs.io/app/settings/api-keys" target="_blank" rel="noopener">API Keys</a>.</li><li>Haz clic en <strong>Create key</strong>.</li><li>Pon <strong>Text to Speech</strong> en <strong>Access</strong>.</li><li>Copia la clave (empieza por <code>sk_</code>) y pégala aquí.</li></ol></li><li><strong>ID de voz</strong><ol><li>Abre <a href="https://elevenlabs.io/app/voice-lab" target="_blank" rel="noopener">My Voices</a>.</li><li>Haz clic en <strong>More actions</strong> (⋯) en tu voz.</li><li>Haz clic en <strong>Copy voice ID</strong>.</li><li>Pégalo aquí.</li></ol></li></ol>',
   },
   italian: {
     recordVoice: 'Registra la voce',
@@ -1420,6 +1692,23 @@ const UI_STRINGS = {
     feedbackThanks: 'Grazie — il tuo feedback è stato inviato.',
     feedbackError: 'Spiacenti, qualcosa è andato storto. Riprova.',
     feedbackEmpty: 'Scrivi prima un breve messaggio.',
+    elevenLabsVoice: 'Usa la mia voce ElevenLabs',
+    elevenLabsTitle: 'Voce ElevenLabs',
+    elevenLabsKeyLabel: 'Chiave API',
+    elevenLabsVoiceLabel: 'ID voce',
+    elevenLabsKeyNote: 'La chiave resta sul tuo dispositivo. Non viene mai inviata ad ALSounds.',
+    elevenLabsSave: 'Salva e continua',
+    elevenLabsCancel: 'Annulla',
+    elevenLabsForget: 'Dimentica chiave',
+    elevenLabsGenerating: 'Generazione della voce…',
+    elevenLabsError: 'Impossibile generare la voce. Controlla la chiave API e l\'ID voce.',
+    elevenLabsMissing: 'Inserisci la chiave API ElevenLabs e l\'ID voce.',
+    elevenLabsKeyPlaceholder: 'sk_...',
+    elevenLabsPaste: 'Incolla',
+    elevenLabsClipboardBlocked: 'Appunti bloccati — incolla con Ctrl+V (o tieni premuto sul telefono).',
+    elevenLabsVoicePlaceholder: 'ID voce',
+    elevenLabsGuideSummary: 'Come trovarli',
+    elevenLabsGuideHtml: '<ol><li><strong>Chiave API</strong><ol><li>Apri <a href="https://elevenlabs.io/app/settings/api-keys" target="_blank" rel="noopener">API Keys</a>.</li><li>Clicca su <strong>Create key</strong>.</li><li>Imposta <strong>Text to Speech</strong> su <strong>Access</strong>.</li><li>Copia la chiave (inizia con <code>sk_</code>) e incollala qui.</li></ol></li><li><strong>ID voce</strong><ol><li>Apri <a href="https://elevenlabs.io/app/voice-lab" target="_blank" rel="noopener">My Voices</a>.</li><li>Clicca su <strong>More actions</strong> (⋯) sulla tua voce.</li><li>Clicca su <strong>Copy voice ID</strong>.</li><li>Incollalo qui.</li></ol></li></ol>',
   },
   german: {
     recordVoice: 'Stimme aufnehmen',
@@ -1462,6 +1751,23 @@ const UI_STRINGS = {
     feedbackThanks: 'Danke — dein Feedback wurde gesendet.',
     feedbackError: 'Leider ist etwas schiefgelaufen. Bitte versuche es erneut.',
     feedbackEmpty: 'Schreib bitte zuerst eine kurze Nachricht.',
+    elevenLabsVoice: 'Meine ElevenLabs-Stimme nutzen',
+    elevenLabsTitle: 'ElevenLabs-Stimme',
+    elevenLabsKeyLabel: 'API-Schlüssel',
+    elevenLabsVoiceLabel: 'Stimm-ID',
+    elevenLabsKeyNote: 'Dein Schlüssel bleibt auf deinem Gerät. Er wird nie an ALSounds gesendet.',
+    elevenLabsSave: 'Speichern & weiter',
+    elevenLabsCancel: 'Abbrechen',
+    elevenLabsForget: 'Schlüssel vergessen',
+    elevenLabsGenerating: 'Sprache wird erzeugt…',
+    elevenLabsError: 'Sprache konnte nicht erzeugt werden. Prüfe API-Schlüssel und Stimm-ID.',
+    elevenLabsMissing: 'Gib deinen ElevenLabs-API-Schlüssel und die Stimm-ID ein.',
+    elevenLabsKeyPlaceholder: 'sk_...',
+    elevenLabsPaste: 'Einfügen',
+    elevenLabsClipboardBlocked: 'Zwischenablage blockiert — mit Strg+V einfügen (oder auf dem Handy lange drücken).',
+    elevenLabsVoicePlaceholder: 'Stimm-ID',
+    elevenLabsGuideSummary: 'So findest du diese Angaben',
+    elevenLabsGuideHtml: '<ol><li><strong>API-Schlüssel</strong><ol><li>Öffne <a href="https://elevenlabs.io/app/settings/api-keys" target="_blank" rel="noopener">API Keys</a>.</li><li>Klicke auf <strong>Create key</strong>.</li><li>Setze <strong>Text to Speech</strong> auf <strong>Access</strong>.</li><li>Kopiere den Schlüssel (beginnt mit <code>sk_</code>) und füge ihn hier ein.</li></ol></li><li><strong>Stimm-ID</strong><ol><li>Öffne <a href="https://elevenlabs.io/app/voice-lab" target="_blank" rel="noopener">My Voices</a>.</li><li>Klicke bei deiner Stimme auf <strong>More actions</strong> (⋯).</li><li>Klicke auf <strong>Copy voice ID</strong>.</li><li>Füge sie hier ein.</li></ol></li></ol>',
   },
   arabic: {
     recordVoice: 'تسجيل الصوت',
@@ -1504,6 +1810,23 @@ const UI_STRINGS = {
     feedbackThanks: 'شكراً — تم إرسال ملاحظاتك.',
     feedbackError: 'عذراً، حدث خطأ. يرجى المحاولة مجدداً.',
     feedbackEmpty: 'اكتب رسالة قصيرة أولاً.',
+    elevenLabsVoice: 'استخدم صوتي من ElevenLabs',
+    elevenLabsTitle: 'صوت ElevenLabs',
+    elevenLabsKeyLabel: 'مفتاح API',
+    elevenLabsVoiceLabel: 'معرّف الصوت',
+    elevenLabsKeyNote: 'يبقى مفتاحك على جهازك فقط. لا يُرسل أبداً إلى ALSounds.',
+    elevenLabsSave: 'حفظ ومتابعة',
+    elevenLabsCancel: 'إلغاء',
+    elevenLabsForget: 'نسيان المفتاح',
+    elevenLabsGenerating: 'جارٍ توليد الكلام…',
+    elevenLabsError: 'تعذّر توليد الكلام. تحقّق من مفتاح API ومعرّف الصوت.',
+    elevenLabsMissing: 'أدخل مفتاح API الخاص بـ ElevenLabs ومعرّف الصوت.',
+    elevenLabsKeyPlaceholder: 'sk_...',
+    elevenLabsPaste: 'لصق',
+    elevenLabsClipboardBlocked: 'الحافظة محظورة — الصق بـ Ctrl+V (أو اضغط مطولاً على الجوال).',
+    elevenLabsVoicePlaceholder: 'معرّف الصوت',
+    elevenLabsGuideSummary: 'كيف تجد هذه البيانات',
+    elevenLabsGuideHtml: '<ol><li><strong>مفتاح API</strong><ol><li>افتح <a href="https://elevenlabs.io/app/settings/api-keys" target="_blank" rel="noopener">API Keys</a>.</li><li>انقر على <strong>Create key</strong>.</li><li>اضبط <strong>Text to Speech</strong> على <strong>Access</strong>.</li><li>انسخ المفتاح (يبدأ بـ <code>sk_</code>) والصقه هنا.</li></ol></li><li><strong>معرّف الصوت</strong><ol><li>افتح <a href="https://elevenlabs.io/app/voice-lab" target="_blank" rel="noopener">My Voices</a>.</li><li>انقر على <strong>More actions</strong> (⋯) على صوتك.</li><li>انقر على <strong>Copy voice ID</strong>.</li><li>الصقه هنا.</li></ol></li></ol>',
   }
 };
 
@@ -1557,6 +1880,7 @@ function updateUiLang() {
   document.documentElement.dir = isRtl ? 'rtl' : 'ltr';
   const karaoke = document.getElementById('karaoke-area');
   if (karaoke) karaoke.dir = isRtl ? 'rtl' : 'ltr';
+  updateElevenLabsModalLabels();
   updateReaderControls();
 }
 
@@ -1592,8 +1916,17 @@ const CAM_W = 720, CAM_H = 1280;   // 'Record with camera': upright video (camer
 const SQ_SIZE = 1080;               // 'Record voice': square video (picture top, caption below)
 
 let wantCamera = false;  // set by the card button: 'Record with camera' (true) or 'Record voice' (false)
+let ttsMode = false;     // ElevenLabs cloned voice (no mic; TTS audio + timings)
+let ttsAudioEl = null;
+let ttsAudioUrl = null;
+let ttsPendingStoryId = null;
+const ELEVEN_LS_KEY = 'alsounds_eleven_key';
+const ELEVEN_LS_VOICE = 'alsounds_eleven_voice';
+const ELEVEN_LS_LAST_ERROR = 'alsounds_eleven_last_error';
+const ELEVEN_API = 'https://api.elevenlabs.io/v1/text-to-speech';
+const ELEVEN_MODEL = 'eleven_multilingual_v2';
 function cameraWanted() {
-  return wantCamera;
+  return wantCamera && !ttsMode;
 }
 
 function releaseCamera() {
@@ -1902,6 +2235,7 @@ function buildPicker() {
       <div class="card-footer" style="justify-content:flex-end;flex-wrap:wrap">
         <button class="btn-start btn-voice" ${ready ? `onclick="startStory(${story.id}, false)"` : 'disabled'}>● ${ui('recordVoice')}</button>
         <button class="btn-start btn-camera" ${ready ? `onclick="startStory(${story.id}, true)"` : 'disabled'}>📷 ${ui('recordCamera')}</button>
+        <button class="btn-start btn-eleven" ${ready ? `onclick="startElevenLabsStory(${story.id})"` : 'disabled'}>🎙 ${ui('elevenLabsVoice')}</button>
       </div>
     `;
 
@@ -1922,6 +2256,9 @@ function computeStoryDuration() {
 }
 
 function getStoryTime() {
+  if (ttsMode && ttsAudioEl) {
+    return ttsAudioEl.currentTime || 0;
+  }
   if (!camComposite && storyVideoEl && storyVideoEl.readyState >= 2) {
     return storyVideoEl.currentTime;
   }
@@ -1977,6 +2314,8 @@ function endPlayback() {
 function startStory(storyId, withCamera = false) {
   const story = currentStories.find(s => s.id === storyId);
   if (!story || !isStoryReady(story)) return;
+  clearTtsAudio();
+  ttsMode = false;
   wantCamera = !!withCamera;
   currentStory = story;
   void beginStoryWithMic(story);
@@ -2221,7 +2560,8 @@ function togglePauseRecording() {
     if (recorder.state === 'paused' && typeof recorder.resume === 'function') {
       recorder.resume();
     }
-    if (storyVideoEl && !camComposite) storyVideoEl.play().catch(() => {});
+    if (ttsMode && ttsAudioEl) ttsAudioEl.play().catch(() => {});
+    else if (storyVideoEl && !camComposite) storyVideoEl.play().catch(() => {});
     lastKaraokeIdx = -1;
     startKaraokeLoop();
   } else {
@@ -2230,6 +2570,7 @@ function togglePauseRecording() {
     if (recorder.state === 'recording' && typeof recorder.pause === 'function') {
       recorder.pause();
     }
+    if (ttsMode && ttsAudioEl) ttsAudioEl.pause();
     if (storyVideoEl) storyVideoEl.pause();
     if (animFrame) cancelAnimationFrame(animFrame);
   }
@@ -2423,6 +2764,7 @@ async function ensureMicrophone() {
 
 async function startRecording() {
   if (isRecording || !storyDuration) return false;
+  if (ttsMode) return startTtsRecording();
   if (!micStream || !micStream.active) {
     const micOk = await ensureMicrophone();
     if (!micOk) return false;
@@ -2525,6 +2867,10 @@ async function startRecording() {
 function stopRecording() {
   if (!isRecording || !recorder) return;
   pauseStoryVideo();
+  if (ttsMode && ttsAudioEl) {
+    try { ttsAudioEl.pause(); } catch { /* noop */ }
+    lastRecordedDuration = ttsAudioEl.currentTime || lastRecordedDuration;
+  }
   try {
     if (recorder.state !== 'inactive') recorder.stop();
   } catch { /* noop */ }
@@ -2586,6 +2932,7 @@ function cleanupRecording(discard, keepMic = false) {
   recTotalPausedMs = 0;
   recordingHasVideo = false;
   pauseStoryVideo();
+  if (ttsMode && ttsAudioEl) { try { ttsAudioEl.pause(); } catch { /* noop */ } }
   if (!keepMic) releaseMicrophone();
   recChunks = [];
   recorder = null;
@@ -2608,6 +2955,529 @@ function closePreview() {
   if (video) { video.pause(); video.removeAttribute('src'); video.load(); }
   overlay.classList.remove('show');
 }
+
+
+// ── ElevenLabs cloned voice (browser → api.elevenlabs.io; key in localStorage only) ──
+function updateElevenLabsModalLabels() {
+  const set = (id, text) => { const el = document.getElementById(id); if (el) el.textContent = text; };
+  set('eleven-modal-title', ui('elevenLabsTitle'));
+  set('eleven-key-label', ui('elevenLabsKeyLabel'));
+  set('eleven-voice-label', ui('elevenLabsVoiceLabel'));
+  set('eleven-key-note', ui('elevenLabsKeyNote'));
+  set('eleven-save', ui('elevenLabsSave'));
+  set('eleven-cancel', ui('elevenLabsCancel'));
+  set('eleven-forget', ui('elevenLabsForget'));
+  set('eleven-guide-summary', ui('elevenLabsGuideSummary'));
+  const guideBody = document.getElementById('eleven-guide-body');
+  if (guideBody) guideBody.innerHTML = ui('elevenLabsGuideHtml') || '';
+  const keyIn = document.getElementById('eleven-api-key');
+  const voiceIn = document.getElementById('eleven-voice-id');
+  if (keyIn) keyIn.placeholder = ui('elevenLabsKeyPlaceholder');
+  if (voiceIn) voiceIn.placeholder = ui('elevenLabsVoicePlaceholder');
+  const pasteKey = document.getElementById('eleven-paste-key');
+  const pasteVoice = document.getElementById('eleven-paste-voice');
+  if (pasteKey) pasteKey.textContent = ui('elevenLabsPaste');
+  if (pasteVoice) pasteVoice.textContent = ui('elevenLabsPaste');
+
+}
+
+function getElevenLabsCreds() {
+  try {
+    return {
+      key: (localStorage.getItem(ELEVEN_LS_KEY) || '').trim(),
+      voice: (localStorage.getItem(ELEVEN_LS_VOICE) || '').trim(),
+    };
+  } catch {
+    return { key: '', voice: '' };
+  }
+}
+
+function setElevenLabsCreds(key, voice) {
+  try {
+    localStorage.setItem(ELEVEN_LS_KEY, key);
+    localStorage.setItem(ELEVEN_LS_VOICE, voice);
+  } catch { /* private mode */ }
+}
+
+function forgetElevenLabsKey() {
+  try {
+    localStorage.removeItem(ELEVEN_LS_KEY);
+    localStorage.removeItem(ELEVEN_LS_VOICE);
+  } catch { /* noop */ }
+  const keyIn = document.getElementById('eleven-api-key');
+  const voiceIn = document.getElementById('eleven-voice-id');
+  if (keyIn) keyIn.value = '';
+  if (voiceIn) voiceIn.value = '';
+  const err = document.getElementById('eleven-error');
+  if (err) err.textContent = '';
+}
+
+function openElevenLabsModal(storyId) {
+  ttsPendingStoryId = storyId;
+  updateElevenLabsModalLabels();
+  const creds = getElevenLabsCreds();
+  const keyIn = document.getElementById('eleven-api-key');
+  const voiceIn = document.getElementById('eleven-voice-id');
+  if (keyIn) keyIn.value = creds.key;
+  if (voiceIn) voiceIn.value = creds.voice;
+  const err = document.getElementById('eleven-error');
+  if (err) err.textContent = '';
+  const guide = document.getElementById('eleven-guide');
+  if (guide) guide.open = true;
+  document.getElementById('eleven-modal').classList.add('show');
+  if (keyIn) keyIn.focus();
+}
+
+function closeElevenLabsModal() {
+  document.getElementById('eleven-modal').classList.remove('show');
+  ttsPendingStoryId = null;
+}
+
+function startElevenLabsStory(storyId) {
+  const story = currentStories.find(s => s.id === storyId);
+  if (!story || !isStoryReady(story)) return;
+  openElevenLabsModal(storyId);
+}
+
+
+
+async function pasteIntoElevenField(inputId) {
+  const input = document.getElementById(inputId);
+  const err = document.getElementById('eleven-error');
+  if (!input) return;
+  try {
+    if (!navigator.clipboard || !navigator.clipboard.readText) {
+      throw new Error('clipboard unavailable');
+    }
+    const text = (await navigator.clipboard.readText() || '').trim();
+    if (!text) {
+      if (err) err.textContent = ui('elevenLabsClipboardBlocked');
+      return;
+    }
+    input.value = text;
+    if (err && err.textContent === ui('elevenLabsClipboardBlocked')) err.textContent = '';
+    input.focus();
+  } catch (e) {
+    if (err) err.textContent = ui('elevenLabsClipboardBlocked');
+  }
+}
+
+function saveElevenLabsLastError(status, detail) {
+  try {
+    localStorage.setItem(ELEVEN_LS_LAST_ERROR, JSON.stringify({
+      status: status === '' || status == null ? null : status,
+      detail: scrubSecretsFromText(detail || '') || null,
+      at: new Date().toISOString(),
+    }));
+  } catch { /* private mode */ }
+}
+
+function dismissElevenLabsError() {
+  const err = document.getElementById('eleven-error');
+  if (err) err.textContent = '';
+}
+
+function showElevenLabsPersistentError(storyId, message) {
+  // Re-open the settings modal with a lasting error; do not navigate away.
+  ttsPendingStoryId = storyId;
+  updateElevenLabsModalLabels();
+  const creds = getElevenLabsCreds();
+  const keyIn = document.getElementById('eleven-api-key');
+  const voiceIn = document.getElementById('eleven-voice-id');
+  if (keyIn) keyIn.value = creds.key;
+  if (voiceIn) voiceIn.value = creds.voice;
+  const err = document.getElementById('eleven-error');
+  if (err) err.textContent = scrubSecretsFromText(message || '');
+  const modal = document.getElementById('eleven-modal');
+  if (modal) modal.classList.add('show');
+}
+
+function confirmElevenLabsSettings() {
+  const keyIn = document.getElementById('eleven-api-key');
+  const voiceIn = document.getElementById('eleven-voice-id');
+  const err = document.getElementById('eleven-error');
+  const key = (keyIn && keyIn.value || '').trim();
+  const voice = (voiceIn && voiceIn.value || '').trim();
+  if (!key || !voice) {
+    if (err) err.textContent = ui('elevenLabsMissing');
+    return;
+  }
+  if (err) err.textContent = '';
+  setElevenLabsCreds(key, voice);
+  const storyId = ttsPendingStoryId;
+  document.getElementById('eleven-modal').classList.remove('show');
+  // Keep ttsPendingStoryId so a failed TTS can reopen this modal with the same story.
+  const story = currentStories.find(s => s.id === storyId);
+  if (!story) return;
+  void beginStoryWithElevenLabs(story, key, voice);
+}
+
+function clearTtsAudio() {
+  if (ttsAudioEl) {
+    try { ttsAudioEl.pause(); } catch { /* noop */ }
+    ttsAudioEl.onended = null;
+    ttsAudioEl.removeAttribute('src');
+    ttsAudioEl.load();
+    ttsAudioEl = null;
+  }
+  if (ttsAudioUrl) {
+    try { URL.revokeObjectURL(ttsAudioUrl); } catch { /* noop */ }
+    ttsAudioUrl = null;
+  }
+}
+
+function storyPlainText(story) {
+  const s = withTitleScene(story);
+  const parts = [];
+  (s.scenes || []).forEach(sc => {
+    (sc.words || []).forEach(w => { if (w.text) parts.push(w.text); });
+  });
+  return parts.join(' ');
+}
+
+function wordsFromCharAlignment(alignment) {
+  if (!alignment || !alignment.characters) return [];
+  const chars = alignment.characters;
+  const starts = alignment.character_start_times_seconds || [];
+  const ends = alignment.character_end_times_seconds || [];
+  const out = [];
+  let i = 0;
+  while (i < chars.length) {
+    if (!chars[i] || /\s/.test(chars[i])) { i++; continue; }
+    let j = i;
+    while (j < chars.length && chars[j] && !/\s/.test(chars[j])) j++;
+    out.push({
+      text: chars.slice(i, j).join(''),
+      start: Number(starts[i]) || 0,
+      end: Number(ends[Math.max(i, j - 1)]) || (Number(starts[i]) || 0) + 0.2,
+    });
+    i = j;
+  }
+  return out;
+}
+
+function rebuildCaptionsFromScenes(scenes, total) {
+  const flat = [];
+  scenes.forEach(sc => {
+    const off = sc.videoOffset || 0;
+    (sc.words || []).forEach(w => flat.push({ text: w.text, start: off + w.start, end: off + w.end }));
+  });
+  const caps = [];
+  let buf = [];
+  const flush = () => {
+    if (!buf.length) return;
+    caps.push({ text: buf.map(x => x.text).join(' '), start: buf[0].start, end: buf[buf.length - 1].end });
+    buf = [];
+  };
+  let prev = null;
+  flat.forEach(w => {
+    if (prev != null && w.start - prev >= 0.35) flush();
+    buf.push(w);
+    const t = String(w.text || '').replace(/["'»\)\]]+$/g, '');
+    const last = t.slice(-1);
+    if (buf.length >= 10 || ((last === ',' || last === ';' || last === ':' || last === '،') && buf.length >= 5) || ((last === '.' || last === '!' || last === '?' || last === '؟') && buf.length >= 4)) flush();
+    prev = w.end;
+  });
+  flush();
+  for (let i = 0; i < caps.length; i++) {
+    const nxt = i + 1 < caps.length ? caps[i + 1].start : total;
+    caps[i].end = Math.min(Math.max(caps[i].end, caps[i].start + 2), nxt - 0.04, total);
+    caps[i].start = Math.round(caps[i].start * 100) / 100;
+    caps[i].end = Math.round(caps[i].end * 100) / 100;
+  }
+  return caps;
+}
+
+function applyTtsTimingsToStory(story, timedWords) {
+  const base = withTitleScene(JSON.parse(JSON.stringify(story)));
+  const sceneWordCounts = (base.scenes || []).map(sc => (sc.words || []).length);
+  const totalNeeded = sceneWordCounts.reduce((a, b) => a + b, 0);
+  let src = timedWords.slice();
+  if (src.length !== totalNeeded && totalNeeded > 0) {
+    // Fallback: keep original word texts, spread TTS timeline proportionally
+    const dur = (timedWords.length ? timedWords[timedWords.length - 1].end : 1) || 1;
+    const orig = [];
+    (base.scenes || []).forEach(sc => (sc.words || []).forEach(w => orig.push(w.text)));
+    let t = 0;
+    src = orig.map((text, i) => {
+      const share = dur / orig.length;
+      const start = t;
+      const end = t + share * 0.85;
+      t += share;
+      return { text, start: Math.round(start * 100) / 100, end: Math.round(end * 100) / 100 };
+    });
+  }
+  let idx = 0;
+  (base.scenes || []).forEach(sc => {
+    const n = (sc.words || []).length;
+    const chunk = src.slice(idx, idx + n);
+    idx += n;
+    const offset = chunk.length ? chunk[0].start : 0;
+    sc.videoOffset = Math.round(offset * 100) / 100;
+    sc.words = chunk.map(w => ({
+      text: w.text,
+      start: Math.round((w.start - offset) * 100) / 100,
+      end: Math.round((w.end - offset) * 100) / 100,
+    }));
+  });
+  const total = src.length ? src[src.length - 1].end + 0.3 : 0;
+  base.captions = rebuildCaptionsFromScenes(base.scenes, total);
+  base.timingsEstimated = false;
+  return base;
+}
+
+function formatElevenLabsErrorDetail(data) {
+  // Prefer detail.status / detail.message; never include API keys.
+  if (!data) return '';
+  const d = data.detail;
+  if (d && typeof d === 'object' && !Array.isArray(d)) {
+    const status = d.status != null ? String(d.status) : '';
+    const message = d.message != null ? String(d.message) : '';
+    if (status && message) return status + ': ' + message;
+    if (message) return message;
+    if (status) return status;
+    try { return JSON.stringify(d); } catch { return ''; }
+  }
+  if (Array.isArray(d)) {
+    return d.map(item => {
+      if (!item || typeof item !== 'object') return String(item);
+      const loc = Array.isArray(item.loc) ? item.loc.join('.') : '';
+      const msg = item.msg || item.message || '';
+      return (loc ? loc + ': ' : '') + msg;
+    }).filter(Boolean).join('; ');
+  }
+  if (typeof d === 'string') return d;
+  if (data.message) return String(data.message);
+  return '';
+}
+
+function scrubSecretsFromText(s) {
+  // Never show an API key if it somehow appears in an error string.
+  return String(s || '')
+    .replace(/xi-api-key["'\s:=]+[^\s"'&,}]+/gi, 'xi-api-key=[redacted]')
+    .replace(/\bsk_[A-Za-z0-9_-]{8,}\b/g, 'sk_[redacted]')
+    .replace(/\bxi[A-Za-z0-9_-]{16,}\b/g, '[redacted]');
+}
+
+async function fetchElevenLabsSpeech(text, apiKey, voiceId) {
+  const key = String(apiKey || '').trim();
+  const vid = String(voiceId || '').trim();
+  if (!key || !vid) {
+    const err = new Error('missing api key or voice id');
+    err.status = 0;
+    throw err;
+  }
+  const url = `${ELEVEN_API}/${encodeURIComponent(vid)}/with-timestamps`;
+  let res;
+  try {
+    res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'xi-api-key': key,
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({
+        text,
+        model_id: ELEVEN_MODEL,
+      }),
+    });
+  } catch (netErr) {
+    const err = new Error(scrubSecretsFromText((netErr && netErr.message) || 'network error'));
+    err.status = 0;
+    err.causeKind = 'network';
+    throw err;
+  }
+  let data = null;
+  try { data = await res.json(); } catch { /* non-JSON */ }
+  if (!res.ok) {
+    const detail = scrubSecretsFromText(formatElevenLabsErrorDetail(data));
+    const msg = detail || ('HTTP ' + res.status);
+    const err = new Error(msg);
+    err.status = res.status;
+    err.detail = detail;
+    throw err;
+  }
+  if (!data || !data.audio_base64) {
+    const err = new Error('missing audio in response');
+    err.status = res.status;
+    throw err;
+  }
+  return data;
+}
+
+function base64ToAudioUrl(b64) {
+  const bin = atob(b64);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  // ElevenLabs default with-timestamps output is mp3
+  const blob = new Blob([bytes], { type: 'audio/mpeg' });
+  return URL.createObjectURL(blob);
+}
+
+async function beginStoryWithElevenLabs(story, apiKey, voiceId) {
+  clearTtsAudio();
+  ttsMode = true;
+  wantCamera = false;
+  currentStory = story;
+  releaseMicrophone();
+  releaseCamera();
+
+  const loadingEl = document.getElementById('loading');
+  const loadingText = loadingEl && loadingEl.querySelector('span');
+  if (loadingText) loadingText.textContent = ui('elevenLabsGenerating');
+  if (loadingEl) loadingEl.classList.add('show');
+
+  try {
+    await loadSceneImages(story);
+    const plain = storyPlainText(story);
+    if (!plain.trim()) throw new Error('empty story text');
+    const data = await fetchElevenLabsSpeech(plain, apiKey, voiceId);
+    const alignment = data.alignment || data.normalized_alignment;
+    const timedWords = wordsFromCharAlignment(alignment);
+    if (!timedWords.length) throw new Error('no alignment');
+    const timedStory = applyTtsTimingsToStory(story, timedWords);
+    currentStory = timedStory;
+
+    // Remap still start times to TTS scene offsets
+    if (camScenes.length && timedStory.scenes) {
+      const byImage = {};
+      timedStory.scenes.forEach(sc => {
+        if (sc.image) byImage[sc.image] = sc.videoOffset || 0;
+      });
+      camScenes.forEach(s => {
+        // match by original order: rebuild from timed story images
+      });
+      const rebuilt = [];
+      for (const sc of timedStory.scenes) {
+        if (!sc.image) continue;
+        const hit = camScenes.find(c => c.img && c.img.src && c.img.src.indexOf(sc.image.split('/').pop()) !== -1)
+          || camScenes[rebuilt.length];
+        if (hit) rebuilt.push({ start: sc.videoOffset || 0, img: hit.img });
+      }
+      if (rebuilt.length) camScenes = rebuilt.sort((a, b) => a.start - b.start);
+    }
+
+    ttsAudioUrl = base64ToAudioUrl(data.audio_base64);
+    ttsAudioEl = new Audio(ttsAudioUrl);
+    ttsAudioEl.preload = 'auto';
+    await new Promise((resolve, reject) => {
+      ttsAudioEl.oncanplaythrough = () => resolve();
+      ttsAudioEl.onerror = () => reject(new Error('audio decode failed'));
+      ttsAudioEl.load();
+    });
+
+    if (loadingEl) loadingEl.classList.remove('show');
+    if (loadingText) loadingText.textContent = ui('loading');
+    ttsPendingStoryId = null;
+    try { localStorage.removeItem(ELEVEN_LS_LAST_ERROR); } catch { /* noop */ }
+    runCountdown(timedStory);
+  } catch (err) {
+    const status = err && err.status != null ? err.status : '';
+    const detail = scrubSecretsFromText((err && err.message) || '');
+    console.error('ElevenLabs TTS failed', { status: status || null, detail: detail || null });
+    saveElevenLabsLastError(status, detail);
+    if (loadingEl) loadingEl.classList.remove('show');
+    if (loadingText) loadingText.textContent = ui('loading');
+    clearTtsAudio();
+    ttsMode = false;
+    const bits = [ui('elevenLabsError')];
+    if (status !== '' && status !== null && status !== undefined) bits.push('HTTP ' + status);
+    if (detail) bits.push(detail);
+    // Persistent modal error (no alert, no navigation).
+    showElevenLabsPersistentError(story && story.id, bits.join('\n'));
+  }
+}
+
+async function startTtsRecording() {
+  if (!ttsMode || !ttsAudioEl || !currentStory) return false;
+
+  endPlayback();
+  allWords.forEach(w => w.el.className = 'word future');
+  lastKaraokeIdx = -1;
+  document.getElementById('progress-fill').style.width = '0%';
+  document.getElementById('karaoke-area').scrollTop = 0;
+  isRecordingPaused = false;
+  recTotalPausedMs = 0;
+  recordingHasVideo = false;
+  camComposite = false;
+
+  const sqMime = camScenes.length ? pickCameraMime() : '';
+  const useSquare = !!(sqMime && typeof HTMLCanvasElement.prototype.captureStream === 'function');
+  const videoMime = pickVideoMime();
+
+  // Capture TTS audio into a MediaStream
+  let audioStream = null;
+  try {
+    if (typeof ttsAudioEl.captureStream === 'function') {
+      audioStream = ttsAudioEl.captureStream();
+    }
+  } catch { /* fallback below */ }
+  if (!audioStream || !audioStream.getAudioTracks().length) {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const src = ctx.createMediaElementSource(ttsAudioEl);
+      const dest = ctx.createMediaStreamDestination();
+      src.connect(dest);
+      src.connect(ctx.destination);
+      audioStream = dest.stream;
+      if (ctx.state === 'suspended') await ctx.resume();
+    } catch (err) {
+      console.error('TTS audio capture failed', err);
+      alert(ui('noFormat'));
+      return false;
+    }
+  }
+
+  let recordStream;
+  let mimeType;
+  if (useSquare) {
+    const composite = startVoiceComposite();
+    recordStream = new MediaStream([
+      ...composite.getVideoTracks(),
+      ...audioStream.getAudioTracks(),
+    ]);
+    mimeType = sqMime;
+    recordingHasVideo = true;
+  } else if (videoMime) {
+    // audio-only fallback still wraps as whatever we can
+    recordStream = audioStream;
+    mimeType = pickAudioMime() || videoMime;
+    recordingHasVideo = false;
+  } else {
+    alert(ui('noFormat'));
+    return false;
+  }
+
+  recChunks = [];
+  const recOptions = { mimeType, audioBitsPerSecond: 128000 };
+  if (recordingHasVideo) recOptions.videoBitsPerSecond = 2500000;
+  recorder = new MediaRecorder(recordStream, recOptions);
+  recorder.ondataavailable = e => { if (e.data && e.data.size > 0) recChunks.push(e.data); };
+  recorder.onstop = () => { void finishRecording(); };
+  recorder.onerror = e => console.error('MediaRecorder error:', e && e.error);
+
+  ttsAudioEl.currentTime = 0;
+  ttsAudioEl.onended = () => { if (isRecording) stopRecording(); };
+  try {
+    await ttsAudioEl.play();
+  } catch (err) {
+    console.error('TTS play failed', err);
+    alert(ui('elevenLabsError'));
+    return false;
+  }
+
+  recorder.start(250);
+  isRecording = true;
+  recStartMs = performance.now();
+  recElapsedSec = 0;
+  discardBlob = false;
+
+  updateReaderControls();
+  startKaraokeLoop();
+  return true;
+}
+
 
 document.addEventListener('keydown', e => {
   const readerVisible = document.getElementById('view-reader').classList.contains('show');
