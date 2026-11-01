@@ -884,6 +884,14 @@
       --font-display: 'Segoe UI', Tahoma, 'Noto Naskh Arabic', 'Arabic Typesetting', Arial, sans-serif;
       --font-body: 'Segoe UI', Tahoma, 'Noto Naskh Arabic', Arial, sans-serif;
     }
+    html[lang="zh-Hans"] {
+      --font-display: 'Microsoft YaHei', 'PingFang SC', 'Noto Sans SC', 'Segoe UI', Arial, sans-serif;
+      --font-body: 'Microsoft YaHei', 'PingFang SC', 'Noto Sans SC', 'Segoe UI', Arial, sans-serif;
+    }
+    html[lang="hi"] {
+      --font-display: 'Nirmala UI', 'Mangal', 'Noto Sans Devanagari', 'Segoe UI', Arial, sans-serif;
+      --font-body: 'Nirmala UI', 'Mangal', 'Noto Sans Devanagari', 'Segoe UI', Arial, sans-serif;
+    }
     html[dir="rtl"] .scene-text { text-align: right; }
     html[dir="rtl"] .title-block .scene-text,
     html[dir="rtl"] .title-block .scene-title { text-align: center; }
@@ -1203,8 +1211,17 @@
     .nav-links a.page-link { text-decoration: none; display: inline-block; padding: 8px 14px; border-radius: 999px; color: var(--muted); font-size: 0.88rem; }
     .nav-links a.page-link.active { background: var(--moon); color: var(--ink); font-weight: 700; }
     .nav-langs { display: flex; gap: 4px; justify-self: end; grid-column: 3; grid-row: 1; }
-    .nav-langs .lang-btn { padding: 6px 10px; }
+    .nav-langs .lang-btn { padding: 6px 8px; font-size: 0.78rem; white-space: nowrap; }
     @media (max-width: 700px) { .nav-langs { grid-column: 1 / -1; grid-row: auto; justify-self: center; } }
+    @media (max-width: 480px) {
+      .nav-langs {
+        flex-wrap: wrap;
+        justify-content: center;
+        max-width: 100%;
+        width: 100%;
+        row-gap: 4px;
+      }
+    }
       #cam-pip { display: none; position: fixed; top: 132px; right: 16px; width: 200px; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 12px; border: 2px solid var(--moon); box-shadow: 0 8px 24px rgba(0,0,0,0.5); transform: scaleX(-1); z-index: 150; background: #000; }
     body.reader-active #cam-pip.on { display: block; }
     @media (max-width: 700px) { #cam-pip { width: 112px; top: var(--cam-pip-top, 236px); right: 10px; } }
@@ -1357,7 +1374,7 @@
     <a class="page-link active" href="./#stories" onclick="return scrollToStories()">Stories</a>
     <a class="page-link" href="privacy.html">Privacy</a>
   </div>
-  <div class="nav-langs" role="group" aria-label="Language"><button type="button" class="lang-btn active" onclick="setLegacyLang('en', this)" aria-label="English">EN</button><button type="button" class="lang-btn" onclick="setLegacyLang('pt', this)" aria-label="Português">PT</button><button type="button" class="lang-btn" onclick="setLegacyLang('es', this)" aria-label="Español">ES</button><button type="button" class="lang-btn" onclick="setLegacyLang('it', this)" aria-label="Italiano">IT</button><button type="button" class="lang-btn" onclick="setLegacyLang('de', this)" aria-label="Deutsch">DE</button><button type="button" class="lang-btn" onclick="setLegacyLang('ar', this)" aria-label="العربية">AR</button></div>
+  <div class="nav-langs" role="group" aria-label="Language"><button type="button" class="lang-btn active" onclick="setLegacyLang('en', this)" aria-label="English">English</button><button type="button" class="lang-btn" onclick="setLegacyLang('pt', this)" aria-label="Português">Português</button><button type="button" class="lang-btn" onclick="setLegacyLang('es', this)" aria-label="Español">Español</button><button type="button" class="lang-btn" onclick="setLegacyLang('it', this)" aria-label="Italiano">Italiano</button><button type="button" class="lang-btn" onclick="setLegacyLang('de', this)" aria-label="Deutsch">Deutsch</button><button type="button" class="lang-btn" onclick="setLegacyLang('ar', this)" aria-label="العربية">العربية</button><button type="button" class="lang-btn" onclick="setLegacyLang('zh', this)" aria-label="中文">中文</button><button type="button" class="lang-btn" onclick="setLegacyLang('hi', this)" aria-label="हिन्दी">हिन्दी</button></div>
 </nav>
 
 <!-- PICKER VIEW -->
@@ -1463,15 +1480,15 @@
 <!-- Story data loaded per language via fetch (see script below) -->
 
 <script>
-const DATA_VERSION = '20261030c';
+const DATA_VERSION = '20261101a';
 const TITLE_CARD_SEC = 3;
-const LEGACY_LANGS = ['english', 'portuguese', 'spanish', 'italian', 'german', 'arabic'];
+const LEGACY_LANGS = ['english', 'portuguese', 'spanish', 'italian', 'german', 'arabic', 'chinese', 'hindi'];
 const STORIES_CACHE = {};
 let currentStories = [];
 
-const NAV_TO_LANG = { en: 'english', pt: 'portuguese', es: 'spanish', it: 'italian', de: 'german', ar: 'arabic' };
+const NAV_TO_LANG = { en: 'english', pt: 'portuguese', es: 'spanish', it: 'italian', de: 'german', ar: 'arabic', zh: 'chinese', hi: 'hindi' };
 
-const LANG_LABELS = { english: 'English', portuguese: 'Português', spanish: 'Español', italian: 'Italiano', german: 'Deutsch', arabic: 'العربية' };
+const LANG_LABELS = { english: 'English', portuguese: 'Português', spanish: 'Español', italian: 'Italiano', german: 'Deutsch', arabic: 'العربية', chinese: '中文', hindi: 'हिन्दी' };
 
 const UI_STRINGS = {
   english: {
@@ -1845,6 +1862,130 @@ const UI_STRINGS = {
     elevenLabsVoicePlaceholder: 'معرّف الصوت',
     elevenLabsGuideSummary: 'كيف تجد هذه البيانات',
     elevenLabsGuideHtml: '<ol><li><strong>مفتاح API</strong><ol><li>افتح <a href="https://elevenlabs.io/app/settings/api-keys" target="_blank" rel="noopener">API Keys</a>.</li><li>انقر على <strong>Create key</strong>.</li><li>اضبط <strong>Text to Speech</strong> على <strong>Access</strong>.</li><li>انسخ المفتاح (يبدأ بـ <code>sk_</code>) والصقه هنا.</li></ol></li><li><strong>معرّف الصوت</strong><ol><li>افتح <a href="https://elevenlabs.io/app/voice-lab" target="_blank" rel="noopener">My Voices</a>.</li><li>انقر على <strong>More actions</strong> (⋯) على صوتك.</li><li>انقر على <strong>Copy voice ID</strong>.</li><li>الصقه هنا.</li></ol></li></ol>',
+  },
+  chinese: {
+    recordVoice: '录制声音',
+    recordCamera: '录制视频',
+    cameraDenied: '相机不可用或未获许可。将只录制你的声音。',
+    sceneLabel: '页',
+    navDonate: '捐赠',
+    welcomeTitle: '你的声音，他们的故事',
+    welcomeBodyHtml: '<p>我在 2021 年、36 岁时被诊断出患有渐冻症（ALS）。我做这个网站，是为了在你再也无法亲自读睡前故事时，尽量接近那种感觉。</p><p>使用方法：选一个故事，点“录制声音”或“录制视频”，跟着文字朗读，然后下载你的视频。</p><picture><source srcset="assets/example-video.webp" type="image/webp"><img class="example-video" src="assets/example-video.jpg" width="520" height="925" alt="手机上成品视频示例：上方是朗读者的摄像头画面，下方是故事插图和字幕" loading="lazy"></picture><p>它是为渐冻症患者设计的，但如果你因为任何原因将无法用自己的声音朗读，也欢迎使用。</p><p>我珍视自己的隐私，也珍视你的。所以这里不用登录，我也从不保存你的录音。一切都留在你的手机或电脑上，只有你选择分享的人才能看到。</p><p>如果你希望这里有某个故事，或还没有你的语言，告诉我，我会尽量添加。哪怕只为一个人，我也愿意加一种语言。发邮件到 <a href="mailto:hello@alsounds.com">hello@alsounds.com</a> 即可。</p>',
+    privacy: '🔒 你的录音永远不会离开你的设备。',
+    pickStory: '选择故事',
+    storyLabel: '故事',
+    startRecording: '录制故事',
+    titleIntro: '请大声读出标题',
+    pause: '暂停',
+    resume: '继续',
+    ready: '就绪',
+    saved: '已下载',
+    comingSoon: '即将推出…',
+    countdownHint: '准备好——倒计时结束后开始录制',
+    backStories: '← 故事',
+    scenes: '页',
+    recording: '● 录制中…',
+    stopSave: '停止并下载',
+    saveVideo: '保存视频',
+    done: '完成',
+    readyToSave: '录制已就绪——点按“保存视频”',
+    loading: '正在加载故事…',
+    noStories: '暂时还没有 {lang} 的故事。',
+    confirmBack: '停止录制并返回故事列表？',
+    recordUnsupported: '此浏览器不支持录制。',
+    noFormat: '未找到支持的录制格式。',
+    micDenied: '麦克风权限被拒绝。请允许使用麦克风以便录制。',
+    videoLoadFailed: '无法加载故事视频。请刷新后重试。',
+    preparingVideo: '正在准备视频…',
+    postDownloadRedirect: '正在下载你的录音。即将返回首页…',
+    endSupport: '如果这对你有帮助，可以支持本站',
+    feedbackTitle: '在这里留下反馈',
+    feedbackLabel: '反馈',
+    feedbackPlaceholder: '你的反馈…',
+    feedbackSend: '发送',
+    feedbackSending: '发送中…',
+    feedbackThanks: '谢谢——你的反馈已发送。',
+    feedbackError: '抱歉，出了点问题。请再试一次。',
+    feedbackEmpty: '请先写一句简短的话。',
+    elevenLabsVoice: '使用我的 ElevenLabs 声音',
+    elevenLabsTitle: 'ElevenLabs 声音',
+    elevenLabsKeyLabel: 'API 密钥',
+    elevenLabsVoiceLabel: '声音 ID',
+    elevenLabsKeyNote: '你的密钥只留在本机，绝不会发送到 ALSounds。',
+    elevenLabsSave: '保存并继续',
+    elevenLabsCancel: '取消',
+    elevenLabsForget: '忘记密钥',
+    elevenLabsGenerating: '正在生成语音…',
+    elevenLabsError: '无法生成语音。请检查 API 密钥和声音 ID。',
+    elevenLabsMissing: '请输入你的 ElevenLabs API 密钥和声音 ID。',
+    elevenLabsKeyPlaceholder: 'sk_...',
+    elevenLabsPaste: '粘贴',
+    elevenLabsClipboardBlocked: '剪贴板被拦截——请用 Ctrl+V 粘贴（手机上可长按）。',
+    elevenLabsVoicePlaceholder: '声音 ID',
+    elevenLabsGuideSummary: '如何找到这些信息',
+    elevenLabsGuideHtml: '<ol><li><strong>API 密钥</strong><ol><li>打开 <a href="https://elevenlabs.io/app/settings/api-keys" target="_blank" rel="noopener">API Keys</a>。</li><li>点击 <strong>Create key</strong>。</li><li>将 <strong>Text to Speech</strong> 设为 <strong>Access</strong>。</li><li>复制密钥（以 <code>sk_</code> 开头）并粘贴到这里。</li></ol></li><li><strong>声音 ID</strong><ol><li>打开 <a href="https://elevenlabs.io/app/voice-lab" target="_blank" rel="noopener">My Voices</a>。</li><li>在你的声音上点击 <strong>More actions</strong>（⋯）。</li><li>点击 <strong>Copy voice ID</strong>。</li><li>粘贴到这里。</li></ol></li></ol>',
+  },
+  hindi: {
+    recordVoice: 'आवाज़ रिकॉर्ड करें',
+    recordCamera: 'वीडियो रिकॉर्ड करें',
+    cameraDenied: 'कैमरा उपलब्ध नहीं है या अनुमति नहीं मिली। केवल आपकी आवाज़ रिकॉर्ड होगी।',
+    sceneLabel: 'पृष्ठ',
+    navDonate: 'दान करें',
+    welcomeTitle: 'आपकी आवाज़, उनकी कहानी',
+    welcomeBodyHtml: '<p>मुझे 2021 में, 36 साल की उम्र में ALS का निदान हुआ। मैंने यह साइट इसलिए बनाई ताकि जब आप खुद सोने से पहले कहानी न पढ़ सकें, तब भी उसके सबसे करीब का अनुभव मिल सके।</p><p>कैसे काम करता है: कोई कहानी चुनें, आवाज़ रिकॉर्ड करें या वीडियो रिकॉर्ड करें दबाएँ, पाठ के साथ पढ़ें, फिर अपना वीडियो डाउनलोड करें।</p><picture><source srcset="assets/example-video.webp" type="image/webp"><img class="example-video" src="assets/example-video.jpg" width="520" height="925" alt="फ़ोन पर तैयार वीडियो का उदाहरण: ऊपर पाठक का कैमरा, नीचे कहानी की तस्वीर और कैप्शन" loading="lazy"></picture><p>यह ALS रोगियों को ध्यान में रखकर बनाया गया है, पर अगर किसी भी वजह से आप अपनी आवाज़ में नहीं पढ़ पाएँगे तो भी बेझिझक इस्तेमाल करें।</p><p>मैं अपनी और आपकी निजता क़ीमती मानता हूँ। इसलिए लॉगिन नहीं है, और मैं आपकी रिकॉर्डिंग कभी सहेजता नहीं। सब कुछ आपके फ़ोन या कंप्यूटर पर रहता है, और जिन्हें आप साझा करना चुनें केवल वे ही देख सकते हैं।</p><p>अगर कोई कहानी यहाँ देखना चाहते हैं, या आपकी भाषा उपलब्ध नहीं है, तो बताइए — मैं जोड़ने की कोशिश करूँगा। एक व्यक्ति के लिए भी भाषा जोड़ने में मुझे आपत्ति नहीं। बस <a href="mailto:hello@alsounds.com">hello@alsounds.com</a> पर ईमेल करें।</p>',
+    privacy: '🔒 आपकी रिकॉर्डिंग आपके डिवाइस से कभी बाहर नहीं जाती।',
+    pickStory: 'कहानी चुनें',
+    storyLabel: 'कहानी',
+    startRecording: 'कहानी रिकॉर्ड करें',
+    titleIntro: 'शीर्षक ज़ोर से पढ़ें',
+    pause: 'रोकें',
+    resume: 'जारी रखें',
+    ready: 'तैयार',
+    saved: 'डाउनलोड हो गया',
+    comingSoon: 'जल्द आ रहा है…',
+    countdownHint: 'तैयार हो जाएँ — उल्टी गिनती खत्म होते ही रिकॉर्डिंग शुरू होगी',
+    backStories: '← कहानियाँ',
+    scenes: 'पृष्ठ',
+    recording: '● रिकॉर्ड हो रहा है…',
+    stopSave: 'रोकें और डाउनलोड करें',
+    saveVideo: 'वीडियो सहेजें',
+    done: 'हो गया',
+    readyToSave: 'रिकॉर्डिंग तैयार — वीडियो सहेजें पर टैप करें',
+    loading: 'कहानी लोड हो रही है…',
+    noStories: '{lang} में अभी कोई कहानी उपलब्ध नहीं है।',
+    confirmBack: 'रिकॉर्डिंग रोककर कहानियों पर वापस जाएँ?',
+    recordUnsupported: 'इस ब्राउज़र में रिकॉर्डिंग समर्थित नहीं है।',
+    noFormat: 'कोई समर्थित रिकॉर्डिंग प्रारूप नहीं मिला।',
+    micDenied: 'माइक्रोफ़ोन की अनुमति नहीं मिली। रिकॉर्ड करने के लिए माइक्रोफ़ोन की अनुमति दें।',
+    videoLoadFailed: 'कहानी का वीडियो लोड नहीं हो सका। कृपया पेज रीफ़्रेश करके फिर कोशिश करें।',
+    preparingVideo: 'आपका वीडियो तैयार हो रहा है…',
+    postDownloadRedirect: 'आपकी रिकॉर्डिंग डाउनलोड हो रही है। होमपेज पर ले जाया जा रहा है…',
+    endSupport: 'अगर इससे मदद मिली, तो आप साइट का समर्थन कर सकते हैं',
+    feedbackTitle: 'यहाँ अपनी प्रतिक्रिया दें',
+    feedbackLabel: 'प्रतिक्रिया',
+    feedbackPlaceholder: 'आपकी प्रतिक्रिया…',
+    feedbackSend: 'भेजें',
+    feedbackSending: 'भेजा जा रहा है…',
+    feedbackThanks: 'धन्यवाद — आपकी प्रतिक्रिया भेज दी गई।',
+    feedbackError: 'माफ़ कीजिए, कुछ गलत हो गया। कृपया फिर कोशिश करें।',
+    feedbackEmpty: 'पहले एक छोटी सी बात लिखें।',
+    elevenLabsVoice: 'मेरी ElevenLabs आवाज़ इस्तेमाल करें',
+    elevenLabsTitle: 'ElevenLabs आवाज़',
+    elevenLabsKeyLabel: 'API कुंजी',
+    elevenLabsVoiceLabel: 'वॉइस ID',
+    elevenLabsKeyNote: 'आपकी कुंजी आपके डिवाइस पर रहती है। ALSounds को कभी नहीं भेजी जाती।',
+    elevenLabsSave: 'सहेजें और जारी रखें',
+    elevenLabsCancel: 'रद्द करें',
+    elevenLabsForget: 'कुंजी भूल जाएँ',
+    elevenLabsGenerating: 'भाषण बनाया जा रहा है…',
+    elevenLabsError: 'भाषण नहीं बन सका। अपनी API कुंजी और वॉइस ID जाँचें।',
+    elevenLabsMissing: 'अपनी ElevenLabs API कुंजी और वॉइस ID दर्ज करें।',
+    elevenLabsKeyPlaceholder: 'sk_...',
+    elevenLabsPaste: 'पेस्ट',
+    elevenLabsClipboardBlocked: 'क्लिपबोर्ड अवरुद्ध — Ctrl+V से पेस्ट करें (मोबाइल पर देर तक दबाएँ)।',
+    elevenLabsVoicePlaceholder: 'वॉइस ID',
+    elevenLabsGuideSummary: 'ये कैसे खोजें',
+    elevenLabsGuideHtml: '<ol><li><strong>API कुंजी</strong><ol><li><a href="https://elevenlabs.io/app/settings/api-keys" target="_blank" rel="noopener">API Keys</a> खोलें।</li><li><strong>Create key</strong> पर क्लिक करें।</li><li><strong>Text to Speech</strong> को <strong>Access</strong> पर सेट करें।</li><li>कुंजी कॉपी करें (<code>sk_</code> से शुरू) और यहाँ पेस्ट करें।</li></ol></li><li><strong>वॉइस ID</strong><ol><li><a href="https://elevenlabs.io/app/voice-lab" target="_blank" rel="noopener">My Voices</a> खोलें।</li><li>अपनी आवाज़ पर <strong>More actions</strong> (⋯) क्लिक करें।</li><li><strong>Copy voice ID</strong> पर क्लिक करें।</li><li>यहाँ पेस्ट करें।</li></ol></li></ol>',
   }
 };
 
@@ -1894,7 +2035,11 @@ function updateUiLang() {
   if (loadingEl) loadingEl.textContent = ui('loading');
   const isRtl = currentLang === 'arabic';
   const navCode = Object.entries(NAV_TO_LANG).find(([, v]) => v === currentLang);
-  document.documentElement.lang = isRtl ? 'ar' : (navCode ? navCode[0] : 'en');
+  const htmlLang = currentLang === 'arabic' ? 'ar'
+    : currentLang === 'chinese' ? 'zh-Hans'
+    : currentLang === 'hindi' ? 'hi'
+    : (navCode ? navCode[0] : 'en');
+  document.documentElement.lang = htmlLang;
   document.documentElement.dir = isRtl ? 'rtl' : 'ltr';
   const karaoke = document.getElementById('karaoke-area');
   if (karaoke) karaoke.dir = isRtl ? 'rtl' : 'ltr';
@@ -2025,7 +2170,7 @@ function pickCameraMime() {
 // Story text on the pictures, same style and timing as the captions burned into the story videos
 // (tools/build_data.py CAP): white bold sans, black outline, translucent black box, centred low.
 const CAP = { size: 36, min: 26, maxw: 0.88, lines: 3, lh: 1.32, pad: 15, stroke: 4, bottom: 0.06, alpha: 100 };
-const CAP_FONT = "Arial, Tahoma, 'Segoe UI', 'Noto Naskh Arabic', 'Liberation Sans', 'Helvetica Neue', Helvetica, sans-serif";
+const CAP_FONT = "Arial, Tahoma, 'Segoe UI', 'Microsoft YaHei', 'Nirmala UI', 'Noto Naskh Arabic', 'Noto Sans SC', 'Noto Sans Devanagari', 'Liberation Sans', 'Helvetica Neue', Helvetica, sans-serif";
 function captionAt(t) {
   const caps = (currentStory && currentStory.captions) || [];
   for (const c of caps) { if (t >= c.start && t < c.end) return c.text; if (c.start > t) break; }
@@ -2537,7 +2682,7 @@ function buildKaraoke(variant) {
     (scene.words || []).forEach((w, wi) => {
       const span = document.createElement('span');
       span.className = 'word future';
-      span.textContent = w.text + (wi < scene.words.length - 1 ? ' ' : '');
+      span.textContent = w.text + (wi < scene.words.length - 1 ? (currentLang === 'chinese' ? '' : ' ') : '');
       textEl.appendChild(span);
       allWords.push({ el: span, start: offset + w.start, end: offset + w.end });
     });
