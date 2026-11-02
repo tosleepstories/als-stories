@@ -1374,7 +1374,7 @@
     <a class="page-link active" href="./#stories" onclick="return scrollToStories()">Stories</a>
     <a class="page-link" href="privacy.html">Privacy</a>
   </div>
-  <div class="nav-langs" role="group" aria-label="Language"><button type="button" class="lang-btn active" onclick="setLegacyLang('en', this)" aria-label="English">English</button><button type="button" class="lang-btn" onclick="setLegacyLang('pt', this)" aria-label="Português">Português</button><button type="button" class="lang-btn" onclick="setLegacyLang('es', this)" aria-label="Español">Español</button><button type="button" class="lang-btn" onclick="setLegacyLang('it', this)" aria-label="Italiano">Italiano</button><button type="button" class="lang-btn" onclick="setLegacyLang('de', this)" aria-label="Deutsch">Deutsch</button><button type="button" class="lang-btn" onclick="setLegacyLang('ar', this)" aria-label="العربية">العربية</button><button type="button" class="lang-btn" onclick="setLegacyLang('zh', this)" aria-label="中文">中文</button><button type="button" class="lang-btn" onclick="setLegacyLang('hi', this)" aria-label="हिन्दी">हिन्दी</button></div>
+  <div class="nav-langs" role="group" aria-label="Language"><button type="button" class="lang-btn active" onclick="setLegacyLang('en', this)" aria-label="English">English</button><button type="button" class="lang-btn" onclick="setLegacyLang('pt', this)" aria-label="Português">Português</button><button type="button" class="lang-btn" onclick="setLegacyLang('es', this)" aria-label="Español">Español</button><button type="button" class="lang-btn" onclick="setLegacyLang('it', this)" aria-label="Italiano">Italiano</button><button type="button" class="lang-btn" onclick="setLegacyLang('de', this)" aria-label="Deutsch">Deutsch</button><button type="button" class="lang-btn" onclick="setLegacyLang('ar', this)" aria-label="العربية">العربية</button><button type="button" class="lang-btn" onclick="setLegacyLang('zh', this)" aria-label="中文">中文</button><button type="button" class="lang-btn" onclick="setLegacyLang('hi', this)" aria-label="हिन्दी">हिन्दी</button><button type="button" class="lang-btn" onclick="setLegacyLang('ga', this)" aria-label="Gaeilge">Gaeilge</button></div>
 </nav>
 
 <!-- PICKER VIEW -->
@@ -1480,15 +1480,15 @@
 <!-- Story data loaded per language via fetch (see script below) -->
 
 <script>
-const DATA_VERSION = '20261101a';
+const DATA_VERSION = '20261102a';
 const TITLE_CARD_SEC = 3;
-const LEGACY_LANGS = ['english', 'portuguese', 'spanish', 'italian', 'german', 'arabic', 'chinese', 'hindi'];
+const LEGACY_LANGS = ['english', 'portuguese', 'spanish', 'italian', 'german', 'arabic', 'chinese', 'hindi', 'irish'];
 const STORIES_CACHE = {};
 let currentStories = [];
 
-const NAV_TO_LANG = { en: 'english', pt: 'portuguese', es: 'spanish', it: 'italian', de: 'german', ar: 'arabic', zh: 'chinese', hi: 'hindi' };
+const NAV_TO_LANG = { en: 'english', pt: 'portuguese', es: 'spanish', it: 'italian', de: 'german', ar: 'arabic', zh: 'chinese', hi: 'hindi', ga: 'irish' };
 
-const LANG_LABELS = { english: 'English', portuguese: 'Português', spanish: 'Español', italian: 'Italiano', german: 'Deutsch', arabic: 'العربية', chinese: '中文', hindi: 'हिन्दी' };
+const LANG_LABELS = { english: 'English', portuguese: 'Português', spanish: 'Español', italian: 'Italiano', german: 'Deutsch', arabic: 'العربية', chinese: '中文', hindi: 'हिन्दी', irish: 'Gaeilge' };
 
 const UI_STRINGS = {
   english: {
@@ -1986,6 +1986,68 @@ const UI_STRINGS = {
     elevenLabsVoicePlaceholder: 'वॉइस ID',
     elevenLabsGuideSummary: 'ये कैसे खोजें',
     elevenLabsGuideHtml: '<ol><li><strong>API कुंजी</strong><ol><li><a href="https://elevenlabs.io/app/settings/api-keys" target="_blank" rel="noopener">API Keys</a> खोलें।</li><li><strong>Create key</strong> पर क्लिक करें।</li><li><strong>Text to Speech</strong> को <strong>Access</strong> पर सेट करें।</li><li>कुंजी कॉपी करें (<code>sk_</code> से शुरू) और यहाँ पेस्ट करें।</li></ol></li><li><strong>वॉइस ID</strong><ol><li><a href="https://elevenlabs.io/app/voice-lab" target="_blank" rel="noopener">My Voices</a> खोलें।</li><li>अपनी आवाज़ पर <strong>More actions</strong> (⋯) क्लिक करें।</li><li><strong>Copy voice ID</strong> पर क्लिक करें।</li><li>यहाँ पेस्ट करें।</li></ol></li></ol>',
+  },
+  irish: {
+    recordVoice: 'Taifead gutha',
+    recordCamera: 'Taifead físeán',
+    cameraDenied: 'Níl an ceamara ar fáil nó níor ceadaíodh é. Do ghuth amháin a thaifeadfar.',
+    sceneLabel: 'Leathanach',
+    navDonate: 'Bronn',
+    welcomeTitle: 'Do ghuth, a scéal-san',
+    welcomeBodyHtml: '<p>Diagnóisíodh ALS orm in 2021, agus mé 36. Rinne mé é seo le bheith chomh gar agus is féidir do scéal a léamh ag am leapa nuair nach féidir leat a thuilleadh.</p><p>Conas a oibríonn sé: roghnaigh scéal, brúigh Taifead gutha nó Taifead físeán, léigh leis an téacs, agus íoslódáil d\'fhíseán.</p><picture><source srcset="assets/example-video.webp" type="image/webp"><img class="example-video" src="assets/example-video.jpg" width="520" height="925" alt="Sampla d\'fhíseán críochnaithe ar fhón: ceamara an léitheora ag an mbarr, pictiúr an scéil agus an fotheideal thíos" loading="lazy"></picture><p>Rinneadh é le hothair ALS i gcuimhne, ach ná bíodh aon leisce ort é a úsáid mura mbeidh tú in ann léamh le do ghuth féin, cibé cúis atá leis.</p><p>Is mór agam mo phríobháideachas agus do cheannsa. Sin an fáth nach bhfuil logáil isteach ann agus nach sábhálaim do thaifeadtaí riamh. Fanann gach rud ar do ghuthán nó ar do ríomhaire, agus ní fheiceann aon duine é ach na daoine a roghnaíonn tú é a roinnt leo.</p><p>Má tá scéal ar mhaith leat a fheiceáil anseo, nó mura bhfuil do theanga ar fáil, inis dom agus déanfaidh mé iarracht é a chur leis. Ní miste liom teanga a chur leis fiú más do dhuine amháin é. Seol ríomhphost chuig <a href="mailto:hello@alsounds.com">hello@alsounds.com</a>.</p>',
+    privacy: '🔒 Ní fhágann do thaifeadadh do ghléas riamh.',
+    pickStory: 'Roghnaigh scéal',
+    storyLabel: 'Scéal',
+    startRecording: 'Taifead an scéal',
+    titleIntro: 'Léigh an teideal os ard',
+    pause: 'Sos',
+    resume: 'Lean ar aghaidh',
+    ready: 'Réidh',
+    saved: 'Íoslódáilte',
+    comingSoon: 'Ag teacht go luath…',
+    countdownHint: 'Bí réidh — tosaíonn an taifeadadh nuair a chríochnaíonn an comhaireamh síos',
+    backStories: '← Scéalta',
+    scenes: 'leathanaigh',
+    recording: '● Á thaifeadadh…',
+    stopSave: 'Stop & íoslódáil',
+    saveVideo: 'Sábháil físeán',
+    done: 'Déanta',
+    readyToSave: 'Taifeadadh réidh — tapáil Sábháil físeán',
+    loading: 'Scéal á lódáil…',
+    noStories: 'Níl aon scéalta ar fáil i {lang} fós.',
+    confirmBack: 'Stop an taifeadadh agus fill ar na scéalta?',
+    recordUnsupported: 'Ní thacaíonn an brabhsálaí seo le taifeadadh.',
+    noFormat: 'Níor aimsíodh formáid thaifeadta a dtacaítear léi.',
+    micDenied: 'Diúltaíodh rochtain ar an micreafón. Ceadaigh an micreafón le taifeadadh.',
+    videoLoadFailed: 'Níorbh fhéidir físeán an scéil a lódáil. Athnuaigh agus bain triail eile as.',
+    preparingVideo: 'D\'fhíseán á ullmhú…',
+    postDownloadRedirect: 'Tá do thaifeadadh á íoslódáil. Tú á thabhairt chuig an leathanach baile…',
+    endSupport: 'Má chabhraigh sé seo, is féidir leat tacú leis an suíomh',
+    feedbackTitle: 'Tabhair do chuid aiseolais anseo',
+    feedbackLabel: 'Aiseolas',
+    feedbackPlaceholder: 'Do chuid aiseolais…',
+    feedbackSend: 'Seol',
+    feedbackSending: 'Á sheoladh…',
+    feedbackThanks: 'Go raibh maith agat — seoladh d\'aiseolas.',
+    feedbackError: 'Ár leithscéal, chuaigh rud éigin mícheart. Bain triail eile as.',
+    feedbackEmpty: 'Scríobh teachtaireacht ghearr ar dtús.',
+    elevenLabsVoice: 'Úsáid mo ghuth ElevenLabs',
+    elevenLabsTitle: 'Guth ElevenLabs',
+    elevenLabsKeyLabel: 'Eochair API',
+    elevenLabsVoiceLabel: 'Aitheantas gutha',
+    elevenLabsKeyNote: 'Fanann d\'eochair ar do ghléas. Ní sheoltar chuig ALSounds í riamh.',
+    elevenLabsSave: 'Sábháil & lean ar aghaidh',
+    elevenLabsCancel: 'Cealaigh',
+    elevenLabsForget: 'Déan dearmad ar an eochair',
+    elevenLabsGenerating: 'Caint á giniúint…',
+    elevenLabsError: 'Níorbh fhéidir caint a ghiniúint. Seiceáil d\'eochair API agus d\'aitheantas gutha.',
+    elevenLabsMissing: 'Cuir isteach d\'eochair API ElevenLabs agus d\'aitheantas gutha.',
+    elevenLabsKeyPlaceholder: 'sk_...',
+    elevenLabsPaste: 'Greamaigh',
+    elevenLabsClipboardBlocked: 'Gearrthaisce blocáilte — greamaigh le Ctrl+V (nó brúigh go fada ar fhón).',
+    elevenLabsVoicePlaceholder: 'Aitheantas gutha',
+    elevenLabsGuideSummary: 'Conas iad seo a aimsiú',
+    elevenLabsGuideHtml: '<ol><li><strong>Eochair API</strong><ol><li>Oscail <a href="https://elevenlabs.io/app/settings/api-keys" target="_blank" rel="noopener">API Keys</a>.</li><li>Cliceáil <strong>Create key</strong>.</li><li>Socraigh <strong>Text to Speech</strong> go <strong>Access</strong>.</li><li>Cóipeáil an eochair (tosaíonn le <code>sk_</code>) agus greamaigh anseo í.</li></ol></li><li><strong>Aitheantas gutha</strong><ol><li>Oscail <a href="https://elevenlabs.io/app/voice-lab" target="_blank" rel="noopener">My Voices</a>.</li><li>Cliceáil <strong>More actions</strong> (⋯) ar do ghuth.</li><li>Cliceáil <strong>Copy voice ID</strong>.</li><li>Greamaigh anseo é.</li></ol></li></ol>',
   }
 };
 
@@ -2038,6 +2100,7 @@ function updateUiLang() {
   const htmlLang = currentLang === 'arabic' ? 'ar'
     : currentLang === 'chinese' ? 'zh-Hans'
     : currentLang === 'hindi' ? 'hi'
+    : currentLang === 'irish' ? 'ga'
     : (navCode ? navCode[0] : 'en');
   document.documentElement.lang = htmlLang;
   document.documentElement.dir = isRtl ? 'rtl' : 'ltr';
