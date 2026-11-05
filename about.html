@@ -1,14 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>
+(function () {
+  try {
+    var t = localStorage.getItem('alsounds-theme');
+    if (t !== 'light' && t !== 'dark') t = 'light';
+    document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {
+    document.documentElement.setAttribute('data-theme', 'light');
+  }
+})();
+</script>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Donate — ALSounds</title>
+  <title>About — ALSounds</title>
   <link rel="icon" href="favicon.ico" sizes="48x48">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="preload" href="assets/fonts/Andika-Regular.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/GentiumBookPlus-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  <meta name="description" content="ALSounds (alsounds.com) is a free site made for people with ALS — and open to anyone — to record voice or video reading stories or narrating a photo album, or use a cloned ElevenLabs voice. Everything stays on your device.">
   <meta name="theme-color" content="#10173a">
   <style>
     /* ── FONTS (self-hosted SIL fonts: full African-Latin coverage — ẹ ọ ṣ ɓ ɗ ƙ ụ ị ṅ + tone marks) ── */
@@ -983,6 +996,266 @@
  .page a{color:var(--moon)}
  .kofi{display:inline-block;margin:10px 0;padding:12px 22px;border-radius:999px;background:var(--coral);color:#fff!important;font-weight:700;text-decoration:none}
  .todo{font-size:.8rem;color:var(--rose)}
+    .site-footer {
+      margin-top: auto;
+      padding: 28px 22px 36px;
+      text-align: center;
+      border-top: 1px solid rgba(244, 213, 141, 0.12);
+      background: rgba(12, 17, 40, 0.55);
+    }
+    .site-footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 18px;
+      justify-content: center;
+      align-items: center;
+    }
+    .site-footer-links a {
+      color: var(--muted, #b9bfdc);
+      text-decoration: none;
+      font-size: 0.92rem;
+      padding: 6px 4px;
+    }
+    .site-footer-links a:hover { color: var(--moon, #f4d58d); }
+    @media (max-width: 700px) {
+      .nav-links a.nav-privacy { display: none !important; }
+    }
+
+ .site-blurb{margin-bottom:36px;padding:26px 28px;border-radius:18px;background:linear-gradient(160deg,var(--night-700) 0%,var(--night-800) 100%);border:1px solid rgba(244,213,141,.16);box-shadow:var(--shadow-card)}
+ .site-blurb h1{margin-bottom:12px}
+ .site-blurb p{color:rgba(247,239,223,.88);margin-bottom:10px;max-width:640px}
+ .site-blurb p:last-child{margin-bottom:0}
+ .site-blurb .blurb-url{color:var(--moon);font-weight:700}
+
+
+    /* Subtle breathing room */
+    .page { padding-top: 48px; padding-bottom: 88px; }
+    .page h1 { margin-bottom: 20px; }
+    .page h2 { margin-top: 36px; margin-bottom: 12px; }
+    .page p, .page li { margin-bottom: 14px; line-height: 1.8; }
+    .site-blurb { margin-bottom: 44px; padding: 30px 30px; }
+    .site-blurb p { margin-bottom: 14px; line-height: 1.8; }
+    .kofi { margin: 18px 0 28px; }
+
+
+    /* ── Theme toggle + light mode (soft, not stark white) ── */
+    .theme-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      padding: 0;
+      border-radius: 999px;
+      border: 1px solid rgba(247, 239, 223, 0.22);
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--moon, #f4d58d);
+      cursor: pointer;
+      font-size: 1.05rem;
+      line-height: 1;
+      flex-shrink: 0;
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
+    }
+    .theme-toggle:hover {
+      background: rgba(244, 213, 141, 0.16);
+      border-color: rgba(244, 213, 141, 0.45);
+    }
+    .theme-toggle .theme-icon-light { display: none; }
+    html[data-theme="light"] .theme-toggle .theme-icon-dark { display: none; }
+    html[data-theme="light"] .theme-toggle .theme-icon-light { display: inline; }
+
+    html[data-theme="light"] {
+      --night-950: #ddd6c6;
+      --night-900: #efe9dc;
+      --night-800: #f7f1e6;
+      --night-700: #fffaf2;
+      --night-600: #e4dccb;
+      --cream: #1d2744;
+      --paper: #fffdf8;
+      --muted: #5c6578;
+      --moon: #8b6914;
+      --moon-deep: #6e5210;
+      --rose: #b87a6c;
+      --coral: #c45f4a;
+      --coral-deep: #a34838;
+      --ink: #1d2744;
+      --navy: var(--night-900);
+      --deep: var(--night-800);
+      --panel: var(--night-800);
+      --gold: var(--moon);
+      --gold-light: var(--moon);
+      --text-light: #1d2744;
+      --text-dim: #5c6578;
+      --accent: #3d5a80;
+      --highlight: var(--moon);
+      --card-bg: linear-gradient(180deg, #fffdf8 0%, #f3ebdd 100%);
+      color-scheme: light;
+    }
+    html[data-theme="light"] body {
+      background: var(--night-900);
+      background-image:
+        radial-gradient(1100px 560px at 85% -10%, rgba(139, 105, 20, 0.08), transparent 60%),
+        radial-gradient(900px 700px at -10% 50%, rgba(184, 122, 108, 0.06), transparent 60%),
+        linear-gradient(180deg, #f4eee2 0%, #e8e0d0 100%);
+      color: var(--cream);
+    }
+    html[data-theme="light"] body::before { opacity: 0.12; }
+    html[data-theme="light"] nav,
+    html[data-theme="light"] .site-nav {
+      background: rgba(247, 241, 230, 0.88);
+      border-bottom-color: rgba(29, 39, 68, 0.10);
+    }
+    html[data-theme="light"] .nav-logo span { color: var(--ink); }
+    html[data-theme="light"] .nav-links {
+      background: rgba(29, 39, 68, 0.05);
+      border-color: rgba(29, 39, 68, 0.10);
+    }
+    html[data-theme="light"] .nav-links a.page-link { color: var(--muted); }
+    html[data-theme="light"] .nav-links a.page-link.active {
+      background: var(--moon);
+      color: #fffdf8;
+    }
+    html[data-theme="light"] .theme-toggle {
+      border-color: rgba(29, 39, 68, 0.16);
+      background: rgba(29, 39, 68, 0.05);
+      color: var(--moon);
+    }
+    html[data-theme="light"] .site-footer {
+      background: rgba(232, 224, 208, 0.7);
+      border-top-color: rgba(29, 39, 68, 0.10);
+    }
+    html[data-theme="light"] .site-footer-links a { color: var(--muted); }
+    html[data-theme="light"] .site-footer-links a:hover { color: var(--moon-deep); }
+    html[data-theme="light"] .site-blurb,
+    html[data-theme="light"] .welcome-banner {
+      background:
+        radial-gradient(520px 260px at 100% 0%, rgba(139, 105, 20, 0.10), transparent 70%),
+        linear-gradient(160deg, #fffdf8 0%, #f0e8d8 100%);
+      border-color: rgba(29, 39, 68, 0.10);
+    }
+    
+    
+    /* Light mode: readable privacy/success greens on cream */
+    html[data-theme="light"] .privacy-note {
+      color: #0b4a34 !important;
+      background: rgba(11, 74, 52, 0.12);
+      border-color: rgba(11, 74, 52, 0.38);
+      font-weight: 600;
+    }
+    html[data-theme="light"] .feedback-status.ok {
+      color: #0b4a34 !important;
+    }
+
+    /* Light mode: fix hardcoded cream/rgba text on soft backgrounds */
+    html[data-theme="light"] .site-blurb p,
+    html[data-theme="light"] .welcome-banner p,
+    html[data-theme="light"] .welcome-banner #ui-welcome-body p,
+    html[data-theme="light"] .page p,
+    html[data-theme="light"] .page li,
+    html[data-theme="light"] .page h1,
+    html[data-theme="light"] .page h2 {
+      color: var(--ink) !important;
+    }
+    html[data-theme="light"] .site-blurb h1,
+    html[data-theme="light"] .welcome-banner h1 {
+      color: var(--ink) !important;
+    }
+    html[data-theme="light"] .page p,
+    html[data-theme="light"] .page li {
+      color: var(--muted) !important;
+    }
+    html[data-theme="light"] .blurb-url { color: var(--moon-deep) !important; }
+    html[data-theme="light"] .picker-heading { color: var(--moon-deep); }
+
+    html[data-theme="light"] .lang-select,
+    html[data-theme="light"] select.lang-select {
+      background: #fffdf8;
+      color: var(--ink);
+      border-color: rgba(29, 39, 68, 0.16);
+    }
+
+
+    /* Language select: clearly visible in light mode */
+    html[data-theme="light"] .lang-select,
+    html[data-theme="light"] select.lang-select {
+      background-color: #fffdf8 !important;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%231d2744' d='M1 1l5 5 5-5'/%3E%3C/svg%3E") !important;
+      background-repeat: no-repeat !important;
+      background-position: right 10px center !important;
+      color: #1d2744 !important;
+      border: 1px solid rgba(29, 39, 68, 0.32) !important;
+      min-width: 7.5rem;
+      font-weight: 600;
+      -webkit-text-fill-color: #1d2744;
+    }
+    .lang-select {
+      min-width: 7.5rem;
+    }
+    .nav-langs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+
+    /* Theme toggle sits with nav buttons on the same row */
+    .nav-links {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .nav-links .theme-toggle {
+      margin-left: 4px;
+      flex-shrink: 0;
+    }
+    @media (max-width: 700px) {
+      .nav-links .theme-toggle {
+        width: 34px;
+        height: 34px;
+        font-size: 0.95rem;
+      }
+    }
+
+
+    /* Desktop-only About in top nav; phone uses footer */
+    @media (max-width: 700px) {
+      .nav-links a.nav-about { display: none !important; }
+    }
+    /* Theme label words — desktop only */
+    .theme-toggle {
+      gap: 8px;
+      width: auto;
+      height: auto;
+      min-width: 38px;
+      min-height: 38px;
+      padding: 0 12px;
+    }
+    .theme-toggle .theme-label {
+      display: none;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      white-space: nowrap;
+      font-family: var(--font-body, inherit);
+    }
+    @media (min-width: 701px) {
+      .theme-toggle .theme-label { display: inline; }
+    }
+    @media (max-width: 700px) {
+      .theme-toggle {
+        width: 34px;
+        height: 34px;
+        min-width: 34px;
+        min-height: 34px;
+        padding: 0;
+      }
+      .theme-toggle .theme-label { display: none !important; }
+    }
+
 </style></head>
 <body>
 <nav>
@@ -991,34 +1264,120 @@
   </div>
   <div class="nav-links">
     <a class="page-link" href="./#stories">Stories</a>
-    <a class="page-link" href="privacy.html">Privacy</a>
+    <a class="page-link nav-feature" href="videoalbum/">Video album</a>
+    <a class="page-link nav-about active" href="about.html">About</a>
+    <a class="page-link nav-privacy" href="privacy.html">Privacy</a>
+  <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch to light mode" title="Theme"><span class="theme-icon-dark" aria-hidden="true">☀</span><span class="theme-icon-light" aria-hidden="true">☾</span><span class="theme-label" id="theme-label">Dark mode</span></button>
   </div>
-</nav>
+<div class="nav-langs" id="nav-langs" style="display:flex;align-items:center;gap:8px;justify-self:end;grid-column:3;grid-row:1"><label class="lang-select-wrap"><span class="sr-only" id="ui-lang-label">Language</span><select id="lang-select" class="lang-select" aria-labelledby="ui-lang-label"></select></label></div></nav>
 <main class="page">
-<section lang="en">
-<h1>Support the site</h1>
-<p>The site is free to use. If you would like to help with hosting costs and new stories, you can buy me a coffee.</p>
+<section lang="en" class="site-blurb" id="what-this-is">
+<h1>What this is</h1>
+<p>ALSounds is a free website at <a class="blurb-url" href="https://alsounds.com">alsounds.com</a>. It was made for people with ALS — a way to leave your voice reading a story, or narrating a photo album, as a legacy. Anyone who wants to can use it the same way. Record your voice, record video, or use a cloned ElevenLabs voice. Everything stays on your device; download when you are done — nothing is uploaded.</p>
 </section>
-<a class="kofi" href="https://ko-fi.com/alsounds">☕ Support on Ko-fi</a>
+<section lang="en">
+<h1>Support the website</h1>
+<p>The site is free to use. If you would like to help with hosting costs and new stories, you can support the website.</p>
+</section>
+<a class="kofi" href="https://ko-fi.com/alsounds">Support on Ko-fi</a>
 <section lang="pt-PT">
 <h2>Apoiar o site</h2>
-<p>O site é gratuito. Se quiser ajudar com os custos de alojamento e com novas histórias, pode pagar-me um café.</p>
+<p>O site é gratuito. Se quiser ajudar com os custos de alojamento e com novas histórias, pode apoiar o site.</p>
 </section>
 <section lang="es">
-<h2>Apoya el sitio</h2>
-<p>El sitio es gratuito. Si quieres ayudar con los costes de alojamiento y con nuevos cuentos, puedes invitarme a un café.</p>
+<h2>Apoyar el sitio</h2>
+<p>El sitio es gratuito. Si quieres ayudar con los costes de alojamiento y con nuevos cuentos, puedes apoyar el sitio.</p>
 </section>
 <section lang="it">
 <h2>Sostieni il sito</h2>
-<p>Il sito è gratuito. Se vuoi aiutare con i costi di hosting e con nuove storie, puoi offrirmi un caffè.</p>
+<p>Il sito è gratuito. Se vuoi aiutare con i costi di hosting e con nuove storie, puoi sostenere il sito.</p>
 </section>
 <section lang="de">
-<h2>Unterstütze die Seite</h2>
-<p>Die Seite ist kostenlos. Wenn du bei den Hosting-Kosten und neuen Geschichten helfen möchtest, kannst du mir einen Kaffee spendieren.</p>
+<h2>Die Website unterstützen</h2>
+<p>Die Seite ist kostenlos. Wenn du bei den Hosting-Kosten und neuen Geschichten helfen möchtest, kannst du die Website unterstützen.</p>
 </section>
 </main>
+<footer class="site-footer">
+  <nav class="site-footer-links" aria-label="Site">
+    <a href="about.html">About</a>
+    <a href="privacy.html">Privacy</a>
+  </nav>
+</footer>
 <script src='https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'></script><script>kofiWidgetOverlay.draw('alsounds', {'type':'floating-chat','floating-chat.donateButton.text':'Donate','floating-chat.donateButton.background-color':'#f573ae','floating-chat.donateButton.text-color':'#fff'});</script>
 <script data-goatcounter="https://alsounds.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
+
+<script>
+(function () {
+  var KEY = 'alsounds-theme';
+  function current() {
+    var t = document.documentElement.getAttribute('data-theme');
+    return t === 'dark' ? 'dark' : 'light';
+  }
+  function apply(t) {
+    document.documentElement.setAttribute('data-theme', t);
+    try { localStorage.setItem(KEY, t); } catch (e) {}
+    document.querySelectorAll('#theme-toggle, .theme-toggle').forEach(function (btn) {
+      var next = t === 'light' ? 'dark' : 'light';
+      btn.setAttribute('aria-label', next === 'light' ? 'Switch to light mode' : 'Switch to dark mode');
+      btn.title = next === 'light' ? 'Light mode' : 'Dark mode';
+      var lab = btn.querySelector('.theme-label');
+      if (lab) lab.textContent = next === 'light' ? 'Light mode' : 'Dark mode';
+    });
+  }
+  function toggle() {
+    apply(current() === 'light' ? 'dark' : 'light');
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    apply(current());
+    document.querySelectorAll('#theme-toggle, .theme-toggle').forEach(function (btn) {
+      btn.addEventListener('click', toggle);
+    });
+  });
+  window.__alsoundsToggleTheme = toggle;
+})();
+</script>
+
+
+<script>
+(function () {
+  var labels = { en:'English', pt:'Português', es:'Español', it:'Italiano', de:'Deutsch', ar:'العربية', zh:'中文', hi:'हिन्दी', ga:'Gaeilge' };
+  var order = ['en','pt','es','it','de','ar','zh','hi','ga'];
+  var map = { en:'english', pt:'portuguese', es:'spanish', it:'italian', de:'german', ar:'arabic', zh:'chinese', hi:'hindi', ga:'irish' };
+  function codeFromStored() {
+    try {
+      var full = sessionStorage.getItem('alsounds-lang') || '';
+      for (var k in map) { if (map[k] === full) return k; }
+      var nav = localStorage.getItem('alsounds-nav-lang');
+      if (nav && labels[nav]) return nav;
+    } catch (e) {}
+    var lang = (document.documentElement.lang || 'en').slice(0,2).toLowerCase();
+    return labels[lang] ? lang : 'en';
+  }
+  function fill() {
+    var sel = document.getElementById('lang-select');
+    if (!sel) return;
+    var cur = codeFromStored();
+    sel.innerHTML = '';
+    order.forEach(function (code) {
+      var opt = document.createElement('option');
+      opt.value = code;
+      opt.textContent = labels[code];
+      if (code === cur) opt.selected = true;
+      sel.appendChild(opt);
+    });
+    sel.addEventListener('change', function () {
+      var code = sel.value;
+      try {
+        sessionStorage.setItem('alsounds-lang', map[code] || 'english');
+        localStorage.setItem('alsounds-nav-lang', code);
+      } catch (e) {}
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fill);
+  else fill();
+})();
+</script>
+
 </body>
 </html>

@@ -1,0 +1,2112 @@
+<script>
+(function () {
+  try {
+    var t = localStorage.getItem('alsounds-theme');
+    if (t !== 'light' && t !== 'dark') t = 'light';
+    document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {
+    document.documentElement.setAttribute('data-theme', 'light');
+  }
+})();
+</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Photo story — ALSounds</title>
+<meta name="description" content="Talk about your photos. Nothing is uploaded.">
+<link rel="icon" href="../favicon.ico">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<style>
+:root {
+  --night-950:#0c1128; --night-900:#10173a; --night-800:#161f48; --night-700:#1e2a5a;
+  --cream:#f7efdf; --muted:#b9bfdc; --moon:#f4d58d; --ink:#1d2744;
+  --font-display: Georgia, 'Times New Roman', serif;
+  --font-body: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+}
+html[lang="zh-Hans"] { --font-display:'Microsoft YaHei','PingFang SC','Noto Sans SC',sans-serif; --font-body:'Microsoft YaHei','PingFang SC','Noto Sans SC',sans-serif; }
+html[lang="hi"] { --font-display:'Nirmala UI','Mangal','Noto Sans Devanagari',sans-serif; --font-body:'Nirmala UI','Mangal','Noto Sans Devanagari',sans-serif; }
+html[dir="rtl"] { --font-display:'Segoe UI',Tahoma,'Noto Naskh Arabic',Arial,sans-serif; --font-body:'Segoe UI',Tahoma,'Noto Naskh Arabic',Arial,sans-serif; }
+* { box-sizing: border-box; }
+body {
+  margin: 0; min-height: 100vh; color: var(--cream);
+  font-family: var(--font-body);
+  background: radial-gradient(1200px 600px at 20% -10%, #1a2558 0%, var(--night-950) 55%);
+  -webkit-font-smoothing: antialiased;
+}
+nav.site-nav {
+  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+  gap: 10px; padding: 12px 16px; position: sticky; top: 0; z-index: 100;
+  background: rgba(12,17,40,0.82); backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(244,213,141,0.12);
+}
+.nav-logo { display:inline-flex; align-items:center; gap:8px; color:var(--cream); text-decoration:none; font-family:var(--font-display); font-size:1.1rem; }
+.nav-logo img { height:34px; width:34px; border-radius:10px; }
+.nav-links { display:flex; gap:6px; justify-content:center; flex-wrap:wrap; }
+.nav-links a.page-link { text-decoration:none; display:inline-block; padding:8px 14px; border-radius:999px; color:var(--muted); font-size:0.88rem; }
+.nav-links a.page-link.active { background:var(--moon); color:var(--ink); font-weight:700; }
+.nav-langs { display:flex; gap:4px; justify-self:end; align-items:center; max-width:100%; }
+@media (max-width:700px) {
+  nav.site-nav { grid-template-columns: auto 1fr; }
+  .nav-langs { grid-column:1 / -1; justify-self:center; }
+}
+main { max-width: 820px; margin: 0 auto; padding: 22px 16px 80px; }
+h1, h1.page-title { font-family: var(--font-display); font-weight: 500; font-size: 1.85rem; margin: 0 0 10px; }
+.page-title { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.page-title #ui-page-title { font-family: inherit; font-weight: inherit; font-size: inherit; }
+.new-tag {
+  display:inline-block; vertical-align:middle;
+  padding: 3px 10px; border-radius:999px;
+  background: var(--moon); color: var(--ink);
+  font-family: var(--font-body); font-size: 0.72rem; font-weight: 800;
+  letter-spacing: 0.04em; text-transform: uppercase; line-height: 1.3;
+}
+
+.lead { color: var(--muted); line-height: 1.55; margin: 0 0 14px; }
+.intro-title { font-size:1.1rem; margin:0 0 6px; }
+.steps { margin:0 0 14px; padding-inline-start:1.2em; line-height:1.5; }
+.steps li { margin:4px 0; }
+.note { color: var(--muted); font-size: 0.9rem; line-height: 1.45; margin: 14px 0; }
+.privacy { color: var(--muted); font-size: 0.88rem; margin-top: 18px; }
+.panel {
+  background: rgba(22,31,72,0.72); border: 1px solid rgba(244,213,141,0.14);
+  border-radius: 18px; padding: 16px; margin: 14px 0;
+}
+.row { display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+button, .file-btn {
+  appearance:none; border:0; cursor:pointer; border-radius:999px;
+  padding: 11px 18px; font-size: 0.95rem; font-weight: 600;
+  background: rgba(244,213,141,0.16); color: var(--cream);
+}
+button.primary { background: var(--moon); color: var(--ink); }
+button:disabled { opacity: 0.4; cursor: not-allowed; }
+button.danger { background: rgba(224,128,106,0.22); }
+.file-btn { display:inline-block; }
+.mode { display:flex; gap:10px; flex-wrap:wrap; }
+.mode label {
+  flex:1; min-width:160px; border:1px solid rgba(244,213,141,0.22);
+  border-radius:14px; padding:12px; cursor:pointer; background:rgba(0,0,0,0.15);
+}
+.mode input { accent-color: var(--moon); }
+.mode .hint { display:block; color:var(--muted); font-size:0.82rem; margin-top:6px; font-weight:400; }
+.thumbs { display:grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap:10px; margin-top:12px; }
+.thumb {
+  position:relative; aspect-ratio:16/9; border-radius:12px; overflow:hidden;
+  background:#000; border:1px solid rgba(244,213,141,0.18);
+}
+.thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+.thumb button {
+  position:absolute; top:4px; right:4px; padding:4px 8px; font-size:0.7rem;
+  background:rgba(0,0,0,0.55);
+}
+.example-story { margin: 0 0 16px; }
+.example-frame {
+  position:relative; aspect-ratio:16/9; border-radius:16px; overflow:hidden;
+  background:#000; border:1px solid rgba(244,213,141,0.22);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.28);
+}
+.example-frame img { width:100%; height:100%; object-fit:cover; display:block; }
+.example-captions {
+  position:absolute; left:0; right:0; bottom:0; padding:18px 14px 14px;
+  background: linear-gradient(180deg, transparent 0%, rgba(8,12,28,0.78) 55%, rgba(8,12,28,0.9) 100%);
+  display:flex; flex-direction:column; gap:6px;
+}
+.example-cap {
+  margin:0; color:var(--cream); font-size:0.92rem; line-height:1.35;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.55);
+}
+.example-label {
+  margin-top:8px; color:var(--muted); font-size:0.82rem; line-height:1.4;
+}
+#view-record { display:none; position:fixed; inset:0; z-index:200; background:#000; }
+#view-record.show { display:flex; flex-direction:column; }
+.stage-wrap {
+  flex:1; position:relative; min-height:0; background:#000;
+  display:flex; align-items:center; justify-content:center;
+  padding: 8px;
+}
+#live-canvas {
+  max-width:100%; max-height:100%; width:auto; height:auto; display:block; background:#000;
+  border-radius: 8px;
+}
+.rec-bar {
+  display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:space-between;
+  padding: 10px 12px calc(12px + env(safe-area-inset-bottom));
+  background: rgba(12,17,40,0.94); border-top:1px solid rgba(244,213,141,0.16);
+}
+.rec-meta { color: var(--moon); font-variant-numeric: tabular-nums; font-size:0.9rem; }
+.rec-actions { display:flex; flex-wrap:wrap; gap:8px; }
+#overlay-save {
+  display:none; position:fixed; inset:0; z-index:300; align-items:center; justify-content:center;
+  background: rgba(8,12,28,0.82); padding:20px;
+}
+#overlay-save.show { display:flex; }
+.save-card {
+  background: var(--night-800); border-radius:18px; padding:22px; max-width:360px; width:100%;
+  text-align:center; border:1px solid rgba(244,213,141,0.2);
+}
+.save-card p { color:var(--muted); }
+#preparing {
+  display:none; position:fixed; inset:0; z-index:250; align-items:center; justify-content:center;
+  background:rgba(8,12,28,0.75); color:var(--cream); font-size:1.05rem;
+}
+#preparing.show { display:flex; }
+
+.caption-card { display:flex; gap:12px; align-items:flex-start; margin:12px 0; padding:10px; border-radius:12px; background:rgba(0,0,0,0.18); border:1px solid rgba(244,213,141,0.12); }
+.caption-card img { width:96px; height:54px; object-fit:cover; border-radius:10px; flex-shrink:0; }
+.caption-card .cap-fields { flex:1; min-width:0; }
+.caption-card label { display:block; font-size:0.78rem; color:var(--muted); font-weight:700; margin-bottom:6px; }
+.caption-card textarea {
+  width:100%; min-height:64px; resize:vertical; border-radius:10px; padding:10px 12px;
+  border:1px solid rgba(247,239,223,0.18); background:rgba(0,0,0,0.25); color:var(--cream);
+  font: inherit;
+}
+.caption-card textarea:focus { outline:none; border-color:rgba(244,213,141,0.55); }
+.eleven-modal { display:none; position:fixed; inset:0; z-index:600; background:rgba(8,11,28,0.88); align-items:center; justify-content:center; padding:18px; }
+.eleven-modal.show { display:flex; }
+.eleven-modal-box { width:min(420px,100%); background:linear-gradient(180deg,var(--night-700) 0%,var(--night-800) 100%); border:1px solid rgba(244,213,141,0.2); border-radius:18px; padding:20px; }
+.eleven-modal-box h2 { font-family:var(--font-display); font-size:1.35rem; color:var(--cream); margin:0 0 14px; }
+.eleven-modal-box label { display:block; font-size:0.78rem; font-weight:700; letter-spacing:0.04em; color:var(--muted); }
+.eleven-field-row { display:flex; gap:8px; align-items:stretch; margin-top:6px; margin-bottom:12px; }
+.eleven-field-row input { flex:1; min-width:0; margin:0; }
+.eleven-modal-box input { width:100%; padding:11px 13px; border-radius:10px; border:1px solid rgba(247,239,223,0.18); background:rgba(0,0,0,0.25); color:var(--cream); }
+.eleven-modal-box input:focus { outline:none; border-color:rgba(244,213,141,0.55); }
+.eleven-paste { flex-shrink:0; background:rgba(247,239,223,0.08); border:1px solid rgba(247,239,223,0.22); color:var(--cream); border-radius:999px; padding:0 14px; cursor:pointer; }
+.eleven-note { margin-top:12px; font-size:0.8rem; color:var(--muted); line-height:1.45; }
+.eleven-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:18px; align-items:center; }
+.eleven-actions .btn-eleven-go { display:inline-flex; align-items:center; padding:10px 18px; border:none; border-radius:999px; background:var(--moon); color:var(--ink); font-weight:700; cursor:pointer; }
+.eleven-actions .btn-eleven-cancel, .eleven-actions .btn-eleven-forget { background:transparent; border:1px solid rgba(247,239,223,0.22); color:var(--cream); border-radius:999px; padding:9px 14px; cursor:pointer; }
+.eleven-actions .btn-eleven-forget { margin-inline-start:auto; }
+.eleven-error { margin-top:10px; font-size:0.85rem; color:#f0a090; min-height:1.2em; white-space:pre-wrap; line-height:1.4; }
+.eleven-error:not(:empty) { padding:10px 12px; border-radius:10px; background:rgba(224,128,106,0.12); border:1px solid rgba(224,128,106,0.28); }
+.eleven-guide { margin-top:14px; border:1px solid rgba(247,239,223,0.14); border-radius:10px; background:rgba(0,0,0,0.18); }
+.eleven-guide > summary { cursor:pointer; list-style:none; padding:11px 12px; font-size:0.84rem; font-weight:700; color:var(--cream); }
+.eleven-guide > summary::-webkit-details-marker { display:none; }
+.eleven-guide > summary::before { content:'▸ '; display:inline-block; }
+.eleven-guide[open] > summary::before { content:'▾ '; }
+.eleven-guide-body { padding:0 12px 12px; font-size:0.82rem; color:var(--muted); line-height:1.55; }
+.eleven-guide-body ol { margin:6px 0 0; padding-inline-start:1.2em; }
+.eleven-guide-body li { margin:6px 0; }
+.eleven-guide-body a { color:var(--moon); }
+
+.nav-links a.page-link.nav-feature {
+  display:inline-flex; align-items:center; gap:7px;
+  padding-inline-end: 10px;
+  border: 2px solid #e04545;
+  box-sizing: border-box;
+}
+.nav-links a.page-link.nav-feature.active {
+  border-color: #c62828;
+  box-shadow: 0 0 0 1px rgba(198,40,40,0.35);
+}
+.sr-only {
+  position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+  overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+}
+.lang-select-wrap { display:inline-flex; align-items:center; }
+.lang-select {
+  appearance:none; -webkit-appearance:none;
+  background: rgba(0,0,0,0.25) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23b9bfdc' d='M1 1l5 5 5-5'/%3E%3C/svg%3E") no-repeat right 10px center;
+  color: var(--cream); border: 1px solid rgba(244,213,141,0.28);
+  border-radius: 999px; padding: 7px 28px 7px 12px; font-size: 0.82rem;
+  cursor: pointer; min-width: 7.5rem; font-family: inherit;
+}
+.lang-select:focus { outline: none; border-color: rgba(244,213,141,0.6); }
+.lang-select option { color: #1d2744; background: #f7efdf; }
+</style>
+</head>
+<style>
+
+    /* Site footer: About + Privacy (Privacy leaves top nav on small phones) */
+    .site-footer {
+      margin-top: auto;
+      padding: 32px 22px 40px;
+      text-align: center;
+      border-top: 1px solid rgba(244, 213, 141, 0.12);
+      background: rgba(12, 17, 40, 0.55);
+    }
+    .site-footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 22px;
+      justify-content: center;
+      align-items: center;
+    }
+    .site-footer-links a {
+      color: var(--muted, #b9bfdc);
+      text-decoration: none;
+      font-size: 0.92rem;
+      padding: 8px 6px;
+    }
+    .site-footer-links a:hover { color: var(--moon, #f4d58d); }
+    @media (max-width: 700px) {
+      .nav-links a.nav-privacy { display: none !important; }
+    }
+
+
+    .photo-page .lead, .photo-page .steps { margin-bottom: 18px; }
+    .photo-page .steps li { margin-bottom: 10px; }
+    .photo-actions, .btn-row, .chooser-row { gap: 14px; margin-top: 18px; }
+    .example-wrap, .example-block { margin: 22px 0 28px; }
+</style>
+<style>
+
+    /* ── Theme toggle + light mode (soft, not stark white) ── */
+    .theme-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      padding: 0;
+      border-radius: 999px;
+      border: 1px solid rgba(247, 239, 223, 0.22);
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--moon, #f4d58d);
+      cursor: pointer;
+      font-size: 1.05rem;
+      line-height: 1;
+      flex-shrink: 0;
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
+    }
+    .theme-toggle:hover {
+      background: rgba(244, 213, 141, 0.16);
+      border-color: rgba(244, 213, 141, 0.45);
+    }
+    .theme-toggle .theme-icon-light { display: none; }
+    html[data-theme="light"] .theme-toggle .theme-icon-dark { display: none; }
+    html[data-theme="light"] .theme-toggle .theme-icon-light { display: inline; }
+
+    html[data-theme="light"] {
+      --night-950: #ddd6c6;
+      --night-900: #efe9dc;
+      --night-800: #f7f1e6;
+      --night-700: #fffaf2;
+      --night-600: #e4dccb;
+      --cream: #1d2744;
+      --paper: #fffdf8;
+      --muted: #5c6578;
+      --moon: #8b6914;
+      --moon-deep: #6e5210;
+      --rose: #b87a6c;
+      --coral: #c45f4a;
+      --coral-deep: #a34838;
+      --ink: #1d2744;
+      --navy: var(--night-900);
+      --deep: var(--night-800);
+      --panel: var(--night-800);
+      --gold: var(--moon);
+      --gold-light: var(--moon);
+      --text-light: #1d2744;
+      --text-dim: #5c6578;
+      --accent: #3d5a80;
+      --highlight: var(--moon);
+      --card-bg: linear-gradient(180deg, #fffdf8 0%, #f3ebdd 100%);
+      color-scheme: light;
+    }
+    html[data-theme="light"] body {
+      background: var(--night-900);
+      background-image:
+        radial-gradient(1100px 560px at 85% -10%, rgba(139, 105, 20, 0.08), transparent 60%),
+        radial-gradient(900px 700px at -10% 50%, rgba(184, 122, 108, 0.06), transparent 60%),
+        linear-gradient(180deg, #f4eee2 0%, #e8e0d0 100%);
+      color: var(--cream);
+    }
+    html[data-theme="light"] body::before { opacity: 0.12; }
+    html[data-theme="light"] nav,
+    html[data-theme="light"] .site-nav {
+      background: rgba(247, 241, 230, 0.88);
+      border-bottom-color: rgba(29, 39, 68, 0.10);
+    }
+    html[data-theme="light"] .nav-logo span { color: var(--ink); }
+    html[data-theme="light"] .nav-links {
+      background: rgba(29, 39, 68, 0.05);
+      border-color: rgba(29, 39, 68, 0.10);
+    }
+    html[data-theme="light"] .nav-links a.page-link { color: var(--muted); }
+    html[data-theme="light"] .nav-links a.page-link.active {
+      background: var(--moon);
+      color: #fffdf8;
+    }
+    html[data-theme="light"] .theme-toggle {
+      border-color: rgba(29, 39, 68, 0.16);
+      background: rgba(29, 39, 68, 0.05);
+      color: var(--moon);
+    }
+    html[data-theme="light"] .site-footer {
+      background: rgba(232, 224, 208, 0.7);
+      border-top-color: rgba(29, 39, 68, 0.10);
+    }
+    html[data-theme="light"] .site-footer-links a { color: var(--muted); }
+    html[data-theme="light"] .site-footer-links a:hover { color: var(--moon-deep); }
+    html[data-theme="light"] .site-blurb,
+    html[data-theme="light"] .welcome-banner {
+      background:
+        radial-gradient(520px 260px at 100% 0%, rgba(139, 105, 20, 0.10), transparent 70%),
+        linear-gradient(160deg, #fffdf8 0%, #f0e8d8 100%);
+      border-color: rgba(29, 39, 68, 0.10);
+    }
+    html[data-theme="light"] .lang-select,
+    html[data-theme="light"] select.lang-select {
+      background: #fffdf8;
+      color: var(--ink);
+      border-color: rgba(29, 39, 68, 0.16);
+    }
+
+</style>
+<style>
+
+    /* Light mode: fix hardcoded cream/rgba text on soft backgrounds */
+    html[data-theme="light"] .site-blurb p,
+    html[data-theme="light"] .welcome-banner p,
+    html[data-theme="light"] .welcome-banner #ui-welcome-body p,
+    html[data-theme="light"] .page p,
+    html[data-theme="light"] .page li,
+    html[data-theme="light"] .page h1,
+    html[data-theme="light"] .page h2 {
+      color: var(--ink) !important;
+    }
+    html[data-theme="light"] .site-blurb h1,
+    html[data-theme="light"] .welcome-banner h1 {
+      color: var(--ink) !important;
+    }
+    html[data-theme="light"] .page p,
+    html[data-theme="light"] .page li {
+      color: var(--muted) !important;
+    }
+    html[data-theme="light"] .blurb-url { color: var(--moon-deep) !important; }
+    html[data-theme="light"] .picker-heading { color: var(--moon-deep); }
+
+</style>
+<style>
+
+    /* Light mode: readable privacy/success greens on cream */
+    html[data-theme="light"] .privacy-note {
+      color: #0b4a34 !important;
+      background: rgba(11, 74, 52, 0.12);
+      border-color: rgba(11, 74, 52, 0.38);
+      font-weight: 600;
+    }
+    html[data-theme="light"] .feedback-status.ok {
+      color: #0b4a34 !important;
+    }
+
+</style>
+<style>
+
+    /* Language select: clearly visible in light mode */
+    html[data-theme="light"] .lang-select,
+    html[data-theme="light"] select.lang-select {
+      background-color: #fffdf8 !important;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%231d2744' d='M1 1l5 5 5-5'/%3E%3C/svg%3E") !important;
+      background-repeat: no-repeat !important;
+      background-position: right 10px center !important;
+      color: #1d2744 !important;
+      border: 1px solid rgba(29, 39, 68, 0.32) !important;
+      min-width: 7.5rem;
+      font-weight: 600;
+      -webkit-text-fill-color: #1d2744;
+    }
+    .lang-select {
+      min-width: 7.5rem;
+    }
+    .nav-langs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+</style>
+<style>
+
+    /* Theme toggle sits with nav buttons on the same row */
+    .nav-links {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .nav-links .theme-toggle {
+      margin-left: 4px;
+      flex-shrink: 0;
+    }
+    @media (max-width: 700px) {
+      .nav-links .theme-toggle {
+        width: 34px;
+        height: 34px;
+        font-size: 0.95rem;
+      }
+    }
+
+</style>
+<style>
+
+    /* Desktop-only About in top nav; phone uses footer */
+    @media (max-width: 700px) {
+      .nav-links a.nav-about { display: none !important; }
+    }
+    /* Theme label words — desktop only */
+    .theme-toggle {
+      gap: 8px;
+      width: auto;
+      height: auto;
+      min-width: 38px;
+      min-height: 38px;
+      padding: 0 12px;
+    }
+    .theme-toggle .theme-label {
+      display: none;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      white-space: nowrap;
+      font-family: var(--font-body, inherit);
+    }
+    @media (min-width: 701px) {
+      .theme-toggle .theme-label { display: inline; }
+    }
+    @media (max-width: 700px) {
+      .theme-toggle {
+        width: 34px;
+        height: 34px;
+        min-width: 34px;
+        min-height: 34px;
+        padding: 0;
+      }
+      .theme-toggle .theme-label { display: none !important; }
+    }
+
+</style>
+<body>
+<nav class="site-nav">
+  <a class="nav-logo" href="../"><img class="nav-lamp" src="../logo-header.png" alt="" width="34" height="34"><span>ALSounds</span></a>
+  <div class="nav-links">
+    <a class="page-link" href="../#stories" id="ui-nav-stories">Stories</a>
+    <a class="page-link active nav-feature" href="./" id="ui-nav-photos"><span id="ui-nav-photos-label">Video album</span></a>
+    <a class="page-link nav-about" href="../about.html" id="ui-nav-about">About</a>
+    <a class="page-link nav-privacy" href="../privacy.html" id="ui-nav-privacy">Privacy</a>
+  <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch to light mode" title="Theme"><span class="theme-icon-dark" aria-hidden="true">☀</span><span class="theme-icon-light" aria-hidden="true">☾</span><span class="theme-label" id="theme-label">Dark mode</span></button>
+  </div>
+  <div class="nav-langs" id="nav-langs"><label class="lang-select-wrap"><span class="sr-only" id="ui-lang-label">Language</span><select id="lang-select" class="lang-select" aria-labelledby="ui-lang-label"></select></label></div>
+</nav>
+
+<main id="view-setup">
+  <h1 class="page-title"><span id="ui-page-title">Photo story</span></h1>
+  <h2 class="intro-title" id="ui-intro-title"></h2>
+  <p class="lead" id="ui-lead"></p>
+
+  <figure class="example-story">
+    <div class="example-frame">
+      <img src="../assets/photo-story-example.jpg" alt="" width="1600" height="900">
+      <div class="example-captions" aria-hidden="true">
+        <p class="example-cap" id="ui-example-cap1"></p>
+        <p class="example-cap" id="ui-example-cap2"></p>
+      </div>
+    </div>
+    <figcaption class="example-label" id="ui-example-label"></figcaption>
+  </figure>
+
+  <div class="note" id="ui-orientation"></div>
+
+  <div class="panel">
+    <div class="row">
+      <label class="file-btn" id="ui-pick-label">
+        <span id="ui-pick">Choose photos</span>
+        <input id="file-input" type="file" accept="image/*" multiple hidden>
+      </label>
+      <label class="file-btn" id="ui-folder-label">
+        <span id="ui-pick-folder">Choose folder</span>
+        <input id="folder-input" type="file" accept="image/*" multiple webkitdirectory directory hidden>
+      </label>
+      <label class="file-btn" id="ui-camera-label">
+        <span id="ui-take-photo">Take photos</span>
+        <input id="camera-input" type="file" accept="image/*" capture="environment" multiple hidden>
+      </label>
+      <button type="button" id="btn-add" hidden><span id="ui-add">Add more</span></button>
+      <button type="button" id="btn-clear" class="danger" hidden><span id="ui-clear">Clear</span></button>
+      <span class="note" id="ui-count" style="margin:0"></span>
+    </div>
+    <p class="note" id="ui-empty-hint"></p>
+    <div class="thumbs" id="thumbs"></div>
+  </div>
+
+  <div class="panel">
+    <div id="ui-mode-label" style="margin-bottom:10px;font-weight:600">How to record</div>
+    <div class="mode">
+      <label><input type="radio" name="mode" value="audio" checked> <strong id="ui-mode-audio">Describe your photos</strong><span class="hint" id="ui-mode-audio-hint"></span></label>
+      <label><input type="radio" name="mode" value="eleven"> <strong id="ui-mode-eleven">Typed voice (ElevenLabs)</strong><span class="hint" id="ui-mode-eleven-hint"></span></label>
+    </div>
+  </div>
+
+
+  <div class="panel" id="captions-panel" hidden>
+    <div id="ui-skip-empty" class="note" style="margin-top:0"></div>
+    <div id="caption-list"></div>
+  </div>
+  <div class="row" style="margin-top:18px">
+    <button type="button" class="primary" id="btn-start"><span id="ui-start">Narrate your photos</span></button>
+  </div>
+  <p class="privacy" id="ui-privacy"></p>
+</main>
+
+<div id="view-record">
+  <div class="stage-wrap">
+    <canvas id="live-canvas"></canvas>
+  </div>
+  <div class="rec-bar">
+    <div class="rec-meta">
+      <div id="ui-rec-status">Recording</div>
+      <div id="ui-photo-of"></div>
+      <div id="ui-timer">0:00</div>
+    </div>
+    <div class="rec-actions">
+      <button type="button" id="btn-back-photo"><span id="ui-back">Back</span></button>
+      <button type="button" id="btn-next-photo" class="primary"><span id="ui-next">Next</span></button>
+      <button type="button" id="btn-finish" class="danger"><span id="ui-finish">Finish</span></button>
+    </div>
+  </div>
+</div>
+
+<div id="preparing"><span id="ui-preparing">Preparing your video…</span></div>
+
+<div id="overlay-save">
+  <div class="save-card">
+    <p id="ui-ready-save">Recording ready — tap Save video</p>
+    <div class="row" style="justify-content:center;margin-top:14px">
+      <button type="button" class="primary" id="btn-save"><span id="ui-save">Save video</span></button>
+      <button type="button" id="btn-done" hidden><span id="ui-done">Done</span></button>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <nav class="site-footer-links" aria-label="Site">
+    <a href="../about.html">About</a>
+    <a href="../privacy.html">Privacy</a>
+  </nav>
+</footer>
+<div class="eleven-modal" id="eleven-modal" role="dialog" aria-modal="true" aria-labelledby="eleven-modal-title">
+  <div class="eleven-modal-box">
+    <h2 id="eleven-modal-title">ElevenLabs voice</h2>
+    <label for="eleven-api-key" id="eleven-key-label">API key</label>
+    <div class="eleven-field-row">
+      <input type="password" id="eleven-api-key" autocomplete="off" spellcheck="false" placeholder="sk_...">
+      <button type="button" class="eleven-paste" id="eleven-paste-key" onclick="pasteIntoElevenField('eleven-api-key')">Paste</button>
+    </div>
+    <label for="eleven-voice-id" id="eleven-voice-label">Voice ID</label>
+    <div class="eleven-field-row">
+      <input type="text" id="eleven-voice-id" autocomplete="off" spellcheck="false" placeholder="Voice ID">
+      <button type="button" class="eleven-paste" id="eleven-paste-voice" onclick="pasteIntoElevenField('eleven-voice-id')">Paste</button>
+    </div>
+    <p class="eleven-note" id="eleven-key-note">Your key stays on your device. It is never sent to ALSounds.</p>
+    <details class="eleven-guide" id="eleven-guide" open>
+      <summary id="eleven-guide-summary">How to find these</summary>
+      <div class="eleven-guide-body" id="eleven-guide-body"></div>
+    </details>
+    <p class="eleven-error" id="eleven-error" role="status" aria-live="polite"></p>
+    <div class="eleven-actions">
+      <button type="button" class="btn-eleven-go" id="eleven-save" onclick="confirmElevenLabsSettings()">Save &amp; continue</button>
+      <button type="button" class="btn-eleven-cancel" id="eleven-cancel" onclick="closeElevenLabsModal()">Cancel</button>
+      <button type="button" class="btn-eleven-forget" id="eleven-forget" onclick="forgetElevenLabsKey()">Forget key</button>
+    </div>
+  </div>
+</div>
+<script>
+const PHOTO_UI = {
+  "english": {
+    "navStories": "Stories",
+    "navPhotos": "Video album",
+    "navPrivacy": "Privacy",
+    "navDonate": "Donate",
+    "pageTitle": "Photo story",
+    "lead": "Photos left in a folder, real or digital, lose their context. Here, someone who knows them talks over each one, and you keep that video - and its meaning - forever.",
+    "pickPhotos": "Choose photos",
+    "addMore": "Add more",
+    "clearAll": "Clear",
+    "photosSelected": "{n} photo(s) selected",
+    "needPhotos": "Choose at least one photo first.",
+    "modeLabel": "How to record",
+    "modeAudio": "Describe your photos",
+    "modeAudioHint": "Speak over each photo in your own voice.",
+    "startRecord": "Narrate your photos",
+    "next": "Next",
+    "back": "Back",
+    "finish": "Finish",
+    "recording": "● Recording…",
+    "photoOf": "Photo {n} of {total}",
+    "pause": "Pause",
+    "resume": "Resume",
+    "ready": "Ready",
+    "saved": "Downloaded",
+    "saveVideo": "Save video",
+    "done": "Done",
+    "readyToSave": "Recording ready — tap Save video",
+    "preparingVideo": "Preparing your video…",
+    "recordUnsupported": "Recording is not supported in this browser.",
+    "noFormat": "No supported recording format found.",
+    "micDenied": "Microphone access denied. Please allow microphone access to record.",
+    "cameraDenied": "Camera not available or not allowed. Recording your voice only.",
+    "privacy": "🔒 Your photos and recording never leave your device.",
+    "confirmLeave": "Stop recording and leave?",
+    "orientationNote": "<ul class=\"steps\"><li><strong>Choose photos</strong> — one or many.</li><li><strong>Record your voice</strong>, or type for ElevenLabs.</li><li><strong>Talk through each photo</strong>, then save and download.</li></ul>",
+    "emptyHint": "Add as many photos as you want — from your camera, files, or a folder.",
+    "remove": "Remove",
+    "modeEleven": "Typed voice (ElevenLabs)",
+    "modeElevenHint": "Type a short description for each photo. Uses your ElevenLabs voice — no speaking needed.",
+    "captionLabel": "Description",
+    "captionPlaceholder": "What to say for this photo…",
+    "captionsNeeded": "Add text for at least one photo.",
+    "skipEmptyNote": "Photos with no text are skipped.",
+    "elevenLabsVoice": "Use my ElevenLabs voice",
+    "elevenLabsTitle": "ElevenLabs voice",
+    "elevenLabsKeyLabel": "API key",
+    "elevenLabsVoiceLabel": "Voice ID",
+    "elevenLabsKeyNote": "Your key stays on your device. It is never sent to ALSounds.",
+    "elevenLabsSave": "Save & continue",
+    "elevenLabsCancel": "Cancel",
+    "elevenLabsForget": "Forget key",
+    "elevenLabsGenerating": "Generating speech…",
+    "elevenLabsError": "Could not generate speech. Check your API key and voice ID.",
+    "elevenLabsMissing": "Enter your ElevenLabs API key and voice ID.",
+    "elevenLabsKeyPlaceholder": "sk_...",
+    "elevenLabsPaste": "Paste",
+    "elevenLabsClipboardBlocked": "Clipboard blocked — paste with Ctrl+V (or long-press on mobile).",
+    "elevenLabsVoicePlaceholder": "Voice ID",
+    "elevenLabsGuideSummary": "How to find these",
+    "elevenLabsGuideHtml": "<ol><li><strong>API key</strong><ol><li>Open <a href=\"https://elevenlabs.io/app/settings/api-keys\" target=\"_blank\" rel=\"noopener\">API Keys</a>.</li><li>Click <strong>Create key</strong>.</li><li>Set <strong>Text to Speech</strong> to <strong>Access</strong>.</li><li>Copy the key (starts with <code>sk_</code>) and paste it here.</li></ol></li><li><strong>Voice ID</strong><ol><li>Open <a href=\"https://elevenlabs.io/app/voice-lab\" target=\"_blank\" rel=\"noopener\">My Voices</a>.</li><li>Click <strong>More actions</strong> (⋯) on your voice.</li><li>Click <strong>Copy voice ID</strong>.</li><li>Paste it here.</li></ol></li></ol>",
+    "takePhoto": "Take photos",
+    "introTitle": "Keep the story with the photos",
+    "exampleLabel": "Example — captions appear only here, not in your video",
+    "exampleCap1": "That day at the lake with everyone together.",
+    "exampleCap2": "She held his hand the whole way down the beach.",
+    "pickFolder": "Choose folder",
+    "newTag": "New",
+    "langLabel": "Language",
+    "albumCoverTitle": "Photo album",
+    "albumCoverHint": "Your photos"
+  },
+  "portuguese": {
+    "navStories": "Histórias",
+    "navPhotos": "Álbum de vídeo",
+    "navPrivacy": "Privacidade",
+    "navDonate": "Doar",
+    "pageTitle": "História em fotos",
+    "lead": "Fotos esquecidas numa pasta, real ou digital, perdem o contexto. Aqui, alguém que as conhece fala sobre cada uma, e guarda esse vídeo - e o seu significado - para sempre.",
+    "pickPhotos": "Escolher fotos",
+    "addMore": "Adicionar mais",
+    "clearAll": "Limpar",
+    "photosSelected": "{n} foto(s) selecionada(s)",
+    "needPhotos": "Escolha pelo menos uma foto primeiro.",
+    "modeLabel": "Como gravar",
+    "modeAudio": "Descrever as suas fotos",
+    "modeAudioHint": "Fale sobre cada foto com a sua voz.",
+    "startRecord": "Narrar as suas fotos",
+    "next": "Seguinte",
+    "back": "Anterior",
+    "finish": "Terminar",
+    "recording": "● A gravar…",
+    "photoOf": "Foto {n} de {total}",
+    "pause": "Pausa",
+    "resume": "Continuar",
+    "ready": "Pronto",
+    "saved": "Descarregado",
+    "saveVideo": "Guardar vídeo",
+    "done": "Concluir",
+    "readyToSave": "Gravação pronta — toque em Guardar vídeo",
+    "preparingVideo": "A preparar o vídeo…",
+    "recordUnsupported": "Este browser não permite gravação.",
+    "noFormat": "Não foi encontrado um formato de gravação suportado.",
+    "micDenied": "Acesso ao microfone negado. Permita o microfone para gravar.",
+    "cameraDenied": "Câmara indisponível ou sem permissão. A gravar só a voz.",
+    "privacy": "🔒 As suas fotos e gravação nunca saem do dispositivo.",
+    "confirmLeave": "Parar a gravação e sair?",
+    "orientationNote": "<ul class=\"steps\"><li><strong>Escolha as fotos</strong> — uma ou várias.</li><li><strong>Grave a sua voz</strong>, ou escreva para o ElevenLabs.</li><li><strong>Fale sobre cada foto</strong>, depois guarde e descarregue.</li></ul>",
+    "emptyHint": "Adicione quantas fotos quiser — da câmara, de ficheiros ou de uma pasta.",
+    "remove": "Remover",
+    "modeEleven": "Voz escrita (ElevenLabs)",
+    "modeElevenHint": "Escreva uma descrição curta para cada foto. Usa a sua voz ElevenLabs — sem falar.",
+    "captionLabel": "Descrição",
+    "captionPlaceholder": "O que dizer nesta foto…",
+    "captionsNeeded": "Adicione texto a pelo menos uma foto.",
+    "skipEmptyNote": "Fotos sem texto são ignoradas.",
+    "elevenLabsVoice": "Usar a minha voz ElevenLabs",
+    "elevenLabsTitle": "Voz ElevenLabs",
+    "elevenLabsKeyLabel": "Chave da API",
+    "elevenLabsVoiceLabel": "ID da voz",
+    "elevenLabsKeyNote": "A chave fica só no seu dispositivo. Nunca é enviada para o ALSounds.",
+    "elevenLabsSave": "Guardar e continuar",
+    "elevenLabsCancel": "Cancelar",
+    "elevenLabsForget": "Esquecer chave",
+    "elevenLabsGenerating": "A gerar a fala…",
+    "elevenLabsError": "Não foi possível gerar a fala. Verifique a chave da API e o ID da voz.",
+    "elevenLabsMissing": "Introduza a chave da API ElevenLabs e o ID da voz.",
+    "elevenLabsKeyPlaceholder": "sk_...",
+    "elevenLabsPaste": "Colar",
+    "elevenLabsClipboardBlocked": "Área de transferência bloqueada — cole com Ctrl+V (ou pressione longamente no telemóvel).",
+    "elevenLabsVoicePlaceholder": "ID da voz",
+    "elevenLabsGuideSummary": "Como encontrar estes dados",
+    "elevenLabsGuideHtml": "<ol><li><strong>Chave da API</strong><ol><li>Abra <a href=\"https://elevenlabs.io/app/settings/api-keys\" target=\"_blank\" rel=\"noopener\">API Keys</a>.</li><li>Clique em <strong>Create key</strong>.</li><li>Defina <strong>Text to Speech</strong> como <strong>Access</strong>.</li><li>Copie a chave (começa por <code>sk_</code>) e cole-a aqui.</li></ol></li><li><strong>ID da voz</strong><ol><li>Abra <a href=\"https://elevenlabs.io/app/voice-lab\" target=\"_blank\" rel=\"noopener\">My Voices</a>.</li><li>Clique em <strong>More actions</strong> (⋯) na sua voz.</li><li>Clique em <strong>Copy voice ID</strong>.</li><li>Cole-o aqui.</li></ol></li></ol>",
+    "takePhoto": "Tirar fotos",
+    "introTitle": "Guarde a história com as fotos",
+    "exampleLabel": "Exemplo — as legendas aparecem só aqui, não no seu vídeo",
+    "exampleCap1": "Aquele dia no lago com toda a gente junta.",
+    "exampleCap2": "Ela segurou-lhe a mão o caminho todo na praia.",
+    "pickFolder": "Escolher pasta",
+    "newTag": "Novo",
+    "langLabel": "Idioma",
+    "albumCoverTitle": "Álbum de fotos",
+    "albumCoverHint": "As suas fotos"
+  },
+  "spanish": {
+    "navStories": "Cuentos",
+    "navPhotos": "Álbum de vídeo",
+    "navPrivacy": "Privacidad",
+    "navDonate": "Donar",
+    "pageTitle": "Historia en fotos",
+    "lead": "Las fotos olvidadas en una carpeta, real o digital, pierden su contexto. Aquí, alguien que las conoce habla sobre cada una, y guardas ese vídeo - y su significado - para siempre.",
+    "pickPhotos": "Elegir fotos",
+    "addMore": "Añadir más",
+    "clearAll": "Borrar",
+    "photosSelected": "{n} foto(s) seleccionada(s)",
+    "needPhotos": "Elige al menos una foto primero.",
+    "modeLabel": "Cómo grabar",
+    "modeAudio": "Describe tus fotos",
+    "modeAudioHint": "Habla sobre cada foto con tu voz.",
+    "startRecord": "Narrar tus fotos",
+    "next": "Siguiente",
+    "back": "Anterior",
+    "finish": "Terminar",
+    "recording": "● Grabando…",
+    "photoOf": "Foto {n} de {total}",
+    "pause": "Pausa",
+    "resume": "Seguir",
+    "ready": "Listo",
+    "saved": "Descargado",
+    "saveVideo": "Guardar vídeo",
+    "done": "Listo",
+    "readyToSave": "Grabación lista — toca Guardar vídeo",
+    "preparingVideo": "Preparando el vídeo…",
+    "recordUnsupported": "Este navegador no permite grabar.",
+    "noFormat": "No se encontró un formato de grabación compatible.",
+    "micDenied": "Acceso al micrófono denegado. Permite el micrófono para grabar.",
+    "cameraDenied": "Cámara no disponible o sin permiso. Solo se grabará la voz.",
+    "privacy": "🔒 Tus fotos y la grabación no salen de tu dispositivo.",
+    "confirmLeave": "¿Parar la grabación y salir?",
+    "orientationNote": "<ul class=\"steps\"><li><strong>Elige las fotos</strong> — una o varias.</li><li><strong>Graba tu voz</strong>, o escribe para ElevenLabs.</li><li><strong>Habla sobre cada foto</strong>, luego guarda y descarga.</li></ul>",
+    "emptyHint": "Añade todas las fotos que quieras — de la cámara, archivos o una carpeta.",
+    "remove": "Quitar",
+    "modeEleven": "Voz escrita (ElevenLabs)",
+    "modeElevenHint": "Escribe una descripción breve de cada foto. Usa tu voz de ElevenLabs — sin hablar.",
+    "captionLabel": "Descripción",
+    "captionPlaceholder": "Qué decir en esta foto…",
+    "captionsNeeded": "Añade texto a al menos una foto.",
+    "skipEmptyNote": "Las fotos sin texto se omiten.",
+    "elevenLabsVoice": "Usar mi voz de ElevenLabs",
+    "elevenLabsTitle": "Voz de ElevenLabs",
+    "elevenLabsKeyLabel": "Clave de API",
+    "elevenLabsVoiceLabel": "ID de voz",
+    "elevenLabsKeyNote": "Tu clave se queda en tu dispositivo. Nunca se envía a ALSounds.",
+    "elevenLabsSave": "Guardar y continuar",
+    "elevenLabsCancel": "Cancelar",
+    "elevenLabsForget": "Olvidar clave",
+    "elevenLabsGenerating": "Generando el habla…",
+    "elevenLabsError": "No se pudo generar el habla. Revisa tu clave de API y el ID de voz.",
+    "elevenLabsMissing": "Introduce tu clave de API de ElevenLabs y el ID de voz.",
+    "elevenLabsKeyPlaceholder": "sk_...",
+    "elevenLabsPaste": "Pegar",
+    "elevenLabsClipboardBlocked": "Portapapeles bloqueado — pega con Ctrl+V (o mantén pulsado en el móvil).",
+    "elevenLabsVoicePlaceholder": "ID de voz",
+    "elevenLabsGuideSummary": "Cómo encontrarlos",
+    "elevenLabsGuideHtml": "<ol><li><strong>Clave de API</strong><ol><li>Abre <a href=\"https://elevenlabs.io/app/settings/api-keys\" target=\"_blank\" rel=\"noopener\">API Keys</a>.</li><li>Haz clic en <strong>Create key</strong>.</li><li>Pon <strong>Text to Speech</strong> en <strong>Access</strong>.</li><li>Copia la clave (empieza por <code>sk_</code>) y pégala aquí.</li></ol></li><li><strong>ID de voz</strong><ol><li>Abre <a href=\"https://elevenlabs.io/app/voice-lab\" target=\"_blank\" rel=\"noopener\">My Voices</a>.</li><li>Haz clic en <strong>More actions</strong> (⋯) en tu voz.</li><li>Haz clic en <strong>Copy voice ID</strong>.</li><li>Pégalo aquí.</li></ol></li></ol>",
+    "takePhoto": "Hacer fotos",
+    "introTitle": "Guarda la historia con las fotos",
+    "exampleLabel": "Ejemplo — los subtítulos solo aquí, no en tu vídeo",
+    "exampleCap1": "Aquel día en el lago con todos juntos.",
+    "exampleCap2": "Ella le cogió la mano todo el camino por la playa.",
+    "pickFolder": "Elegir carpeta",
+    "newTag": "Nuevo",
+    "langLabel": "Idioma",
+    "albumCoverTitle": "Álbum de fotos",
+    "albumCoverHint": "Tus fotos"
+  },
+  "italian": {
+    "navStories": "Storie",
+    "navPhotos": "Album video",
+    "navPrivacy": "Privacy",
+    "navDonate": "Dona",
+    "pageTitle": "Storia con foto",
+    "lead": "Le foto dimenticate in una cartella, reale o digitale, perdono il loro contesto. Qui, qualcuno che le conosce parla di ognuna, e tu conservi quel video - e il suo significato - per sempre.",
+    "pickPhotos": "Scegli foto",
+    "addMore": "Aggiungi",
+    "clearAll": "Cancella",
+    "photosSelected": "{n} foto selezionate",
+    "needPhotos": "Scegli almeno una foto prima.",
+    "modeLabel": "Come registrare",
+    "modeAudio": "Descrivi le tue foto",
+    "modeAudioHint": "Parla di ogni foto con la tua voce.",
+    "startRecord": "Narra le tue foto",
+    "next": "Avanti",
+    "back": "Indietro",
+    "finish": "Fine",
+    "recording": "● Registrazione…",
+    "photoOf": "Foto {n} di {total}",
+    "pause": "Pausa",
+    "resume": "Riprendi",
+    "ready": "Pronto",
+    "saved": "Scaricato",
+    "saveVideo": "Salva video",
+    "done": "Fatto",
+    "readyToSave": "Registrazione pronta — tocca Salva video",
+    "preparingVideo": "Preparazione del video…",
+    "recordUnsupported": "Questo browser non supporta la registrazione.",
+    "noFormat": "Nessun formato di registrazione supportato.",
+    "micDenied": "Accesso al microfono negato. Consenti il microfono per registrare.",
+    "cameraDenied": "Fotocamera non disponibile o non consentita. Si registra solo la voce.",
+    "privacy": "🔒 Le tue foto e la registrazione non lasciano mai il dispositivo.",
+    "confirmLeave": "Interrompere la registrazione e uscire?",
+    "orientationNote": "<ul class=\"steps\"><li><strong>Scegli le foto</strong> — una o più.</li><li><strong>Registra la voce</strong>, oppure digita per ElevenLabs.</li><li><strong>Racconta ogni foto</strong>, poi salva e scarica.</li></ul>",
+    "emptyHint": "Aggiungi tutte le foto che vuoi — dalla fotocamera, dai file o da una cartella.",
+    "remove": "Rimuovi",
+    "modeEleven": "Voce scritta (ElevenLabs)",
+    "modeElevenHint": "Scrivi una breve descrizione per ogni foto. Usa la tua voce ElevenLabs — senza parlare.",
+    "captionLabel": "Descrizione",
+    "captionPlaceholder": "Cosa dire per questa foto…",
+    "captionsNeeded": "Aggiungi testo ad almeno una foto.",
+    "skipEmptyNote": "Le foto senza testo vengono saltate.",
+    "elevenLabsVoice": "Usa la mia voce ElevenLabs",
+    "elevenLabsTitle": "Voce ElevenLabs",
+    "elevenLabsKeyLabel": "Chiave API",
+    "elevenLabsVoiceLabel": "ID voce",
+    "elevenLabsKeyNote": "La chiave resta sul tuo dispositivo. Non viene mai inviata ad ALSounds.",
+    "elevenLabsSave": "Salva e continua",
+    "elevenLabsCancel": "Annulla",
+    "elevenLabsForget": "Dimentica chiave",
+    "elevenLabsGenerating": "Generazione della voce…",
+    "elevenLabsError": "Impossibile generare la voce. Controlla la chiave API e l'ID voce.",
+    "elevenLabsMissing": "Inserisci la chiave API ElevenLabs e l'ID voce.",
+    "elevenLabsKeyPlaceholder": "sk_...",
+    "elevenLabsPaste": "Incolla",
+    "elevenLabsClipboardBlocked": "Appunti bloccati — incolla con Ctrl+V (o tieni premuto sul telefono).",
+    "elevenLabsVoicePlaceholder": "ID voce",
+    "elevenLabsGuideSummary": "Come trovarli",
+    "elevenLabsGuideHtml": "<ol><li><strong>Chiave API</strong><ol><li>Apri <a href=\"https://elevenlabs.io/app/settings/api-keys\" target=\"_blank\" rel=\"noopener\">API Keys</a>.</li><li>Clicca su <strong>Create key</strong>.</li><li>Imposta <strong>Text to Speech</strong> su <strong>Access</strong>.</li><li>Copia la chiave (inizia con <code>sk_</code>) e incollala qui.</li></ol></li><li><strong>ID voce</strong><ol><li>Apri <a href=\"https://elevenlabs.io/app/voice-lab\" target=\"_blank\" rel=\"noopener\">My Voices</a>.</li><li>Clicca su <strong>More actions</strong> (⋯) sulla tua voce.</li><li>Clicca su <strong>Copy voice ID</strong>.</li><li>Incollalo qui.</li></ol></li></ol>",
+    "takePhoto": "Scatta foto",
+    "introTitle": "Conserva la storia con le foto",
+    "exampleLabel": "Esempio — i sottotitoli solo qui, non nel tuo video",
+    "exampleCap1": "Quel giorno al lago tutti insieme.",
+    "exampleCap2": "Lei gli tenne la mano per tutta la spiaggia.",
+    "pickFolder": "Scegli cartella",
+    "newTag": "Nuovo",
+    "langLabel": "Lingua",
+    "albumCoverTitle": "Album fotografico",
+    "albumCoverHint": "Le tue foto"
+  },
+  "german": {
+    "navStories": "Geschichten",
+    "navPhotos": "Videoalbum",
+    "navPrivacy": "Datenschutz",
+    "navDonate": "Spenden",
+    "pageTitle": "Fotogeschichte",
+    "lead": "Fotos in einem Ordner, echt oder digital, verlieren ihren Zusammenhang. Hier erzählt jemand, der sie kennt, zu jedem Foto - und du behältst dieses Video und seine Bedeutung für immer.",
+    "pickPhotos": "Fotos auswählen",
+    "addMore": "Mehr hinzufügen",
+    "clearAll": "Löschen",
+    "photosSelected": "{n} Foto(s) ausgewählt",
+    "needPhotos": "Wähle zuerst mindestens ein Foto.",
+    "modeLabel": "Aufnahmeart",
+    "modeAudio": "Fotos beschreiben",
+    "modeAudioHint": "Sprich zu jedem Foto mit deiner Stimme.",
+    "startRecord": "Fotos erzählen",
+    "next": "Weiter",
+    "back": "Zurück",
+    "finish": "Fertig",
+    "recording": "● Aufnahme…",
+    "photoOf": "Foto {n} von {total}",
+    "pause": "Pause",
+    "resume": "Weiter",
+    "ready": "Bereit",
+    "saved": "Heruntergeladen",
+    "saveVideo": "Video speichern",
+    "done": "Fertig",
+    "readyToSave": "Aufnahme bereit — tippe auf Video speichern",
+    "preparingVideo": "Video wird vorbereitet…",
+    "recordUnsupported": "Dieser Browser unterstützt keine Aufnahme.",
+    "noFormat": "Kein unterstütztes Aufnahmeformat gefunden.",
+    "micDenied": "Mikrofonzugriff verweigert. Bitte Mikrofon erlauben.",
+    "cameraDenied": "Kamera nicht verfügbar oder nicht erlaubt. Es wird nur die Stimme aufgenommen.",
+    "privacy": "🔒 Deine Fotos und die Aufnahme verlassen dein Gerät nie.",
+    "confirmLeave": "Aufnahme stoppen und verlassen?",
+    "orientationNote": "<ul class=\"steps\"><li><strong>Fotos wählen</strong> — eines oder viele.</li><li><strong>Stimme aufnehmen</strong>, oder für ElevenLabs tippen.</li><li><strong>Zu jedem Foto erzählen</strong>, dann speichern und herunterladen.</li></ul>",
+    "emptyHint": "Füge so viele Fotos hinzu, wie du willst — von Kamera, Dateien oder einem Ordner.",
+    "remove": "Entfernen",
+    "modeEleven": "Getippte Stimme (ElevenLabs)",
+    "modeElevenHint": "Schreibe eine kurze Beschreibung zu jedem Foto. Nutzt deine ElevenLabs-Stimme — ohne Sprechen.",
+    "captionLabel": "Beschreibung",
+    "captionPlaceholder": "Was zu diesem Foto gesagt werden soll…",
+    "captionsNeeded": "Füge mindestens einem Foto Text hinzu.",
+    "skipEmptyNote": "Fotos ohne Text werden übersprungen.",
+    "elevenLabsVoice": "Meine ElevenLabs-Stimme nutzen",
+    "elevenLabsTitle": "ElevenLabs-Stimme",
+    "elevenLabsKeyLabel": "API-Schlüssel",
+    "elevenLabsVoiceLabel": "Stimm-ID",
+    "elevenLabsKeyNote": "Dein Schlüssel bleibt auf deinem Gerät. Er wird nie an ALSounds gesendet.",
+    "elevenLabsSave": "Speichern & weiter",
+    "elevenLabsCancel": "Abbrechen",
+    "elevenLabsForget": "Schlüssel vergessen",
+    "elevenLabsGenerating": "Sprache wird erzeugt…",
+    "elevenLabsError": "Sprache konnte nicht erzeugt werden. Prüfe API-Schlüssel und Stimm-ID.",
+    "elevenLabsMissing": "Gib deinen ElevenLabs-API-Schlüssel und die Stimm-ID ein.",
+    "elevenLabsKeyPlaceholder": "sk_...",
+    "elevenLabsPaste": "Einfügen",
+    "elevenLabsClipboardBlocked": "Zwischenablage blockiert — mit Strg+V einfügen (oder auf dem Handy lange drücken).",
+    "elevenLabsVoicePlaceholder": "Stimm-ID",
+    "elevenLabsGuideSummary": "So findest du diese Angaben",
+    "elevenLabsGuideHtml": "<ol><li><strong>API-Schlüssel</strong><ol><li>Öffne <a href=\"https://elevenlabs.io/app/settings/api-keys\" target=\"_blank\" rel=\"noopener\">API Keys</a>.</li><li>Klicke auf <strong>Create key</strong>.</li><li>Setze <strong>Text to Speech</strong> auf <strong>Access</strong>.</li><li>Kopiere den Schlüssel (beginnt mit <code>sk_</code>) und füge ihn hier ein.</li></ol></li><li><strong>Stimm-ID</strong><ol><li>Öffne <a href=\"https://elevenlabs.io/app/voice-lab\" target=\"_blank\" rel=\"noopener\">My Voices</a>.</li><li>Klicke bei deiner Stimme auf <strong>More actions</strong> (⋯).</li><li>Klicke auf <strong>Copy voice ID</strong>.</li><li>Füge sie hier ein.</li></ol></li></ol>",
+    "takePhoto": "Fotos aufnehmen",
+    "introTitle": "Bewahre die Geschichte zu den Fotos",
+    "exampleLabel": "Beispiel — Untertitel nur hier, nicht in deinem Video",
+    "exampleCap1": "Der Tag am See, alle zusammen.",
+    "exampleCap2": "Sie hielt seine Hand den ganzen Weg am Strand.",
+    "pickFolder": "Ordner wählen",
+    "newTag": "Neu",
+    "langLabel": "Sprache",
+    "albumCoverTitle": "Fotoalbum",
+    "albumCoverHint": "Deine Fotos"
+  },
+  "arabic": {
+    "navStories": "القصص",
+    "navPhotos": "ألبوم فيديو",
+    "navPrivacy": "الخصوصية",
+    "navDonate": "تبرّع",
+    "pageTitle": "قصة بالصور",
+    "lead": "الصور المنسية في مجلد، حقيقي أو رقمي، تفقد سياقها. هنا يتحدث شخص يعرفها عن كل صورة، وتحتفظ بهذا الفيديو - ومعناه - إلى الأبد.",
+    "pickPhotos": "اختر الصور",
+    "addMore": "أضف المزيد",
+    "clearAll": "مسح",
+    "photosSelected": "تم اختيار {n} صورة",
+    "needPhotos": "اختر صورة واحدةاً على الأقل أولاً.",
+    "modeLabel": "طريقة التسجيل",
+    "modeAudio": "صف صورك",
+    "modeAudioHint": "تحدث عن كل صورة بصوتك.",
+    "startRecord": "اروِ صورك",
+    "next": "التالي",
+    "back": "السابق",
+    "finish": "إنهاء",
+    "recording": "● جارٍ التسجيل…",
+    "photoOf": "صورة {n} من {total}",
+    "pause": "إيقاف مؤقت",
+    "resume": "متابعة",
+    "ready": "جاهز",
+    "saved": "تم التنزيل",
+    "saveVideo": "حفظ الفيديو",
+    "done": "تم",
+    "readyToSave": "التسجيل جاهز — اضغط حفظ الفيديو",
+    "preparingVideo": "جارٍ تجهيز الفيديو…",
+    "recordUnsupported": "هذا المتصفح لا يدعم التسجيل.",
+    "noFormat": "لم يُعثر على تنسيق تسجيل مدعوم.",
+    "micDenied": "رُفض الوصول إلى الميكروفون. يرجى السماح بالوصول للتسجيل.",
+    "cameraDenied": "الكاميرا غير متاحة أو غير مسموح بها. سيتم تسجيل صوتك فقط.",
+    "privacy": "🔒 صورك وتسجيلك لا يغادران جهازك أبداً.",
+    "confirmLeave": "إيقاف التسجيل والمغادرة؟",
+    "orientationNote": "<ul class=\"steps\"><li><strong>اختر الصور</strong> — واحدة أو أكثر.</li><li><strong>سجّل صوتك</strong>، أو اكتب لـ ElevenLabs.</li><li><strong>تحدث عن كل صورة</strong> ثم احفظ وحمّل.</li></ul>",
+    "emptyHint": "أضف أي عدد من الصور — من الكاميرا أو الملفات أو مجلد.",
+    "remove": "إزالة",
+    "modeEleven": "صوت مكتوب (ElevenLabs)",
+    "modeElevenHint": "اكتب وصفاً قصيراً لكل صورة. يستخدم صوتك من ElevenLabs — دون الحاجة للكلام.",
+    "captionLabel": "الوصف",
+    "captionPlaceholder": "ما يُقال عن هذه الصورة…",
+    "captionsNeeded": "أضف نصاً لصورة واحدةاً على الأقل.",
+    "skipEmptyNote": "يتم تخطي الصور بلا نص.",
+    "elevenLabsVoice": "استخدم صوتي من ElevenLabs",
+    "elevenLabsTitle": "صوت ElevenLabs",
+    "elevenLabsKeyLabel": "مفتاح API",
+    "elevenLabsVoiceLabel": "معرّف الصوت",
+    "elevenLabsKeyNote": "يبقى مفتاحك على جهازك فقط. لا يُرسل أبداً إلى ALSounds.",
+    "elevenLabsSave": "حفظ ومتابعة",
+    "elevenLabsCancel": "إلغاء",
+    "elevenLabsForget": "نسيان المفتاح",
+    "elevenLabsGenerating": "جارٍ توليد الكلام…",
+    "elevenLabsError": "تعذّر توليد الكلام. تحقّق من مفتاح API ومعرّف الصوت.",
+    "elevenLabsMissing": "أدخل مفتاح API الخاص بـ ElevenLabs ومعرّف الصوت.",
+    "elevenLabsKeyPlaceholder": "sk_...",
+    "elevenLabsPaste": "لصق",
+    "elevenLabsClipboardBlocked": "الحافظة محظورة — الصق بـ Ctrl+V (أو اضغط مطولاً على الجوال).",
+    "elevenLabsVoicePlaceholder": "معرّف الصوت",
+    "elevenLabsGuideSummary": "كيف تجد هذه البيانات",
+    "elevenLabsGuideHtml": "<ol><li><strong>مفتاح API</strong><ol><li>افتح <a href=\"https://elevenlabs.io/app/settings/api-keys\" target=\"_blank\" rel=\"noopener\">API Keys</a>.</li><li>انقر على <strong>Create key</strong>.</li><li>اضبط <strong>Text to Speech</strong> على <strong>Access</strong>.</li><li>انسخ المفتاح (يبدأ بـ <code>sk_</code>) والصقه هنا.</li></ol></li><li><strong>معرّف الصوت</strong><ol><li>افتح <a href=\"https://elevenlabs.io/app/voice-lab\" target=\"_blank\" rel=\"noopener\">My Voices</a>.</li><li>انقر على <strong>More actions</strong> (⋯) على صوتك.</li><li>انقر على <strong>Copy voice ID</strong>.</li><li>الصقه هنا.</li></ol></li></ol>",
+    "takePhoto": "التقط صوراً",
+    "introTitle": "احفظ القصة مع الصور",
+    "exampleLabel": "مثال — التسميات تظهر هنا فقط، وليس في فيديوك",
+    "exampleCap1": "ذلك اليوم عند البحيرة مع الجميع.",
+    "exampleCap2": "أمسكت بيده طوال الطريق على الشاطئ.",
+    "pickFolder": "اختر مجلداً",
+    "newTag": "جديد",
+    "langLabel": "اللغة",
+    "albumCoverTitle": "ألبوم صور",
+    "albumCoverHint": "صورك"
+  },
+  "chinese": {
+    "navStories": "故事",
+    "navPhotos": "视频相册",
+    "navPrivacy": "隐私",
+    "navDonate": "捐赠",
+    "pageTitle": "照片故事",
+    "lead": "存放在文件夹里的照片，无论实体还是数字，都会失去背景。在这里，熟悉这些照片的人为每张照片讲述，你将永远保留这段视频及其意义。",
+    "pickPhotos": "选择照片",
+    "addMore": "继续添加",
+    "clearAll": "清除",
+    "photosSelected": "已选 {n} 张照片",
+    "needPhotos": "请先至少选择一张照片。",
+    "modeLabel": "录制方式",
+    "modeAudio": "描述你的照片",
+    "modeAudioHint": "用你的声音讲述每张照片。",
+    "startRecord": "讲述你的照片",
+    "next": "下一张",
+    "back": "上一张",
+    "finish": "完成",
+    "recording": "● 录制中…",
+    "photoOf": "第 {n} 张，共 {total} 张",
+    "pause": "暂停",
+    "resume": "继续",
+    "ready": "就绪",
+    "saved": "已下载",
+    "saveVideo": "保存视频",
+    "done": "完成",
+    "readyToSave": "录制已就绪——点按“保存视频”",
+    "preparingVideo": "正在准备视频…",
+    "recordUnsupported": "此浏览器不支持录制。",
+    "noFormat": "未找到支持的录制格式。",
+    "micDenied": "麦克风权限被拒绝。请允许使用麦克风以便录制。",
+    "cameraDenied": "相机不可用或未获许可。将只录制声音。",
+    "privacy": "🔒 你的照片和录音永远不会离开你的设备。",
+    "confirmLeave": "停止录制并离开？",
+    "orientationNote": "<ul class=\"steps\"><li><strong>选择照片</strong> — 一张或多张。</li><li><strong>录制你的声音</strong>，或为 ElevenLabs 输入文字。</li><li><strong>逐张讲述</strong>，然后保存并下载。</li></ul>",
+    "emptyHint": "想加多少张就加多少张 — 可用相机、文件或文件夹。",
+    "remove": "移除",
+    "modeEleven": "文字配音（ElevenLabs）",
+    "modeElevenHint": "为每张照片写一段简短说明。使用你的 ElevenLabs 声音——无需开口说话。",
+    "captionLabel": "说明",
+    "captionPlaceholder": "这张照片要说的话…",
+    "captionsNeeded": "请至少为一张照片填写文字。",
+    "skipEmptyNote": "没有文字的照片会被跳过。",
+    "elevenLabsVoice": "使用我的 ElevenLabs 声音",
+    "elevenLabsTitle": "ElevenLabs 声音",
+    "elevenLabsKeyLabel": "API 密钥",
+    "elevenLabsVoiceLabel": "声音 ID",
+    "elevenLabsKeyNote": "你的密钥只留在本机，绝不会发送到 ALSounds。",
+    "elevenLabsSave": "保存并继续",
+    "elevenLabsCancel": "取消",
+    "elevenLabsForget": "忘记密钥",
+    "elevenLabsGenerating": "正在生成语音…",
+    "elevenLabsError": "无法生成语音。请检查 API 密钥和声音 ID。",
+    "elevenLabsMissing": "请输入你的 ElevenLabs API 密钥和声音 ID。",
+    "elevenLabsKeyPlaceholder": "sk_...",
+    "elevenLabsPaste": "粘贴",
+    "elevenLabsClipboardBlocked": "剪贴板被拦截——请用 Ctrl+V 粘贴（手机上可长按）。",
+    "elevenLabsVoicePlaceholder": "声音 ID",
+    "elevenLabsGuideSummary": "如何找到这些信息",
+    "elevenLabsGuideHtml": "<ol><li><strong>API 密钥</strong><ol><li>打开 <a href=\"https://elevenlabs.io/app/settings/api-keys\" target=\"_blank\" rel=\"noopener\">API Keys</a>。</li><li>点击 <strong>Create key</strong>。</li><li>将 <strong>Text to Speech</strong> 设为 <strong>Access</strong>。</li><li>复制密钥（以 <code>sk_</code> 开头）并粘贴到这里。</li></ol></li><li><strong>声音 ID</strong><ol><li>打开 <a href=\"https://elevenlabs.io/app/voice-lab\" target=\"_blank\" rel=\"noopener\">My Voices</a>。</li><li>在你的声音上点击 <strong>More actions</strong>（⋯）。</li><li>点击 <strong>Copy voice ID</strong>。</li><li>粘贴到这里。</li></ol></li></ol>",
+    "takePhoto": "拍照",
+    "introTitle": "让故事与照片同在",
+    "exampleLabel": "示例 — 字幕仅在此处显示，不会出现在你的视频中",
+    "exampleCap1": "那天全家一起在湖边。",
+    "exampleCap2": "她一路牵着他的手走在沙滩上。",
+    "pickFolder": "选择文件夹",
+    "newTag": "新",
+    "langLabel": "语言",
+    "albumCoverTitle": "相册",
+    "albumCoverHint": "你的照片"
+  },
+  "hindi": {
+    "navStories": "कहानियाँ",
+    "navPhotos": "वीडियो एल्बम",
+    "navPrivacy": "गोपनीयता",
+    "navDonate": "दान करें",
+    "pageTitle": "फ़ोटो कहानी",
+    "lead": "किसी फ़ोल्डर में पड़ी तस्वीरें, असली हो या डिजिटल, अपना संदर्भ खो देती हैं। यहाँ उन्हें जानने वाला कोई हर तस्वीर के बारे में बोलता है, और आप वह वीडियो - और उसका अर्थ - हमेशा के लिए रखते हैं।",
+    "pickPhotos": "तस्वीरें चुनें",
+    "addMore": "और जोड़ें",
+    "clearAll": "साफ़ करें",
+    "photosSelected": "{n} फ़ोटो चुनी गईं",
+    "needPhotos": "पहले कम से कम एक फ़ोटो चुनें।",
+    "modeLabel": "रिकॉर्ड कैसे करें",
+    "modeAudio": "अपनी तस्वीरें बताएँ",
+    "modeAudioHint": "हर तस्वीर पर अपनी आवाज़ में बोलें।",
+    "startRecord": "अपनी तस्वीरें सुनाएँ",
+    "next": "अगला",
+    "back": "पिछला",
+    "finish": "समाप्त",
+    "recording": "● रिकॉर्ड हो रहा है…",
+    "photoOf": "फ़ोटो {n} / {total}",
+    "pause": "रोकें",
+    "resume": "जारी रखें",
+    "ready": "तैयार",
+    "saved": "डाउनलोड हो गया",
+    "saveVideo": "वीडियो सहेजें",
+    "done": "हो गया",
+    "readyToSave": "रिकॉर्डिंग तैयार — वीडियो सहेजें पर टैप करें",
+    "preparingVideo": "आपका वीडियो तैयार हो रहा है…",
+    "recordUnsupported": "इस ब्राउज़र में रिकॉर्डिंग समर्थित नहीं है.",
+    "noFormat": "कोई समर्थित रिकॉर्डिंग प्रारूप नहीं मिला.",
+    "micDenied": "माइक्रोफ़ोन की अनुमति नहीं मिली. रिकॉर्ड करने के लिए अनुमति दें.",
+    "cameraDenied": "कैमरा उपलब्ध नहीं या अनुमति नहीं. केवल आवाज़ रिकॉर्ड होगी.",
+    "privacy": "🔒 आपकी फ़ोटो और रिकॉर्डिंग आपके डिवाइस से कभी बाहर नहीं जातीं.",
+    "confirmLeave": "रिकॉर्डिंग रोककर बाहर जाएँ?",
+    "orientationNote": "<ul class=\"steps\"><li><strong>तस्वीरें चुनें</strong> — एक या कई।</li><li><strong>अपनी आवाज़ रिकॉर्ड करें</strong>, या ElevenLabs के लिए टाइप करें।</li><li><strong>हर तस्वीर पर बोलें</strong>, फिर सहेजें और डाउनलोड करें।</li></ul>",
+    "emptyHint": "जितनी चाहें तस्वीरें जोड़ें — कैमरा, फ़ाइलें या फ़ोल्डर से।",
+    "remove": "हटाएँ",
+    "modeEleven": "टाइप की आवाज़ (ElevenLabs)",
+    "modeElevenHint": "हर फ़ोटो के लिए छोटी सी बात लिखें। आपकी ElevenLabs आवाज़ इस्तेमाल होगी — बोलने की ज़रूरत नहीं।",
+    "captionLabel": "विवरण",
+    "captionPlaceholder": "इस फ़ोटो पर क्या कहना है…",
+    "captionsNeeded": "कम से कम एक फ़ोटो के लिए टेक्स्ट जोड़ें।",
+    "skipEmptyNote": "बिना टेक्स्ट वाली फ़ोटो छोड़ दी जाएँगी।",
+    "elevenLabsVoice": "मेरी ElevenLabs आवाज़ इस्तेमाल करें",
+    "elevenLabsTitle": "ElevenLabs आवाज़",
+    "elevenLabsKeyLabel": "API कुंजी",
+    "elevenLabsVoiceLabel": "वॉइस ID",
+    "elevenLabsKeyNote": "आपकी कुंजी आपके डिवाइस पर रहती है। ALSounds को कभी नहीं भेजी जाती।",
+    "elevenLabsSave": "सहेजें और जारी रखें",
+    "elevenLabsCancel": "रद्द करें",
+    "elevenLabsForget": "कुंजी भूल जाएँ",
+    "elevenLabsGenerating": "भाषण बनाया जा रहा है…",
+    "elevenLabsError": "भाषण नहीं बन सका। अपनी API कुंजी और वॉइस ID जाँचें।",
+    "elevenLabsMissing": "अपनी ElevenLabs API कुंजी और वॉइस ID दर्ज करें।",
+    "elevenLabsKeyPlaceholder": "sk_...",
+    "elevenLabsPaste": "पेस्ट",
+    "elevenLabsClipboardBlocked": "क्लिपबोर्ड अवरुद्ध — Ctrl+V से पेस्ट करें (मोबाइल पर देर तक दबाएँ)।",
+    "elevenLabsVoicePlaceholder": "वॉइस ID",
+    "elevenLabsGuideSummary": "ये कैसे खोजें",
+    "elevenLabsGuideHtml": "<ol><li><strong>API कुंजी</strong><ol><li><a href=\"https://elevenlabs.io/app/settings/api-keys\" target=\"_blank\" rel=\"noopener\">API Keys</a> खोलें।</li><li><strong>Create key</strong> पर क्लिक करें।</li><li><strong>Text to Speech</strong> को <strong>Access</strong> पर सेट करें।</li><li>कुंजी कॉपी करें (<code>sk_</code> से शुरू) और यहाँ पेस्ट करें।</li></ol></li><li><strong>वॉइस ID</strong><ol><li><a href=\"https://elevenlabs.io/app/voice-lab\" target=\"_blank\" rel=\"noopener\">My Voices</a> खोलें।</li><li>अपनी आवाज़ पर <strong>More actions</strong> (⋯) क्लिक करें।</li><li><strong>Copy voice ID</strong> पर क्लिक करें।</li><li>यहाँ पेस्ट करें।</li></ol></li></ol>",
+    "takePhoto": "फ़ोटो लें",
+    "introTitle": "तस्वीरों के साथ कहानी संजोएँ",
+    "exampleLabel": "उदाहरण — कैप्शन सिर्फ यहाँ दिखते हैं, आपके वीडियो में नहीं",
+    "exampleCap1": "वह दिन झील पर, सब साथ।",
+    "exampleCap2": "उसने पूरे रास्ते समुद्र तट पर उसका हाथ पकड़ा।",
+    "pickFolder": "फ़ोल्डर चुनें",
+    "newTag": "नया",
+    "langLabel": "भाषा",
+    "albumCoverTitle": "फ़ोटो एल्बम",
+    "albumCoverHint": "आपकी तस्वीरें"
+  },
+  "irish": {
+    "navStories": "Scéalta",
+    "navPhotos": "Albam físe",
+    "navPrivacy": "Príobháideachas",
+    "navDonate": "Bronn",
+    "pageTitle": "Scéal grianghraf",
+    "lead": "Cailleann grianghraif i bhfillteán, fíor nó digiteach, a gcomhthéacs. Anseo, labhraíonn duine a bhfuil aithne aige orthu faoi gach ceann, agus coinníonn tú an físeán sin - agus a bhrí - go deo.",
+    "pickPhotos": "Roghnaigh grianghraif",
+    "addMore": "Cuir tuilleadh leis",
+    "clearAll": "Glan",
+    "photosSelected": "{n} grianghraf roghnaithe",
+    "needPhotos": "Roghnaigh grianghraf amháin ar a laghad ar dtús.",
+    "modeLabel": "Conas taifeadadh",
+    "modeAudio": "Déan cur síos ar do ghrianghraif",
+    "modeAudioHint": "Labhair faoi gach grianghraf i do ghuth féin.",
+    "startRecord": "Inis faoi do ghrianghraif",
+    "next": "Ar aghaidh",
+    "back": "Siar",
+    "finish": "Críochnaigh",
+    "recording": "● Á thaifeadadh…",
+    "photoOf": "Grianghraf {n} as {total}",
+    "pause": "Sos",
+    "resume": "Lean ar aghaidh",
+    "ready": "Réidh",
+    "saved": "Íoslódáilte",
+    "saveVideo": "Sábháil físeán",
+    "done": "Déanta",
+    "readyToSave": "Taifeadadh réidh — tapáil Sábháil físeán",
+    "preparingVideo": "D'fhíseán á ullmhú…",
+    "recordUnsupported": "Ní thacaíonn an brabhsálaí seo le taifeadadh.",
+    "noFormat": "Níor aimsíodh formáid thaifeadta a dtacaítear léi.",
+    "micDenied": "Diúltaíodh rochtain ar an micreafón. Ceadaigh an micreafón le taifeadadh.",
+    "cameraDenied": "Ceamara nach bhfuil ar fáil nó gan chead. Do ghuth amháin a thaifeadfar.",
+    "privacy": "🔒 Ní fhágann do ghrianghraif ná do thaifeadadh do ghléas riamh.",
+    "confirmLeave": "Stop an taifeadadh agus fág?",
+    "orientationNote": "<ul class=\"steps\"><li><strong>Roghnaigh grianghraif</strong> — ceann amháin nó níos mó.</li><li><strong>Taifead do ghuth</strong>, nó clóscríobh do ElevenLabs.</li><li><strong>Labhair faoi gach grianghraf</strong>, ansin sábháil agus íoslódáil.</li></ul>",
+    "emptyHint": "Cuir isteach an oiread grianghraf agus is mian leat — ón gceamara, ó chomhaid, nó ó fhillteán.",
+    "remove": "Bain",
+    "modeEleven": "Guth clóscríofa (ElevenLabs)",
+    "modeElevenHint": "Scríobh cur síos gairid ar gach grianghraf. Úsáideann sé do ghuth ElevenLabs — gan labhairt.",
+    "captionLabel": "Cur síos",
+    "captionPlaceholder": "Cad atá le rá faoin ngrianghraf seo…",
+    "captionsNeeded": "Cuir téacs le grianghraf amháin ar a laghad.",
+    "skipEmptyNote": "Déantar neamhaird de ghrianghraif gan téacs.",
+    "elevenLabsVoice": "Úsáid mo ghuth ElevenLabs",
+    "elevenLabsTitle": "Guth ElevenLabs",
+    "elevenLabsKeyLabel": "Eochair API",
+    "elevenLabsVoiceLabel": "Aitheantas gutha",
+    "elevenLabsKeyNote": "Fanann d'eochair ar do ghléas. Ní sheoltar chuig ALSounds í riamh.",
+    "elevenLabsSave": "Sábháil & lean ar aghaidh",
+    "elevenLabsCancel": "Cealaigh",
+    "elevenLabsForget": "Déan dearmad ar an eochair",
+    "elevenLabsGenerating": "Caint á giniúint…",
+    "elevenLabsError": "Níorbh fhéidir caint a ghiniúint. Seiceáil d'eochair API agus d'aitheantas gutha.",
+    "elevenLabsMissing": "Cuir isteach d'eochair API ElevenLabs agus d'aitheantas gutha.",
+    "elevenLabsKeyPlaceholder": "sk_...",
+    "elevenLabsPaste": "Greamaigh",
+    "elevenLabsClipboardBlocked": "Gearrthaisce blocáilte — greamaigh le Ctrl+V (nó brúigh go fada ar fhón).",
+    "elevenLabsVoicePlaceholder": "Aitheantas gutha",
+    "elevenLabsGuideSummary": "Conas iad seo a aimsiú",
+    "elevenLabsGuideHtml": "<ol><li><strong>Eochair API</strong><ol><li>Oscail <a href=\"https://elevenlabs.io/app/settings/api-keys\" target=\"_blank\" rel=\"noopener\">API Keys</a>.</li><li>Cliceáil <strong>Create key</strong>.</li><li>Socraigh <strong>Text to Speech</strong> go <strong>Access</strong>.</li><li>Cóipeáil an eochair (tosaíonn le <code>sk_</code>) agus greamaigh anseo í.</li></ol></li><li><strong>Aitheantas gutha</strong><ol><li>Oscail <a href=\"https://elevenlabs.io/app/voice-lab\" target=\"_blank\" rel=\"noopener\">My Voices</a>.</li><li>Cliceáil <strong>More actions</strong> (⋯) ar do ghuth.</li><li>Cliceáil <strong>Copy voice ID</strong>.</li><li>Greamaigh anseo é.</li></ol></li></ol>",
+    "takePhoto": "Tóg grianghraif",
+    "introTitle": "Coinnigh an scéal leis na grianghraif",
+    "exampleLabel": "Sampla — taispeántar fotheidil anseo amháin, ní i d’fhíseán",
+    "exampleCap1": "An lá sin ag an loch le gach duine le chéile.",
+    "exampleCap2": "Choinnigh sí a lámh an bealach ar fad ar an trá.",
+    "pickFolder": "Roghnaigh fillteán",
+    "newTag": "Nua",
+    "langLabel": "Teanga",
+    "albumCoverTitle": "Albam grianghraf",
+    "albumCoverHint": "Do ghrianghraif"
+  }
+};
+﻿const NAV_TO_LANG = { en:'english', pt:'portuguese', es:'spanish', it:'italian', de:'german', ar:'arabic', zh:'chinese', hi:'hindi', ga:'irish' };
+const LANG_LABELS = { english:'English', portuguese:'Português', spanish:'Español', italian:'Italiano', german:'Deutsch', arabic:'العربية', chinese:'中文', hindi:'हिन्दी', irish:'Gaeilge' };
+const LANG_ORDER = ['en','pt','es','it','de','ar','zh','hi','ga'];
+const IS_ANDROID = /Android/i.test(navigator.userAgent);
+const IS_IOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+let currentLang = 'english';
+let photos = [];
+let currentIndex = 0;
+let micStream = null, camStream = null;
+let recorder = null, recChunks = [], isRecording = false, recStartMs = 0, recPausedMs = 0;
+let drawTimer = null, canvasW = 1280, canvasH = 720;
+var latestRecBlob = null, latestRecUrl = null, latestRecFilename = 'photo-story.webm';
+let albumCoverUntil = 0;
+let albumAudioCtx = null, albumDest = null, albumMicSource = null, pageFlipBuffer = null, pageFlipGain = null;
+const PAGE_TURN_URL = '../assets/page-turn.wav';
+const ALBUM_COVER_MS = 1600;
+
+function ui(key) {
+  const pack = PHOTO_UI[currentLang] || PHOTO_UI.english;
+  return (pack[key] != null ? pack[key] : PHOTO_UI.english[key]) || key;
+}
+function fmt(str, map) {
+  return String(str).replace(/\{(\w+)\}/g, (_, k) => (map[k] != null ? map[k] : ''));
+}
+function setLang(navCode) {
+  currentLang = NAV_TO_LANG[navCode] || 'english';
+  const sel = document.getElementById('lang-select');
+  if (sel && sel.value !== navCode) sel.value = navCode;
+  try { sessionStorage.setItem('alsounds-lang', currentLang); } catch (e) {}
+  updateUi();
+}
+function updateUi() {
+  const isRtl = currentLang === 'arabic';
+  const htmlLang = currentLang === 'arabic' ? 'ar' : currentLang === 'chinese' ? 'zh-Hans' : currentLang === 'hindi' ? 'hi' : currentLang === 'irish' ? 'ga' : (Object.entries(NAV_TO_LANG).find(([,v]) => v === currentLang) || ['en'])[0];
+  document.documentElement.lang = htmlLang;
+  document.documentElement.dir = isRtl ? 'rtl' : 'ltr';
+  const set = (id, t) => { const el = document.getElementById(id); if (el) el.textContent = t; };
+  set('ui-nav-stories', ui('navStories'));
+  set('ui-nav-photos-label', ui('navPhotos'));
+  set('ui-nav-privacy', ui('navPrivacy'));
+  set('ui-lang-label', ui('langLabel'));
+  set('ui-page-title', ui('pageTitle'));
+  set('ui-lead', ui('lead'));
+  set('ui-intro-title', ui('introTitle'));
+{ const o = document.getElementById('ui-orientation'); if (o) o.innerHTML = ui('orientationNote') || ''; }
+  set('ui-pick', ui('pickPhotos'));
+  set('ui-pick-folder', ui('pickFolder'));
+  set('ui-add', ui('addMore'));
+  set('ui-take-photo', ui('takePhoto'));
+  set('ui-clear', ui('clearAll'));
+  set('ui-empty-hint', ui('emptyHint'));
+  set('ui-mode-label', ui('modeLabel'));
+  set('ui-mode-audio', ui('modeAudio'));
+  set('ui-mode-audio-hint', ui('modeAudioHint'));
+  set('ui-mode-eleven', ui('modeEleven'));
+  set('ui-mode-eleven-hint', ui('modeElevenHint'));
+  set('ui-example-label', ui('exampleLabel'));
+  set('ui-example-cap1', ui('exampleCap1'));
+  set('ui-example-cap2', ui('exampleCap2'));
+  set('ui-skip-empty', ui('skipEmptyNote'));
+  if (typeof updateElevenLabsModalLabels === 'function') updateElevenLabsModalLabels();
+  if (typeof syncModeUi === 'function') syncModeUi();
+  set('ui-start', ui('startRecord'));
+  set('ui-privacy', ui('privacy'));
+  set('ui-rec-status', ui('recording'));
+  set('ui-back', ui('back'));
+  set('ui-next', ui('next'));
+  set('ui-finish', ui('finish'));
+  set('ui-preparing', ui('preparingVideo'));
+  set('ui-ready-save', ui('readyToSave'));
+  set('ui-save', ui('saveVideo'));
+  set('ui-done', ui('done'));
+  document.title = ui('pageTitle') + ' — ALSounds';
+  refreshCount();
+  updatePhotoOf();
+}
+function buildLangButtons() {
+  const sel = document.getElementById('lang-select');
+  if (!sel) return;
+  sel.innerHTML = '';
+  LANG_ORDER.forEach((code) => {
+    const lang = NAV_TO_LANG[code];
+    const opt = document.createElement('option');
+    opt.value = code;
+    opt.textContent = LANG_LABELS[lang];
+    if (lang === currentLang) opt.selected = true;
+    sel.appendChild(opt);
+  });
+  sel.onchange = () => setLang(sel.value);
+}
+function refreshCount() {
+  const el = document.getElementById('ui-count');
+  const has = photos.length > 0;
+  document.getElementById('btn-add').hidden = !has;
+  document.getElementById('btn-clear').hidden = !has;
+  el.textContent = has ? fmt(ui('photosSelected'), { n: photos.length }) : '';
+}
+function renderThumbs() {
+  const box = document.getElementById('thumbs');
+  box.innerHTML = '';
+  photos.forEach((p, i) => {
+    const d = document.createElement('div');
+    d.className = 'thumb';
+    const img = document.createElement('img');
+    img.src = p.url; img.alt = '';
+    const btn = document.createElement('button');
+    btn.type = 'button'; btn.textContent = '×'; btn.title = ui('remove');
+    btn.onclick = () => { photos.splice(i,1); renderThumbs(); refreshCount(); };
+    d.appendChild(img); d.appendChild(btn); box.appendChild(d);
+  });
+}
+async function addFiles(fileList) {
+  for (const file of fileList) {
+    if (!file.type || !file.type.startsWith('image/')) continue;
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.decoding = 'async';
+    try {
+      await new Promise((res, rej) => { img.onload = res; img.onerror = rej; img.src = url; });
+    } catch (e) { URL.revokeObjectURL(url); continue; }
+    const maxEdge = 1920;
+    let w = img.naturalWidth, h = img.naturalHeight;
+    const scale = Math.min(1, maxEdge / Math.max(w, h));
+    const cw = Math.max(1, Math.round(w * scale)), ch = Math.max(1, Math.round(h * scale));
+    const c = document.createElement('canvas');
+    c.width = cw; c.height = ch;
+    c.getContext('2d').drawImage(img, 0, 0, cw, ch);
+    URL.revokeObjectURL(url);
+    const nice = new Image();
+    await new Promise((res) => { nice.onload = res; nice.src = c.toDataURL('image/jpeg', 0.92); });
+    photos.push({ url: nice.src, img: nice, w: cw, h: ch });
+  }
+  renderThumbs(); refreshCount();
+}
+document.getElementById('file-input').addEventListener('change', async (e) => {
+  await addFiles(e.target.files || []);
+  e.target.value = '';
+});
+document.getElementById('folder-input').addEventListener('change', async (e) => {
+  await addFiles(e.target.files || []);
+  e.target.value = '';
+});
+document.getElementById('camera-input').addEventListener('change', async (e) => {
+  const input = e.target;
+  const files = input.files || [];
+  if (!files.length) { input.value = ''; return; }
+  await addFiles(files);
+  input.value = '';
+  // Re-open camera so more shots can be added; cancel the picker to stop.
+  setTimeout(() => { try { input.click(); } catch (err) {} }, 120);
+});
+document.getElementById('btn-add').onclick = () => document.getElementById('file-input').click();
+document.getElementById('btn-clear').onclick = () => { photos = []; renderThumbs(); refreshCount(); };
+
+function pickMime() {
+  if (!window.MediaRecorder) return '';
+  const candidates = [
+    'video/mp4;codecs=avc1.42E01E,mp4a.40.2',
+    'video/mp4;codecs=avc1,mp4a.40.2',
+    'video/mp4',
+    'video/webm;codecs=vp9,opus',
+    'video/webm;codecs=vp8,opus',
+    'video/webm',
+  ];
+  return candidates.find(t => MediaRecorder.isTypeSupported(t)) || '';
+}
+async function ensureMic() {
+  if (micStream && micStream.active) return true;
+  try {
+    micStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation:true, noiseSuppression:true }, video:false });
+    return true;
+  } catch (e) { alert(ui('micDenied')); return false; }
+}
+function releaseAV() {
+  if (micStream) { micStream.getTracks().forEach(t => t.stop()); micStream = null; }
+  if (camStream) { camStream.getTracks().forEach(t => t.stop()); camStream = null; }
+}
+function chooseOutputSize() {
+  // Landscape-first framing. If the phone is held portrait at Start, output stays portrait.
+  // Photos still fill via contain + blurred cover (no crop, no black bars).
+  let portrait = false;
+  try {
+    if (screen.orientation && screen.orientation.type) portrait = String(screen.orientation.type).includes('portrait');
+    else if (window.matchMedia) portrait = window.matchMedia('(orientation: portrait)').matches;
+    else portrait = window.innerHeight > window.innerWidth;
+  } catch (e) { portrait = window.innerHeight > window.innerWidth; }
+  // Desktop / wide windows: always landscape even if the window is tall.
+  if (!IS_IOS && !IS_ANDROID && window.innerWidth >= 900) portrait = false;
+  const scale = IS_ANDROID ? 0.75 : 1;
+  if (portrait) { canvasW = Math.round(720 * scale); canvasH = Math.round(1280 * scale); }
+  else { canvasW = Math.round(1280 * scale); canvasH = Math.round(720 * scale); }
+}
+function drawCoverBlur(ctx, img, W, H) {
+  const iw = img.naturalWidth || img.width, ih = img.naturalHeight || img.height;
+  const cover = Math.max(W / iw, H / ih);
+  const dw = iw * cover, dh = ih * cover;
+  const dx = (W - dw) / 2, dy = (H - dh) / 2;
+  ctx.save();
+  ctx.filter = 'blur(28px) brightness(0.72)';
+  ctx.drawImage(img, dx - 20, dy - 20, dw + 40, dh + 40);
+  ctx.restore();
+}
+function drawContain(ctx, img, W, H) {
+  const iw = img.naturalWidth || img.width, ih = img.naturalHeight || img.height;
+  const fit = Math.min(W / iw, H / ih);
+  const dw = iw * fit, dh = ih * fit;
+  ctx.drawImage(img, (W - dw) / 2, (H - dh) / 2, dw, dh);
+}
+
+async function ensurePageFlipAudio() {
+  if (pageFlipBuffer) return true;
+  try {
+    if (!albumAudioCtx) albumAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const res = await fetch(PAGE_TURN_URL);
+    const arr = await res.arrayBuffer();
+    pageFlipBuffer = await albumAudioCtx.decodeAudioData(arr.slice(0));
+    return true;
+  } catch (e) { console.warn('page-turn sound unavailable', e); return false; }
+}
+async function setupAlbumAudioGraph(mic) {
+  if (!albumAudioCtx) albumAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (albumAudioCtx.state === 'suspended') await albumAudioCtx.resume();
+  await ensurePageFlipAudio();
+  if (albumMicSource) { try { albumMicSource.disconnect(); } catch (e) {} albumMicSource = null; }
+  albumDest = albumAudioCtx.createMediaStreamDestination();
+  albumMicSource = albumAudioCtx.createMediaStreamSource(mic);
+  albumMicSource.connect(albumDest);
+  if (!pageFlipGain) {
+    pageFlipGain = albumAudioCtx.createGain();
+    pageFlipGain.gain.value = 0.7;
+  }
+  try { pageFlipGain.disconnect(); } catch (e) {}
+  pageFlipGain.connect(albumDest);
+  return albumDest.stream;
+}
+function releaseAlbumAudioGraph() {
+  try { if (albumMicSource) albumMicSource.disconnect(); } catch (e) {}
+  albumMicSource = null; albumDest = null;
+}
+function playPageTurn() {
+  try {
+    if (!albumAudioCtx || !pageFlipBuffer || !pageFlipGain) {
+      // local-only fallback
+      const a = new Audio(PAGE_TURN_URL); a.volume = 0.55; a.play().catch(()=>{});
+      return;
+    }
+    if (albumAudioCtx.state === 'suspended') albumAudioCtx.resume();
+    const src = albumAudioCtx.createBufferSource();
+    src.buffer = pageFlipBuffer;
+    src.connect(pageFlipGain);
+    src.start(0);
+  } catch (e) {}
+}
+function drawAlbumCover(ctx, W, H) {
+  // Bound photo-book cover
+  ctx.fillStyle = '#1a1420';
+  ctx.fillRect(0, 0, W, H);
+  const margin = Math.round(Math.min(W, H) * 0.06);
+  const spine = Math.round(W * 0.045);
+  // cover board
+  const x = margin, y = margin, cw = W - margin * 2, ch = H - margin * 2;
+  const grd = ctx.createLinearGradient(x, y, x + cw, y + ch);
+  grd.addColorStop(0, '#3a2a1c');
+  grd.addColorStop(0.45, '#5a3f28');
+  grd.addColorStop(1, '#2c1e14');
+  ctx.fillStyle = grd;
+  roundRectPath(ctx, x, y, cw, ch, Math.round(Math.min(cw, ch) * 0.03));
+  ctx.fill();
+  // spine
+  ctx.fillStyle = 'rgba(0,0,0,0.35)';
+  ctx.fillRect(x, y, spine, ch);
+  ctx.fillStyle = 'rgba(244,213,141,0.35)';
+  ctx.fillRect(x + spine - 2, y + 8, 2, ch - 16);
+  // photo window
+  const inset = Math.round(Math.min(cw, ch) * 0.1);
+  const px = x + spine + inset, py = y + inset;
+  const pw = cw - spine - inset * 2, ph = ch - inset * 2 - Math.round(H * 0.12);
+  ctx.fillStyle = '#f3ead7';
+  ctx.fillRect(px - 6, py - 6, pw + 12, ph + 12);
+  const p = photos[0];
+  if (p && p.img) {
+    const iw = p.img.naturalWidth || p.img.width, ih = p.img.naturalHeight || p.img.height;
+    const fit = Math.max(pw / iw, ph / ih);
+    const dw = iw * fit, dh = ih * fit;
+    ctx.save();
+    ctx.beginPath(); ctx.rect(px, py, pw, ph); ctx.clip();
+    ctx.drawImage(p.img, px + (pw - dw) / 2, py + (ph - dh) / 2, dw, dh);
+    ctx.restore();
+  } else {
+    ctx.fillStyle = '#cfc3a8';
+    ctx.fillRect(px, py, pw, ph);
+  }
+  // title band (album chrome, not photo captions)
+  ctx.fillStyle = 'rgba(243,234,215,0.95)';
+  const bandY = py + ph + 10;
+  ctx.fillRect(px - 6, bandY, pw + 12, Math.round(H * 0.09));
+  ctx.fillStyle = '#2a1c12';
+  ctx.font = '600 ' + Math.round(H * 0.045) + 'px Georgia, serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(ui('albumCoverTitle'), px + pw / 2, bandY + Math.round(H * 0.045));
+}
+function roundRectPath(ctx, x, y, w, h, rad) {
+  const r = Math.min(rad, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+function drawFrame() {
+  const canvas = document.getElementById('live-canvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, W, H);
+  if (performance.now() < albumCoverUntil) {
+    drawAlbumCover(ctx, W, H);
+    return;
+  }
+  const p = photos[currentIndex];
+  if (p && p.img) { drawCoverBlur(ctx, p.img, W, H); drawContain(ctx, p.img, W, H); }
+}
+function updatePhotoOf() {
+  const el = document.getElementById('ui-photo-of');
+  if (!el) return;
+  el.textContent = photos.length ? fmt(ui('photoOf'), { n: currentIndex + 1, total: photos.length }) : '';
+  document.getElementById('btn-back-photo').disabled = !isRecording || currentIndex <= 0;
+  document.getElementById('btn-next-photo').disabled = !isRecording || currentIndex >= photos.length - 1;
+}
+function updateTimer() {
+  if (!isRecording) return;
+  const s = Math.max(0, Math.floor((performance.now() - recStartMs - recPausedMs) / 1000));
+  document.getElementById('ui-timer').textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+}
+async function startRecording() {
+  if (!photos.length) { alert(ui('needPhotos')); return; }
+  if (!window.MediaRecorder) { alert(ui('recordUnsupported')); return; }
+  const mime = pickMime();
+  if (!mime) { alert(ui('noFormat')); return; }
+  if (!(await ensureMic())) return;
+  chooseOutputSize();
+  const canvas = document.getElementById('live-canvas');
+  canvas.width = canvasW; canvas.height = canvasH;
+  currentIndex = 0; updatePhotoOf();
+  albumCoverUntil = performance.now() + ALBUM_COVER_MS;
+  drawFrame();
+  let track = null;
+  const fps = 24;
+  const stream = IS_ANDROID ? canvas.captureStream(0) : canvas.captureStream(fps);
+  if (IS_ANDROID) track = stream.getVideoTracks()[0] || null;
+  if (drawTimer) clearInterval(drawTimer);
+  drawTimer = setInterval(() => { drawFrame(); if (track && track.requestFrame) track.requestFrame(); updateTimer(); }, 1000 / fps);
+  let audioForRec = micStream;
+  try { audioForRec = await setupAlbumAudioGraph(micStream); } catch (e) { console.warn(e); }
+  const recordStream = new MediaStream([...stream.getVideoTracks(), ...audioForRec.getAudioTracks()]);
+  recChunks = [];
+  try {
+    recorder = new MediaRecorder(recordStream, { mimeType: mime, audioBitsPerSecond: 128000, videoBitsPerSecond: IS_ANDROID ? 1500000 : 2500000 });
+  } catch (e) {
+    alert(ui('noFormat')); releaseAV(); clearInterval(drawTimer); drawTimer = null; return;
+  }
+  recorder.ondataavailable = e => { if (e.data && e.data.size) recChunks.push(e.data); };
+  recorder.onerror = (e) => console.error("MediaRecorder error", e && e.error);
+  recorder.onstop = () => { void finishRecording(); };
+  recorder.start(250);
+  isRecording = true; recPausedMs = 0; recStartMs = performance.now();
+  document.getElementById('view-setup').style.display = 'none';
+  document.getElementById('view-record').classList.add('show');
+  document.body.style.overflow = 'hidden';
+  updatePhotoOf();
+}
+function stopRecording() {
+  if (!isRecording || !recorder) return;
+  try { if (recorder.state !== 'inactive') recorder.stop(); } catch (e) {}
+}
+async function finishRecording() {
+  isRecording = false;
+  if (drawTimer) { clearInterval(drawTimer); drawTimer = null; }
+  releaseAV();
+  releaseAlbumAudioGraph();
+  albumCoverUntil = 0;
+  document.getElementById('view-record').classList.remove('show');
+  document.body.style.overflow = '';
+  document.getElementById('view-setup').style.display = '';
+  if (!recChunks.length) return;
+  document.getElementById('preparing').classList.add('show');
+  await new Promise(r => setTimeout(r, 40));
+  const mime = (recorder && recorder.mimeType) || 'video/webm';
+  const blob = new Blob(recChunks, { type: mime });
+  recChunks = []; recorder = null;
+  if (latestRecUrl) URL.revokeObjectURL(latestRecUrl);
+  latestRecBlob = blob;
+  latestRecUrl = URL.createObjectURL(blob);
+  const ext = /mp4/i.test(mime) ? 'mp4' : 'webm';
+  latestRecFilename = 'alsounds-photo-story-' + new Date().toISOString().slice(0,19).replace(/[:T]/g,'-') + '.' + ext;
+  document.getElementById('preparing').classList.remove('show');
+  if (IS_IOS) {
+    document.getElementById('btn-done').hidden = true;
+    document.getElementById('overlay-save').classList.add('show');
+  } else {
+    downloadRecording();
+  }
+}
+function downloadRecording() {
+  if (!latestRecUrl) return;
+  const a = document.createElement('a');
+  a.href = latestRecUrl; a.download = latestRecFilename; a.rel = 'noopener';
+  document.body.appendChild(a); a.click(); a.remove();
+}
+function buildRecordingFile() {
+  if (!latestRecBlob) return null;
+  try { return new File([latestRecBlob], latestRecFilename, { type: latestRecBlob.type || 'video/webm' }); } catch (e) { return null; }
+}
+async function saveIosRecording() {
+  if (!latestRecBlob && !latestRecUrl) return;
+  const file = buildRecordingFile();
+  if (!file) { downloadRecording(); document.getElementById('btn-done').hidden = false; return; }
+  try {
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({ files: [file], title: file.name });
+      document.getElementById('overlay-save').classList.remove('show');
+      return;
+    }
+  } catch (err) {
+    if (err && err.name === 'AbortError') return;
+    console.error(err);
+  }
+  downloadRecording();
+  document.getElementById('btn-done').hidden = false;
+}
+document.getElementById('btn-start').onclick = () => { void startRecording(); };
+document.getElementById('btn-next-photo').onclick = () => { if (currentIndex < photos.length - 1) { currentIndex++; albumCoverUntil = 0; playPageTurn(); updatePhotoOf(); drawFrame(); } };
+document.getElementById('btn-back-photo').onclick = () => { if (currentIndex > 0) { currentIndex--; albumCoverUntil = 0; playPageTurn(); updatePhotoOf(); drawFrame(); } };
+document.getElementById('btn-finish').onclick = () => stopRecording();
+document.getElementById('btn-save').onclick = () => { void saveIosRecording(); };
+document.getElementById('btn-done').onclick = () => { document.getElementById('overlay-save').classList.remove('show'); };
+window.addEventListener('beforeunload', (e) => { if (isRecording) { e.preventDefault(); e.returnValue = ''; } });
+try { const saved = sessionStorage.getItem('alsounds-lang'); if (saved && PHOTO_UI[saved]) currentLang = saved; } catch (e) {}
+buildLangButtons();
+updateUi();
+
+// ===== ElevenLabs photo mode =====
+const ELEVEN_LS_KEY = 'alsounds_eleven_key';
+const ELEVEN_LS_VOICE = 'alsounds_eleven_voice';
+const ELEVEN_LS_LAST_ERROR = 'alsounds_eleven_last_error';
+const ELEVEN_API = 'https://api.elevenlabs.io/v1/text-to-speech';
+const ELEVEN_MODEL = 'eleven_multilingual_v2';
+const ELEVEN_GAP_SEC = 0.7; // short pause between photos
+var elevenPending = false;
+var elevenAudioCtx = null;
+
+function getSelectedMode() {
+  return (document.querySelector('input[name="mode"]:checked') || {}).value || 'audio';
+}
+function syncModeUi() {
+  const eleven = getSelectedMode() === 'eleven';
+  const panel = document.getElementById('captions-panel');
+  if (panel) panel.hidden = !eleven;
+  if (eleven) renderCaptions();
+}
+document.querySelectorAll('input[name="mode"]').forEach(r => r.addEventListener('change', syncModeUi));
+
+function renderCaptions() {
+  const box = document.getElementById('caption-list');
+  if (!box) return;
+  box.innerHTML = '';
+  photos.forEach((p, i) => {
+    const card = document.createElement('div');
+    card.className = 'caption-card';
+    const img = document.createElement('img');
+    img.src = p.url; img.alt = '';
+    const fields = document.createElement('div');
+    fields.className = 'cap-fields';
+    const lab = document.createElement('label');
+    lab.textContent = ui('captionLabel') + ' · ' + fmt(ui('photoOf'), { n: i + 1, total: photos.length });
+    const ta = document.createElement('textarea');
+    ta.dataset.idx = String(i);
+    ta.placeholder = ui('captionPlaceholder');
+    ta.value = p.caption || '';
+    ta.addEventListener('input', () => { photos[i].caption = ta.value; });
+    fields.appendChild(lab); fields.appendChild(ta);
+    card.appendChild(img); card.appendChild(fields);
+    box.appendChild(card);
+  });
+}
+
+const _renderThumbsOrig = renderThumbs;
+renderThumbs = function() {
+  _renderThumbsOrig();
+  if (getSelectedMode() === 'eleven') renderCaptions();
+};
+
+function scrubSecretsFromText(s) {
+  return String(s || '')
+    .replace(/xi-api-key["'\s:=]+[^\s"'&,}]+/gi, 'xi-api-key=[redacted]')
+    .replace(/\bsk_[A-Za-z0-9_-]{8,}\b/g, 'sk_[redacted]')
+    .replace(/\bxi[A-Za-z0-9_-]{16,}\b/g, '[redacted]');
+}
+function formatElevenLabsErrorDetail(data) {
+  if (!data) return '';
+  const d = data.detail;
+  if (d && typeof d === 'object' && !Array.isArray(d)) {
+    const status = d.status != null ? String(d.status) : '';
+    const message = d.message != null ? String(d.message) : '';
+    if (status && message) return status + ': ' + message;
+    if (message) return message;
+    if (status) return status;
+    try { return JSON.stringify(d); } catch { return ''; }
+  }
+  if (Array.isArray(d)) {
+    return d.map(item => {
+      if (!item || typeof item !== 'object') return String(item);
+      const loc = Array.isArray(item.loc) ? item.loc.join('.') : '';
+      const msg = item.msg || item.message || '';
+      return (loc ? loc + ': ' : '') + msg;
+    }).filter(Boolean).join('; ');
+  }
+  if (typeof d === 'string') return d;
+  if (data.message) return String(data.message);
+  return '';
+}
+function getElevenLabsCreds() {
+  try {
+    return { key: (localStorage.getItem(ELEVEN_LS_KEY) || '').trim(), voice: (localStorage.getItem(ELEVEN_LS_VOICE) || '').trim() };
+  } catch { return { key: '', voice: '' }; }
+}
+function setElevenLabsCreds(key, voice) {
+  try { localStorage.setItem(ELEVEN_LS_KEY, key); localStorage.setItem(ELEVEN_LS_VOICE, voice); } catch {}
+}
+function saveElevenLabsLastError(status, detail) {
+  try {
+    localStorage.setItem(ELEVEN_LS_LAST_ERROR, JSON.stringify({
+      status: status === '' || status == null ? null : status,
+      detail: scrubSecretsFromText(detail || '') || null,
+      at: new Date().toISOString(),
+    }));
+  } catch {}
+}
+function forgetElevenLabsKey() {
+  try { localStorage.removeItem(ELEVEN_LS_KEY); localStorage.removeItem(ELEVEN_LS_VOICE); } catch {}
+  const keyIn = document.getElementById('eleven-api-key');
+  const voiceIn = document.getElementById('eleven-voice-id');
+  if (keyIn) keyIn.value = '';
+  if (voiceIn) voiceIn.value = '';
+  const err = document.getElementById('eleven-error');
+  if (err) err.textContent = '';
+}
+function updateElevenLabsModalLabels() {
+  const set = (id, text) => { const el = document.getElementById(id); if (el) el.textContent = text; };
+  set('eleven-modal-title', ui('elevenLabsTitle'));
+  set('eleven-key-label', ui('elevenLabsKeyLabel'));
+  set('eleven-voice-label', ui('elevenLabsVoiceLabel'));
+  set('eleven-key-note', ui('elevenLabsKeyNote'));
+  set('eleven-save', ui('elevenLabsSave'));
+  set('eleven-cancel', ui('elevenLabsCancel'));
+  set('eleven-forget', ui('elevenLabsForget'));
+  set('eleven-guide-summary', ui('elevenLabsGuideSummary'));
+  const guideBody = document.getElementById('eleven-guide-body');
+  if (guideBody) guideBody.innerHTML = ui('elevenLabsGuideHtml') || '';
+  const keyIn = document.getElementById('eleven-api-key');
+  const voiceIn = document.getElementById('eleven-voice-id');
+  if (keyIn) keyIn.placeholder = ui('elevenLabsKeyPlaceholder');
+  if (voiceIn) voiceIn.placeholder = ui('elevenLabsVoicePlaceholder');
+  const pasteKey = document.getElementById('eleven-paste-key');
+  const pasteVoice = document.getElementById('eleven-paste-voice');
+  if (pasteKey) pasteKey.textContent = ui('elevenLabsPaste');
+  if (pasteVoice) pasteVoice.textContent = ui('elevenLabsPaste');
+}
+async function pasteIntoElevenField(inputId) {
+  const input = document.getElementById(inputId);
+  const err = document.getElementById('eleven-error');
+  if (!input) return;
+  try {
+    if (!navigator.clipboard || !navigator.clipboard.readText) throw new Error('clipboard unavailable');
+    const text = (await navigator.clipboard.readText() || '').trim();
+    if (!text) { if (err) err.textContent = ui('elevenLabsClipboardBlocked'); return; }
+    input.value = text;
+    if (err && err.textContent === ui('elevenLabsClipboardBlocked')) err.textContent = '';
+    input.focus();
+  } catch (e) {
+    if (err) err.textContent = ui('elevenLabsClipboardBlocked');
+  }
+}
+function openElevenLabsModal() {
+  elevenPending = true;
+  updateElevenLabsModalLabels();
+  const creds = getElevenLabsCreds();
+  const keyIn = document.getElementById('eleven-api-key');
+  const voiceIn = document.getElementById('eleven-voice-id');
+  if (keyIn) keyIn.value = creds.key;
+  if (voiceIn) voiceIn.value = creds.voice;
+  const err = document.getElementById('eleven-error');
+  if (err) err.textContent = '';
+  const guide = document.getElementById('eleven-guide');
+  if (guide) guide.open = true;
+  document.getElementById('eleven-modal').classList.add('show');
+  if (keyIn) keyIn.focus();
+}
+function closeElevenLabsModal() {
+  document.getElementById('eleven-modal').classList.remove('show');
+  elevenPending = false;
+}
+function showElevenLabsPersistentError(message) {
+  elevenPending = true;
+  updateElevenLabsModalLabels();
+  const creds = getElevenLabsCreds();
+  const keyIn = document.getElementById('eleven-api-key');
+  const voiceIn = document.getElementById('eleven-voice-id');
+  if (keyIn) keyIn.value = creds.key;
+  if (voiceIn) voiceIn.value = creds.voice;
+  const err = document.getElementById('eleven-error');
+  if (err) err.textContent = scrubSecretsFromText(message || '');
+  document.getElementById('eleven-modal').classList.add('show');
+}
+function confirmElevenLabsSettings() {
+  const keyIn = document.getElementById('eleven-api-key');
+  const voiceIn = document.getElementById('eleven-voice-id');
+  const err = document.getElementById('eleven-error');
+  const key = (keyIn && keyIn.value || '').trim();
+  const voice = (voiceIn && voiceIn.value || '').trim();
+  if (!key || !voice) { if (err) err.textContent = ui('elevenLabsMissing'); return; }
+  if (err) err.textContent = '';
+  setElevenLabsCreds(key, voice);
+  document.getElementById('eleven-modal').classList.remove('show');
+  void beginPhotoElevenLabs(key, voice);
+}
+async function fetchElevenLabsSpeech(text, apiKey, voiceId) {
+  const key = String(apiKey || '').trim();
+  const vid = String(voiceId || '').trim();
+  if (!key || !vid) {
+    const err = new Error('missing api key or voice id'); err.status = 0; throw err;
+  }
+  const url = ELEVEN_API + '/' + encodeURIComponent(vid) + '/with-timestamps';
+  let res;
+  try {
+    res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'xi-api-key': key, 'Accept': 'application/json' },
+      body: JSON.stringify({ text, model_id: ELEVEN_MODEL }),
+    });
+  } catch (netErr) {
+    const err = new Error(scrubSecretsFromText((netErr && netErr.message) || 'network error'));
+    err.status = 0; err.causeKind = 'network'; throw err;
+  }
+  let data = null;
+  try { data = await res.json(); } catch {}
+  if (!res.ok) {
+    const detail = scrubSecretsFromText(formatElevenLabsErrorDetail(data));
+    const err = new Error(detail || ('HTTP ' + res.status));
+    err.status = res.status; err.detail = detail; throw err;
+  }
+  if (!data || !data.audio_base64) {
+    const err = new Error('missing audio in response'); err.status = res.status; throw err;
+  }
+  return data;
+}
+function base64ToAudioUrl(b64) {
+  const bin = atob(b64);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return URL.createObjectURL(new Blob([bytes], { type: 'audio/mpeg' }));
+}
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+async function beginPhotoElevenLabs(apiKey, voiceId) {
+  const items = photos
+    .map((p, i) => ({ i, photo: p, text: String(p.caption || '').trim() }))
+    .filter(x => x.text);
+  if (!items.length) { alert(ui('captionsNeeded')); return; }
+
+  document.getElementById('preparing').classList.add('show');
+  document.getElementById('ui-preparing').textContent = ui('elevenLabsGenerating');
+  const clips = [];
+  try {
+    for (const item of items) {
+      const data = await fetchElevenLabsSpeech(item.text, apiKey, voiceId);
+      const url = base64ToAudioUrl(data.audio_base64);
+      const audio = new Audio(url);
+      audio.preload = 'auto';
+      await new Promise((resolve, reject) => {
+        audio.oncanplaythrough = () => resolve();
+        audio.onerror = () => reject(new Error('audio decode failed'));
+        audio.load();
+      });
+      clips.push({ photoIndex: item.i, audio, url });
+    }
+    try { localStorage.removeItem(ELEVEN_LS_LAST_ERROR); } catch {}
+  } catch (err) {
+    document.getElementById('preparing').classList.remove('show');
+    document.getElementById('ui-preparing').textContent = ui('preparingVideo');
+    const status = err && err.status != null ? err.status : '';
+    const detail = scrubSecretsFromText((err && err.message) || '');
+    saveElevenLabsLastError(status, detail);
+    clips.forEach(c => { try { URL.revokeObjectURL(c.url); } catch {} });
+    const bits = [ui('elevenLabsError')];
+    if (status !== '' && status != null) bits.push('HTTP ' + status);
+    if (detail) bits.push(detail);
+    showElevenLabsPersistentError(bits.join('\n'));
+    return;
+  }
+  document.getElementById('preparing').classList.remove('show');
+  document.getElementById('ui-preparing').textContent = ui('preparingVideo');
+  await recordElevenSlideshow(clips);
+}
+
+async function recordElevenSlideshow(clips) {
+  const mime = pickMime();
+  if (!mime) { alert(ui('noFormat')); clips.forEach(c => URL.revokeObjectURL(c.url)); return; }
+  chooseOutputSize();
+  const canvas = document.getElementById('live-canvas');
+  canvas.width = canvasW; canvas.height = canvasH;
+  currentIndex = clips[0].photoIndex;
+  updatePhotoOf();
+  albumCoverUntil = performance.now() + ALBUM_COVER_MS;
+  drawFrame();
+
+  let track = null;
+  const fps = 24;
+  const vstream = IS_ANDROID ? canvas.captureStream(0) : canvas.captureStream(fps);
+  if (IS_ANDROID) track = vstream.getVideoTracks()[0] || null;
+  if (drawTimer) clearInterval(drawTimer);
+  drawTimer = setInterval(() => {
+    drawFrame();
+    if (track && track.requestFrame) track.requestFrame();
+    updateTimer();
+  }, 1000 / fps);
+
+  // Capture first clip's audio graph; reconnect per clip
+  elevenAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (elevenAudioCtx.state === 'suspended') await elevenAudioCtx.resume();
+  albumAudioCtx = elevenAudioCtx;
+  await ensurePageFlipAudio();
+  const dest = elevenAudioCtx.createMediaStreamDestination();
+  if (!pageFlipGain) pageFlipGain = elevenAudioCtx.createGain();
+  pageFlipGain.gain.value = 0.7;
+  try { pageFlipGain.disconnect(); } catch (e) {}
+  pageFlipGain.connect(dest);
+  let currentSource = null;
+
+  const recordStream = new MediaStream([
+    ...vstream.getVideoTracks(),
+    ...dest.stream.getAudioTracks(),
+  ]);
+  recChunks = [];
+  try {
+    recorder = new MediaRecorder(recordStream, { mimeType: mime, audioBitsPerSecond: 128000, videoBitsPerSecond: IS_ANDROID ? 1500000 : 2500000 });
+  } catch (e) {
+    alert(ui('noFormat'));
+    if (drawTimer) { clearInterval(drawTimer); drawTimer = null; }
+    clips.forEach(c => URL.revokeObjectURL(c.url));
+    return;
+  }
+  recorder.ondataavailable = e => { if (e.data && e.data.size) recChunks.push(e.data); };
+  recorder.onstop = () => { void finishRecording(); };
+  recorder.onerror = e => console.error('MediaRecorder error', e && e.error);
+  recorder.start(250);
+  isRecording = true; recPausedMs = 0; recStartMs = performance.now();
+  document.getElementById('view-setup').style.display = 'none';
+  document.getElementById('view-record').classList.add('show');
+  document.body.style.overflow = 'hidden';
+  // Auto slideshow: disable manual next/back during ElevenLabs play
+  document.getElementById('btn-back-photo').disabled = true;
+  document.getElementById('btn-next-photo').disabled = true;
+
+  try {
+    for (let n = 0; n < clips.length; n++) {
+      if (!isRecording) break;
+      const clip = clips[n];
+      currentIndex = clip.photoIndex;
+      albumCoverUntil = 0;
+      if (n > 0) playPageTurn();
+      updatePhotoOf();
+      drawFrame();
+      if (currentSource) { try { currentSource.disconnect(); } catch {} }
+      currentSource = elevenAudioCtx.createMediaElementSource(clip.audio);
+      currentSource.connect(dest);
+      currentSource.connect(elevenAudioCtx.destination);
+      clip.audio.currentTime = 0;
+      await new Promise((resolve) => {
+        clip.audio.onended = () => resolve();
+        clip.audio.onerror = () => resolve();
+        clip.audio.play().catch(() => resolve());
+      });
+      if (!isRecording) break;
+      // short pause between photos (still showing current photo)
+      if (n < clips.length - 1) await sleep(Math.round(ELEVEN_GAP_SEC * 1000));
+    }
+  } finally {
+    clips.forEach(c => { try { c.audio.pause(); URL.revokeObjectURL(c.url); } catch {} });
+    if (currentSource) { try { currentSource.disconnect(); } catch {} }
+    if (isRecording) stopRecording();
+  }
+}
+
+// Wrap start button to branch into ElevenLabs modal
+const _startRecordingOrig = startRecording;
+startRecording = async function() {
+  if (getSelectedMode() === 'eleven') {
+    if (!photos.length) { alert(ui('needPhotos')); return; }
+    const any = photos.some(p => String(p.caption || '').trim());
+    if (!any) { alert(ui('captionsNeeded')); return; }
+    openElevenLabsModal();
+    return;
+  }
+  return _startRecordingOrig();
+};
+updateElevenLabsModalLabels();
+syncModeUi();
+
+
+/* theme toggle */
+(function () {
+  var KEY = 'alsounds-theme';
+  function current() {
+    var t = document.documentElement.getAttribute('data-theme');
+    return t === 'dark' ? 'dark' : 'light';
+  }
+  function apply(t) {
+    document.documentElement.setAttribute('data-theme', t);
+    try { localStorage.setItem(KEY, t); } catch (e) {}
+    document.querySelectorAll('#theme-toggle, .theme-toggle').forEach(function (btn) {
+      var next = t === 'light' ? 'dark' : 'light';
+      btn.setAttribute('aria-label', next === 'light' ? 'Switch to light mode' : 'Switch to dark mode');
+      btn.title = next === 'light' ? 'Light mode' : 'Dark mode';
+      var lab = btn.querySelector('.theme-label');
+      if (lab) lab.textContent = next === 'light' ? 'Light mode' : 'Dark mode';
+    });
+  }
+  function toggle() { apply(current() === 'light' ? 'dark' : 'light'); }
+  document.addEventListener('DOMContentLoaded', function () {
+    apply(current());
+    document.querySelectorAll('#theme-toggle, .theme-toggle').forEach(function (btn) {
+      btn.addEventListener('click', toggle);
+    });
+  });
+  window.__alsoundsToggleTheme = toggle;
+})();
+
+</script>
+</body>
+</html>
