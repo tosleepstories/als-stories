@@ -5,10 +5,10 @@
 (function () {
   try {
     var t = localStorage.getItem('alsounds-theme');
-    if (t !== 'light' && t !== 'dark') t = 'light';
+    if (t !== 'light' && t !== 'dark') t = 'dark';
     document.documentElement.setAttribute('data-theme', t);
   } catch (e) {
-    document.documentElement.setAttribute('data-theme', 'light');
+    document.documentElement.setAttribute('data-theme', 'dark');
   }
 })();
 </script>
@@ -4217,7 +4217,7 @@ refreshPickerForLang().then(() => { if (location.hash === '#stories') scrollToSt
   var KEY = 'alsounds-theme';
   function current() {
     var t = document.documentElement.getAttribute('data-theme');
-    return t === 'dark' ? 'dark' : 'light';
+    return t === 'light' ? 'light' : 'dark';
   }
   function apply(t) {
     document.documentElement.setAttribute('data-theme', t);
