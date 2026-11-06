@@ -1680,7 +1680,6 @@ let recordCanvas = null;
 let recordTrack = null;
 let frameRing = [];
 let coverFramesLeft = 0;
-let coverTurnPlayed = false;
 let outputDelay = null;
 let stopTimer = null;
 const COVER_FRAMES = 48;
@@ -2290,7 +2289,6 @@ function drawFrame() {
     coverFramesLeft--;
     frameRing.push(currentIndex);
   } else {
-    if (!coverTurnPlayed) { coverTurnPlayed = true; playPageTurn(true); }
     const idx = frameRing.shift();
     if (typeof idx === 'number') {
       drawLivePhoto(rctx, RW, RH, idx);
@@ -2324,7 +2322,6 @@ async function startRecording() {
   updatePhotoOf();
   frameRing = [];
   coverFramesLeft = COVER_FRAMES;
-  coverTurnPlayed = false;
   const rec = ensureRecordCanvas();
   drawAlbumCover(rec.getContext('2d'), canvasW, canvasH);
   drawFrame();
@@ -2411,12 +2408,36 @@ function downloadRecording() {
 }
 function buildRecordingFile() {
   if (!latestRecBlob) return null;
-  try { return new File([latestRecBlob], latestRecFilename, { type: latestRecBlob.type || 'video/webm' }); } catch (e) { return null; }
+  let name = latestRecFilename || 'alsounds-photo-story.mp4';
+  let type = latestRecBlob.type || '';
+  // Same rule as the story recorder: a plain video/mp4 name so the iPhone share sheet accepts the file.
+  if (/mp4|m4a|aac|quicktime/i.test(type) || !type) {
+    type = type && /mp4/i.test(type) ? type : 'video/mp4';
+    if (!/\.mp4$/i.test(name)) name = name.replace(/\.[^.]+$/, '') + '.mp4';
+  }
+  try { return new File([latestRecBlob], name, { type: type }); }
+  catch (e) { try { return new File([latestRecBlob], name); } catch (e2) { return null; } }
+}
+function triggerAnchorDownloadOnly() {
+  if (!latestRecUrl) return;
+  const a = document.createElement('a');
+  a.href = latestRecUrl;
+  a.download = latestRecFilename || 'alsounds-photo-story.mp4';
+  a.rel = 'noopener';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  // Some iPhone builds ignore download=; opening the blob keeps the file on the device.
+  try { window.open(latestRecUrl, '_blank'); } catch (e) {}
 }
 async function saveIosRecording() {
   if (!latestRecBlob && !latestRecUrl) return;
   const file = buildRecordingFile();
-  if (!file) { downloadRecording(); document.getElementById('btn-done').hidden = false; return; }
+  if (!file) {
+    triggerAnchorDownloadOnly();
+    document.getElementById('btn-done').hidden = false;
+    return;
+  }
   try {
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
       await navigator.share({ files: [file], title: file.name });
@@ -2424,10 +2445,11 @@ async function saveIosRecording() {
       return;
     }
   } catch (err) {
+    // User cancelled the share sheet — keep Save video available.
     if (err && err.name === 'AbortError') return;
     console.error(err);
   }
-  downloadRecording();
+  triggerAnchorDownloadOnly();
   document.getElementById('btn-done').hidden = false;
 }
 document.getElementById('btn-start').onclick = () => { void startRecording(); };
@@ -2737,7 +2759,6 @@ async function recordElevenSlideshow(clips) {
   currentIndex = clips[0].photoIndex;
   frameRing = [];
   coverFramesLeft = COVER_FRAMES;
-  coverTurnPlayed = false;
   const rec = ensureRecordCanvas();
   drawAlbumCover(rec.getContext('2d'), canvasW, canvasH);
   drawLivePhoto(canvas.getContext('2d'), canvasW, canvasH);
