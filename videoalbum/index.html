@@ -60,20 +60,20 @@ h1, h1.page-title { font-family: var(--font-display); font-weight: 500; font-siz
 }
 
 .lead { color: var(--muted); line-height: 1.55; margin: 0 0 14px; }
-.intro-title { font-size:1.1rem; margin:0 0 6px; }
+.intro-title { font-size:1.1rem; margin:16px 0 8px; }
 .example-pair {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 240px;
   column-gap: 22px;
   row-gap: 10px;
   align-items: start;
-  margin: 0 0 8px;
+  margin: 0 0 16px;
 }
 .example-pair .lead { grid-column: 1; grid-row: 1; margin: 0; }
 .example-notes { grid-column: 1; grid-row: 2; min-width: 0; }
 .example-notes .note,
 .example-notes .steps { margin: 0; }
-.example-notes .privacy { margin: 6px 0 0; }
+.example-notes .privacy { margin: 8px 0 10px; }
 .steps { margin:0 0 14px; padding-inline-start:1.2em; line-height:1.5; }
 .steps li { margin:2px 0; }
 .note { color: var(--muted); font-size: 0.9rem; line-height: 1.45; margin: 14px 0; }
@@ -121,7 +121,8 @@ button.danger { background: rgba(224,128,106,0.22); }
   background:#000; border:1px solid rgba(244,213,141,0.22);
   box-shadow: 0 8px 18px rgba(0,0,0,0.24);
 }
-.example-frame img { width:100%; height:100%; object-fit:cover; display:block; }
+.example-frame img,
+.example-frame canvas { width:100%; height:100%; object-fit:cover; display:block; }
 .example-captions {
   position:absolute; left:0; right:0; bottom:0; padding:10px 8px 7px;
   background: linear-gradient(180deg, transparent 0%, rgba(8,12,28,0.78) 55%, rgba(8,12,28,0.9) 100%);
@@ -596,35 +597,74 @@ html[data-theme="light"] .privacy {
 <style>
 .camera-overlay {
   position: fixed; inset: 0; z-index: 400;
-  background: rgba(8,12,28,0.88);
+  background: rgba(6,8,14,0.92);
   display: flex; align-items: center; justify-content: center;
   padding: 16px;
 }
 .camera-overlay[hidden] { display: none !important; }
 .camera-overlay-box {
-  width: min(520px, 100%);
-  background: var(--night-800, #161f48);
-  border: 1px solid rgba(244,213,141,0.2);
+  width: min(560px, 100%);
+  background: #12100e;
+  border: 1px solid rgba(244,213,141,0.28);
   border-radius: 18px;
   padding: 14px;
-  box-shadow: 0 24px 50px -24px rgba(0,0,0,0.65);
+  box-shadow: 0 24px 50px -24px rgba(0,0,0,0.75);
+  color: #f4ecd9;
+}
+.scanner-stage {
+  position: relative;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
 }
 #camera-video {
   width: 100%;
-  max-height: 62vh;
+  max-height: 68vh;
+  min-height: 220px;
   background: #000;
-  border-radius: 12px;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
+}
+.scanner-frame {
+  position: absolute; inset: 14px;
+  pointer-events: none;
+}
+.scanner-frame span {
+  position: absolute; width: 34px; height: 34px;
+  border: 3px solid #f4d58d;
+}
+.scanner-frame span:nth-child(1) { top: 0; left: 0; border-right: 0; border-bottom: 0; }
+.scanner-frame span:nth-child(2) { top: 0; right: 0; border-left: 0; border-bottom: 0; }
+.scanner-frame span:nth-child(3) { bottom: 0; left: 0; border-right: 0; border-top: 0; }
+.scanner-frame span:nth-child(4) { bottom: 0; right: 0; border-left: 0; border-top: 0; }
+.scanner-line {
+  position: absolute; left: 6px; right: 6px; height: 2px; top: 12%;
+  background: linear-gradient(90deg, transparent, rgba(244,213,141,0.95), transparent);
+  box-shadow: 0 0 14px rgba(244,213,141,0.55);
+  animation: scanline 2.6s ease-in-out infinite;
+}
+@keyframes scanline {
+  0% { top: 10%; }
+  50% { top: 86%; }
+  100% { top: 10%; }
+}
+.scanner-flash {
+  position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none;
+}
+.scanner-flash.show { animation: shutter-flash 0.32s ease-out; }
+@keyframes shutter-flash {
+  0% { opacity: 0.9; }
+  100% { opacity: 0; }
 }
 .camera-overlay-actions {
   display: flex; flex-wrap: wrap; gap: 10px;
   margin-top: 12px; justify-content: center;
 }
+.camera-overlay .note { color: #d9cbb4; margin: 10px 0 0; text-align: center; }
 html[data-theme="light"] .camera-overlay-box {
-  background: #fffaf2;
-  border-color: rgba(29,39,68,0.12);
-  color: #1d2744;
+  background: #1a1612;
+  border-color: rgba(244,213,141,0.28);
+  color: #f4ecd9;
 }
 </style>
 <style>
@@ -743,9 +783,8 @@ html[data-theme="light"] .camera-overlay-box {
         <span id="ui-pick-folder">Choose folder</span>
         <input id="folder-input" type="file" accept="image/*" multiple webkitdirectory directory hidden>
       </label>
-      <button type="button" class="file-btn" id="ui-camera-label"><span id="ui-take-photo">Take photos</span></button>
+      <button type="button" class="file-btn" id="ui-camera-label"><span id="ui-take-photo">Scan photo</span></button>
       <input id="camera-input" type="file" accept="image/*" capture="environment" hidden>
-      <button type="button" id="btn-add" hidden><span id="ui-add">Add more</span></button>
       <button type="button" id="btn-clear" class="danger" hidden><span id="ui-clear">Clear</span></button>
       <span class="note" id="ui-count" style="margin:0"></span>
     </div>
@@ -792,14 +831,21 @@ html[data-theme="light"] .camera-overlay-box {
 </div>
 
 
-<div id="camera-overlay" class="camera-overlay" hidden aria-modal="true" role="dialog" aria-label="Camera">
+<div id="camera-overlay" class="camera-overlay" hidden aria-modal="true" role="dialog" aria-label="Scan a page">
   <div class="camera-overlay-box">
-    <video id="camera-video" playsinline autoplay muted></video>
+    <div class="scanner-stage">
+      <video id="camera-video" playsinline autoplay muted></video>
+      <div class="scanner-frame" aria-hidden="true">
+        <span></span><span></span><span></span><span></span>
+        <i class="scanner-line"></i>
+      </div>
+      <div class="scanner-flash" id="scanner-flash"></div>
+    </div>
+    <p class="note" id="camera-overlay-hint">Hold the album page flat. A click means the page is saved.</p>
     <div class="camera-overlay-actions">
-      <button type="button" class="primary" id="camera-snap">Take photo</button>
+      <button type="button" class="primary" id="camera-snap">Scan photo</button>
       <button type="button" id="camera-done">Done</button>
     </div>
-    <p class="note" id="camera-overlay-hint">Each shot is added to your album. Tap Done when finished.</p>
   </div>
 </div>
 
@@ -899,7 +945,10 @@ const PHOTO_UI = {
     "elevenLabsVoicePlaceholder": "Voice ID",
     "elevenLabsGuideSummary": "How to find these",
     "elevenLabsGuideHtml": "<ol><li><strong>API key</strong><ol><li>Open <a href=\"https://elevenlabs.io/app/settings/api-keys\" target=\"_blank\" rel=\"noopener\">API Keys</a>.</li><li>Click <strong>Create key</strong>.</li><li>Set <strong>Text to Speech</strong> to <strong>Access</strong>.</li><li>Copy the key (starts with <code>sk_</code>) and paste it here.</li></ol></li><li><strong>Voice ID</strong><ol><li>Open <a href=\"https://elevenlabs.io/app/voice-lab\" target=\"_blank\" rel=\"noopener\">My Voices</a>.</li><li>Click <strong>More actions</strong> (⋯) on your voice.</li><li>Click <strong>Copy voice ID</strong>.</li><li>Paste it here.</li></ol></li></ol>",
-    "takePhoto": "Take photos",
+    "takePhoto": "Scan photo",
+    "scanPage": "Scan photo",
+    "scanHint": "Hold the album page flat. A click means the page is saved.",
+    "finishing": "Finishing…",
     "introTitle": "Keep the story with the photos",
     "exampleLabel": "Example — captions appear only here, not in your video",
     "exampleCap1": "That day at the lake with everyone together.",
@@ -972,7 +1021,10 @@ const PHOTO_UI = {
     "elevenLabsVoicePlaceholder": "ID da voz",
     "elevenLabsGuideSummary": "Como encontrar estes dados",
     "elevenLabsGuideHtml": "<ol><li><strong>Chave da API</strong><ol><li>Abra <a href=\"https://elevenlabs.io/app/settings/api-keys\" target=\"_blank\" rel=\"noopener\">API Keys</a>.</li><li>Clique em <strong>Create key</strong>.</li><li>Defina <strong>Text to Speech</strong> como <strong>Access</strong>.</li><li>Copie a chave (começa por <code>sk_</code>) e cole-a aqui.</li></ol></li><li><strong>ID da voz</strong><ol><li>Abra <a href=\"https://elevenlabs.io/app/voice-lab\" target=\"_blank\" rel=\"noopener\">My Voices</a>.</li><li>Clique em <strong>More actions</strong> (⋯) na sua voz.</li><li>Clique em <strong>Copy voice ID</strong>.</li><li>Cole-o aqui.</li></ol></li></ol>",
-    "takePhoto": "Tirar fotos",
+    "takePhoto": "Digitalizar foto",
+    "scanPage": "Digitalizar foto",
+    "scanHint": "Mantenha a página do álbum plana. Um clique significa que a página ficou guardada.",
+    "finishing": "A terminar…",
     "introTitle": "Guarde a história com as fotos",
     "exampleLabel": "Exemplo — as legendas aparecem só aqui, não no seu vídeo",
     "exampleCap1": "Aquele dia no lago com toda a gente junta.",
@@ -1045,7 +1097,10 @@ const PHOTO_UI = {
     "elevenLabsVoicePlaceholder": "ID de voz",
     "elevenLabsGuideSummary": "Cómo encontrarlos",
     "elevenLabsGuideHtml": "<ol><li><strong>Clave de API</strong><ol><li>Abre <a href=\"https://elevenlabs.io/app/settings/api-keys\" target=\"_blank\" rel=\"noopener\">API Keys</a>.</li><li>Haz clic en <strong>Create key</strong>.</li><li>Pon <strong>Text to Speech</strong> en <strong>Access</strong>.</li><li>Copia la clave (empieza por <code>sk_</code>) y pégala aquí.</li></ol></li><li><strong>ID de voz</strong><ol><li>Abre <a href=\"https://elevenlabs.io/app/voice-lab\" target=\"_blank\" rel=\"noopener\">My Voices</a>.</li><li>Haz clic en <strong>More actions</strong> (⋯) en tu voz.</li><li>Haz clic en <strong>Copy voice ID</strong>.</li><li>Pégalo aquí.</li></ol></li></ol>",
-    "takePhoto": "Hacer fotos",
+    "takePhoto": "Escanear foto",
+    "scanPage": "Escanear foto",
+    "scanHint": "Mantén la página del álbum plana. Un clic significa que la página quedó guardada.",
+    "finishing": "Terminando…",
     "introTitle": "Guarda la historia con las fotos",
     "exampleLabel": "Ejemplo — los subtítulos solo aquí, no en tu vídeo",
     "exampleCap1": "Aquel día en el lago con todos juntos.",
@@ -1118,7 +1173,10 @@ const PHOTO_UI = {
     "elevenLabsVoicePlaceholder": "ID voce",
     "elevenLabsGuideSummary": "Come trovarli",
     "elevenLabsGuideHtml": "<ol><li><strong>Chiave API</strong><ol><li>Apri <a href=\"https://elevenlabs.io/app/settings/api-keys\" target=\"_blank\" rel=\"noopener\">API Keys</a>.</li><li>Clicca su <strong>Create key</strong>.</li><li>Imposta <strong>Text to Speech</strong> su <strong>Access</strong>.</li><li>Copia la chiave (inizia con <code>sk_</code>) e incollala qui.</li></ol></li><li><strong>ID voce</strong><ol><li>Apri <a href=\"https://elevenlabs.io/app/voice-lab\" target=\"_blank\" rel=\"noopener\">My Voices</a>.</li><li>Clicca su <strong>More actions</strong> (⋯) sulla tua voce.</li><li>Clicca su <strong>Copy voice ID</strong>.</li><li>Incollalo qui.</li></ol></li></ol>",
-    "takePhoto": "Scatta foto",
+    "takePhoto": "Scansiona foto",
+    "scanPage": "Scansiona foto",
+    "scanHint": "Tieni la pagina dell’album piatta. Un clic significa che la pagina è salvata.",
+    "finishing": "Completamento…",
     "introTitle": "Conserva la storia con le foto",
     "exampleLabel": "Esempio — i sottotitoli solo qui, non nel tuo video",
     "exampleCap1": "Quel giorno al lago tutti insieme.",
@@ -1191,7 +1249,10 @@ const PHOTO_UI = {
     "elevenLabsVoicePlaceholder": "Stimm-ID",
     "elevenLabsGuideSummary": "So findest du diese Angaben",
     "elevenLabsGuideHtml": "<ol><li><strong>API-Schlüssel</strong><ol><li>Öffne <a href=\"https://elevenlabs.io/app/settings/api-keys\" target=\"_blank\" rel=\"noopener\">API Keys</a>.</li><li>Klicke auf <strong>Create key</strong>.</li><li>Setze <strong>Text to Speech</strong> auf <strong>Access</strong>.</li><li>Kopiere den Schlüssel (beginnt mit <code>sk_</code>) und füge ihn hier ein.</li></ol></li><li><strong>Stimm-ID</strong><ol><li>Öffne <a href=\"https://elevenlabs.io/app/voice-lab\" target=\"_blank\" rel=\"noopener\">My Voices</a>.</li><li>Klicke bei deiner Stimme auf <strong>More actions</strong> (⋯).</li><li>Klicke auf <strong>Copy voice ID</strong>.</li><li>Füge sie hier ein.</li></ol></li></ol>",
-    "takePhoto": "Fotos aufnehmen",
+    "takePhoto": "Foto scannen",
+    "scanPage": "Foto scannen",
+    "scanHint": "Halte die Albumseite flach. Ein Klick heißt, die Seite ist gespeichert.",
+    "finishing": "Wird fertig…",
     "introTitle": "Bewahre die Geschichte zu den Fotos",
     "exampleLabel": "Beispiel — Untertitel nur hier, nicht in deinem Video",
     "exampleCap1": "Der Tag am See, alle zusammen.",
@@ -1264,7 +1325,10 @@ const PHOTO_UI = {
     "elevenLabsVoicePlaceholder": "معرّف الصوت",
     "elevenLabsGuideSummary": "كيف تجد هذه البيانات",
     "elevenLabsGuideHtml": "<ol><li><strong>مفتاح API</strong><ol><li>افتح <a href=\"https://elevenlabs.io/app/settings/api-keys\" target=\"_blank\" rel=\"noopener\">API Keys</a>.</li><li>انقر على <strong>Create key</strong>.</li><li>اضبط <strong>Text to Speech</strong> على <strong>Access</strong>.</li><li>انسخ المفتاح (يبدأ بـ <code>sk_</code>) والصقه هنا.</li></ol></li><li><strong>معرّف الصوت</strong><ol><li>افتح <a href=\"https://elevenlabs.io/app/voice-lab\" target=\"_blank\" rel=\"noopener\">My Voices</a>.</li><li>انقر على <strong>More actions</strong> (⋯) على صوتك.</li><li>انقر على <strong>Copy voice ID</strong>.</li><li>الصقه هنا.</li></ol></li></ol>",
-    "takePhoto": "التقط صوراً",
+    "takePhoto": "امسح الصورة",
+    "scanPage": "امسح الصورة",
+    "scanHint": "أبقِ صفحة الألبوم مستوية. النقرة تعني أن الصفحة حُفظت.",
+    "finishing": "جارٍ الإنهاء…",
     "introTitle": "احفظ القصة مع الصور",
     "exampleLabel": "مثال — التسميات تظهر هنا فقط، وليس في فيديوك",
     "exampleCap1": "ذلك اليوم عند البحيرة مع الجميع.",
@@ -1337,7 +1401,10 @@ const PHOTO_UI = {
     "elevenLabsVoicePlaceholder": "声音 ID",
     "elevenLabsGuideSummary": "如何找到这些信息",
     "elevenLabsGuideHtml": "<ol><li><strong>API 密钥</strong><ol><li>打开 <a href=\"https://elevenlabs.io/app/settings/api-keys\" target=\"_blank\" rel=\"noopener\">API Keys</a>。</li><li>点击 <strong>Create key</strong>。</li><li>将 <strong>Text to Speech</strong> 设为 <strong>Access</strong>。</li><li>复制密钥（以 <code>sk_</code> 开头）并粘贴到这里。</li></ol></li><li><strong>声音 ID</strong><ol><li>打开 <a href=\"https://elevenlabs.io/app/voice-lab\" target=\"_blank\" rel=\"noopener\">My Voices</a>。</li><li>在你的声音上点击 <strong>More actions</strong>（⋯）。</li><li>点击 <strong>Copy voice ID</strong>。</li><li>粘贴到这里。</li></ol></li></ol>",
-    "takePhoto": "拍照",
+    "takePhoto": "扫描照片",
+    "scanPage": "扫描照片",
+    "scanHint": "把相册页放平。听到咔嗒一声就表示这一页已保存。",
+    "finishing": "正在结束…",
     "introTitle": "让故事与照片同在",
     "exampleLabel": "示例 — 字幕仅在此处显示，不会出现在你的视频中",
     "exampleCap1": "那天全家一起在湖边。",
@@ -1410,7 +1477,10 @@ const PHOTO_UI = {
     "elevenLabsVoicePlaceholder": "वॉइस ID",
     "elevenLabsGuideSummary": "ये कैसे खोजें",
     "elevenLabsGuideHtml": "<ol><li><strong>API कुंजी</strong><ol><li><a href=\"https://elevenlabs.io/app/settings/api-keys\" target=\"_blank\" rel=\"noopener\">API Keys</a> खोलें।</li><li><strong>Create key</strong> पर क्लिक करें।</li><li><strong>Text to Speech</strong> को <strong>Access</strong> पर सेट करें।</li><li>कुंजी कॉपी करें (<code>sk_</code> से शुरू) और यहाँ पेस्ट करें।</li></ol></li><li><strong>वॉइस ID</strong><ol><li><a href=\"https://elevenlabs.io/app/voice-lab\" target=\"_blank\" rel=\"noopener\">My Voices</a> खोलें।</li><li>अपनी आवाज़ पर <strong>More actions</strong> (⋯) क्लिक करें।</li><li><strong>Copy voice ID</strong> पर क्लिक करें।</li><li>यहाँ पेस्ट करें।</li></ol></li></ol>",
-    "takePhoto": "फ़ोटो लें",
+    "takePhoto": "फ़ोटो स्कैन करें",
+    "scanPage": "फ़ोटो स्कैन करें",
+    "scanHint": "एल्बम का पन्ना सीधा रखें। क्लिक का मतलब है कि पन्ना सहेज लिया गया।",
+    "finishing": "समाप्त हो रहा है…",
     "introTitle": "तस्वीरों के साथ कहानी संजोएँ",
     "exampleLabel": "उदाहरण — कैप्शन सिर्फ यहाँ दिखते हैं, आपके वीडियो में नहीं",
     "exampleCap1": "वह दिन झील पर, सब साथ।",
@@ -1483,7 +1553,10 @@ const PHOTO_UI = {
     "elevenLabsVoicePlaceholder": "Aitheantas gutha",
     "elevenLabsGuideSummary": "Conas iad seo a aimsiú",
     "elevenLabsGuideHtml": "<ol><li><strong>Eochair API</strong><ol><li>Oscail <a href=\"https://elevenlabs.io/app/settings/api-keys\" target=\"_blank\" rel=\"noopener\">API Keys</a>.</li><li>Cliceáil <strong>Create key</strong>.</li><li>Socraigh <strong>Text to Speech</strong> go <strong>Access</strong>.</li><li>Cóipeáil an eochair (tosaíonn le <code>sk_</code>) agus greamaigh anseo í.</li></ol></li><li><strong>Aitheantas gutha</strong><ol><li>Oscail <a href=\"https://elevenlabs.io/app/voice-lab\" target=\"_blank\" rel=\"noopener\">My Voices</a>.</li><li>Cliceáil <strong>More actions</strong> (⋯) ar do ghuth.</li><li>Cliceáil <strong>Copy voice ID</strong>.</li><li>Greamaigh anseo é.</li></ol></li></ol>",
-    "takePhoto": "Tóg grianghraif",
+    "takePhoto": "Scan grianghraf",
+    "scanPage": "Scan grianghraf",
+    "scanHint": "Coinnigh leathanach an albaim cothrom. Ciallaíonn cliceáil go bhfuil an leathanach sábháilte.",
+    "finishing": "Ag críochnú…",
     "introTitle": "Coinnigh an scéal leis na grianghraif",
     "exampleLabel": "Sampla — taispeántar fotheidil anseo amháin, ní i d’fhíseán",
     "exampleCap1": "An lá sin ag an loch le gach duine le chéile.",
@@ -1514,10 +1587,12 @@ let frameRing = [];
 let coverFramesLeft = 0;
 let coverTurnPlayed = false;
 let outputDelay = null;
-const COVER_FRAMES = 24;
+let stopTimer = null;
+const COVER_FRAMES = 48;
 let albumAudioCtx = null, albumDest = null, albumMicSource = null, pageFlipBuffer = null, pageFlipGain = null;
 const PAGE_TURN_URL = '../assets/page-turn.wav';
-const ALBUM_COVER_MS = 1000;
+const ALBUM_COVER_MS = 2000;
+const PAGE_TURN_GAIN = 0.16;
 
 function ui(key) {
   const pack = PHOTO_UI[currentLang] || PHOTO_UI.english;
@@ -1549,7 +1624,6 @@ function updateUi() {
 { const o = document.getElementById('ui-orientation'); if (o) o.innerHTML = ui('orientationNote') || ''; }
   set('ui-pick', ui('pickPhotos'));
   set('ui-pick-folder', ui('pickFolder'));
-  set('ui-add', ui('addMore'));
   set('ui-take-photo', ui('takePhoto'));
   set('ui-clear', ui('clearAll'));
   set('ui-empty-hint', ui('emptyHint'));
@@ -1561,6 +1635,9 @@ function updateUi() {
   set('ui-example-label', ui('exampleLabel'));
   set('ui-example-cap1', ui('exampleCap1'));
   set('ui-example-cap2', ui('exampleCap2'));
+  set('camera-snap', ui('scanPage'));
+  set('camera-done', ui('done'));
+  set('camera-overlay-hint', ui('scanHint'));
   if (typeof updateElevenLabsModalLabels === 'function') updateElevenLabsModalLabels();
   if (typeof syncModeUi === 'function') syncModeUi();
   set('ui-start', ui(getSelectedMode() === 'eleven' ? 'startEleven' : 'startRecord'));
@@ -1594,7 +1671,6 @@ function buildLangButtons() {
 function refreshCount() {
   const el = document.getElementById('ui-count');
   const has = photos.length > 0;
-  document.getElementById('btn-add').hidden = !has;
   document.getElementById('btn-clear').hidden = !has;
   el.textContent = has ? fmt(ui('photosSelected'), { n: photos.length }) : '';
   if (typeof syncModeUi === 'function') syncModeUi();
@@ -1672,16 +1748,49 @@ async function openCameraOverlay() {
   await video.play().catch(() => {});
   ov.hidden = false;
 }
+function playShutterClick() {
+  try {
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return;
+    if (!playShutterClick.ctx) playShutterClick.ctx = new Ctx();
+    const ctx = playShutterClick.ctx;
+    if (ctx.state === 'suspended') ctx.resume();
+    const t = ctx.currentTime;
+    const tone = (freq, when, dur, peak) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, when);
+      osc.frequency.exponentialRampToValueAtTime(Math.max(80, freq * 0.35), when + dur);
+      gain.gain.setValueAtTime(0.0001, when);
+      gain.gain.exponentialRampToValueAtTime(peak, when + 0.008);
+      gain.gain.exponentialRampToValueAtTime(0.0001, when + dur);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(when);
+      osc.stop(when + dur + 0.02);
+    };
+    tone(1400, t, 0.07, 0.22);
+    tone(720, t + 0.06, 0.08, 0.12);
+  } catch (e) {}
+}
 async function snapFromCamera() {
   const video = document.getElementById('camera-video');
   if (!video || !video.videoWidth) return;
+  playShutterClick();
+  const flash = document.getElementById('scanner-flash');
+  if (flash) {
+    flash.classList.remove('show');
+    void flash.offsetWidth;
+    flash.classList.add('show');
+  }
   const canvas = document.createElement('canvas');
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
   canvas.getContext('2d').drawImage(video, 0, 0);
   const blob = await new Promise((res) => canvas.toBlob(res, 'image/jpeg', 0.92));
   if (!blob) return;
-  const file = new File([blob], 'camera-' + Date.now() + '.jpg', { type: 'image/jpeg' });
+  const file = new File([blob], 'scan-' + Date.now() + '.jpg', { type: 'image/jpeg' });
   await addFiles([file]);
 }
 function openCameraFileFallback() {
@@ -1721,7 +1830,6 @@ document.getElementById('camera-input').addEventListener('change', async (e) => 
 document.getElementById('camera-snap')?.addEventListener('click', () => { snapFromCamera(); });
 document.getElementById('camera-done')?.addEventListener('click', () => { closeCameraOverlay(); });
 
-document.getElementById('btn-add').onclick = () => document.getElementById('file-input').click();
 document.getElementById('btn-clear').onclick = () => { photos = []; renderThumbs(); refreshCount(); };
 
 function pickMime() {
@@ -1795,14 +1903,14 @@ async function setupAlbumAudioGraph(mic) {
   await ensurePageFlipAudio();
   if (albumMicSource) { try { albumMicSource.disconnect(); } catch (e) {} albumMicSource = null; }
   albumDest = albumAudioCtx.createMediaStreamDestination();
-  outputDelay = albumAudioCtx.createDelay(1.5);
+  outputDelay = albumAudioCtx.createDelay(3);
   outputDelay.delayTime.value = ALBUM_COVER_MS / 1000;
   albumMicSource = albumAudioCtx.createMediaStreamSource(mic);
   albumMicSource.connect(outputDelay);
   outputDelay.connect(albumDest);
   if (!pageFlipGain) {
     pageFlipGain = albumAudioCtx.createGain();
-    pageFlipGain.gain.value = 0.38;
+    pageFlipGain.gain.value = PAGE_TURN_GAIN;
   }
   try { pageFlipGain.disconnect(); } catch (e) {}
   pageFlipGain.connect(outputDelay);
@@ -1817,7 +1925,7 @@ function releaseAlbumAudioGraph() {
 function playPageTurn(direct) {
   try {
     if (!albumAudioCtx || !pageFlipBuffer || !pageFlipGain) {
-      const a = new Audio(PAGE_TURN_URL); a.volume = 0.55; a.play().catch(()=>{});
+      const a = new Audio(PAGE_TURN_URL); a.volume = 0.2; a.play().catch(()=>{});
       return;
     }
     if (albumAudioCtx.state === 'suspended') albumAudioCtx.resume();
@@ -1968,17 +2076,10 @@ function ensureRecordCanvas() {
   }
   return recordCanvas;
 }
-function stashDisplayFrame(src) {
-  const c = document.createElement('canvas');
-  c.width = src.width;
-  c.height = src.height;
-  c.getContext('2d').drawImage(src, 0, 0);
-  frameRing.push(c);
-}
-function drawLivePhoto(ctx, W, H) {
+function drawLivePhoto(ctx, W, H, index) {
   ctx.fillStyle = '#000';
   ctx.fillRect(0, 0, W, H);
-  const p = photos[currentIndex];
+  const p = photos[typeof index === 'number' ? index : currentIndex];
   if (p && p.img) { drawCoverBlur(ctx, p.img, W, H); drawContain(ctx, p.img, W, H); }
 }
 function drawFrame() {
@@ -1990,15 +2091,20 @@ function drawFrame() {
   const RW = recordCanvas.width, RH = recordCanvas.height;
   if (coverFramesLeft > 0) {
     drawAlbumCover(rctx, RW, RH);
+    const shown = COVER_FRAMES - coverFramesLeft;
+    const settleFrames = 8;
+    if (shown < settleFrames) {
+      rctx.fillStyle = 'rgba(16,12,9,' + (1 - shown / settleFrames).toFixed(3) + ')';
+      rctx.fillRect(0, 0, RW, RH);
+    }
     coverFramesLeft--;
-    stashDisplayFrame(canvas);
+    frameRing.push(currentIndex);
   } else {
     if (!coverTurnPlayed) { coverTurnPlayed = true; playPageTurn(true); }
-    const old = frameRing.shift();
-    if (old) {
-      rctx.drawImage(old, 0, 0, RW, RH);
-      old.getContext('2d').drawImage(canvas, 0, 0, old.width, old.height);
-      frameRing.push(old);
+    const idx = frameRing.shift();
+    if (typeof idx === 'number') {
+      drawLivePhoto(rctx, RW, RH, idx);
+      frameRing.push(currentIndex);
     }
   }
   if (recordTrack && recordTrack.requestFrame) recordTrack.requestFrame();
@@ -2053,18 +2159,33 @@ async function startRecording() {
   recorder.onstop = () => { void finishRecording(); };
   recorder.start(250);
   isRecording = true; recPausedMs = 0; recStartMs = performance.now();
+  const finishBtn = document.getElementById('btn-finish');
+  if (finishBtn) finishBtn.disabled = false;
+  const recStatus = document.getElementById('ui-rec-status');
+  if (recStatus) recStatus.textContent = ui('recording');
   document.getElementById('view-setup').style.display = 'none';
   document.getElementById('view-record').classList.add('show');
   document.body.style.overflow = 'hidden';
   updatePhotoOf();
 }
 function stopRecording() {
-  if (!isRecording || !recorder) return;
-  try { if (recorder.state !== 'inactive') recorder.stop(); } catch (e) {}
+  if (!isRecording || !recorder || stopTimer) return;
+  try { if (albumMicSource) albumMicSource.disconnect(); } catch (e) {}
+  const status = document.getElementById('ui-rec-status');
+  if (status) status.textContent = ui('finishing');
+  const finishBtn = document.getElementById('btn-finish');
+  if (finishBtn) finishBtn.disabled = true;
+  stopTimer = setTimeout(() => {
+    stopTimer = null;
+    try { if (recorder && recorder.state !== 'inactive') recorder.stop(); } catch (e) {}
+  }, ALBUM_COVER_MS + 800);
 }
 async function finishRecording() {
   isRecording = false;
+  if (stopTimer) { clearTimeout(stopTimer); stopTimer = null; }
   if (drawTimer) { clearInterval(drawTimer); drawTimer = null; }
+  const finishBtn = document.getElementById('btn-finish');
+  if (finishBtn) finishBtn.disabled = false;
   releaseAV();
   releaseAlbumAudioGraph();
   coverFramesLeft = -1;
@@ -2448,10 +2569,10 @@ async function recordElevenSlideshow(clips) {
   await ensurePageFlipAudio();
   const dest = elevenAudioCtx.createMediaStreamDestination();
   albumDest = dest;
-  outputDelay = elevenAudioCtx.createDelay(1.5);
+  outputDelay = elevenAudioCtx.createDelay(3);
   outputDelay.delayTime.value = ALBUM_COVER_MS / 1000;
   if (!pageFlipGain) pageFlipGain = elevenAudioCtx.createGain();
-  pageFlipGain.gain.value = 0.38;
+  pageFlipGain.gain.value = PAGE_TURN_GAIN;
   try { pageFlipGain.disconnect(); } catch (e) {}
   pageFlipGain.connect(outputDelay);
   outputDelay.connect(dest);
@@ -2475,6 +2596,10 @@ async function recordElevenSlideshow(clips) {
   recorder.onerror = e => console.error('MediaRecorder error', e && e.error);
   recorder.start(250);
   isRecording = true; recPausedMs = 0; recStartMs = performance.now();
+  const finishBtn = document.getElementById('btn-finish');
+  if (finishBtn) finishBtn.disabled = false;
+  const recStatus = document.getElementById('ui-rec-status');
+  if (recStatus) recStatus.textContent = ui('recording');
   document.getElementById('view-setup').style.display = 'none';
   document.getElementById('view-record').classList.add('show');
   document.body.style.overflow = 'hidden';
