@@ -85,7 +85,12 @@ button.danger { background: rgba(224,128,106,0.22); }
   border-radius:14px; padding:12px; cursor:pointer; background:rgba(0,0,0,0.15);
 }
 .mode input { accent-color: var(--moon); }
+.mode label:has(input:checked) {
+  border-color: rgba(244,213,141,0.75);
+  background: rgba(244,213,141,0.14);
+}
 .mode .hint { display:block; color:var(--muted); font-size:0.82rem; margin-top:6px; font-weight:400; }
+#pick-panel { scroll-margin-top: 76px; }
 .thumbs { display:grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap:10px; margin-top:12px; }
 .thumb {
   position:relative; aspect-ratio:16/9; border-radius:12px; overflow:hidden;
@@ -683,20 +688,15 @@ html[data-theme="light"] .camera-overlay-box {
   <h2 class="intro-title" id="ui-intro-title"></h2>
   <p class="lead" id="ui-lead"></p>
 
-  <figure class="example-story">
-    <div class="example-frame">
-      <img src="../assets/photo-story-example.jpg" alt="" width="1600" height="900">
-      <div class="example-captions" aria-hidden="true">
-        <p class="example-cap" id="ui-example-cap1"></p>
-        <p class="example-cap" id="ui-example-cap2"></p>
-      </div>
+  <div class="panel" id="mode-panel">
+    <div id="ui-mode-label" style="margin-bottom:10px;font-weight:600">How to record</div>
+    <div class="mode">
+      <label><input type="radio" name="mode" value="audio"> <strong id="ui-mode-audio">Describe your photos</strong><span class="hint" id="ui-mode-audio-hint"></span></label>
+      <label><input type="radio" name="mode" value="eleven"> <strong id="ui-mode-eleven">Typed voice (ElevenLabs)</strong><span class="hint" id="ui-mode-eleven-hint"></span></label>
     </div>
-    <figcaption class="example-label" id="ui-example-label"></figcaption>
-  </figure>
+  </div>
 
-  <div class="note" id="ui-orientation"></div>
-
-  <div class="panel">
+  <div class="panel" id="pick-panel" hidden>
     <div class="row">
       <label class="file-btn" id="ui-pick-label">
         <span id="ui-pick">Choose photos</span>
@@ -716,22 +716,27 @@ html[data-theme="light"] .camera-overlay-box {
     <div class="thumbs" id="thumbs"></div>
   </div>
 
-  <div class="panel">
-    <div id="ui-mode-label" style="margin-bottom:10px;font-weight:600">How to record</div>
-    <div class="mode">
-      <label><input type="radio" name="mode" value="audio" checked> <strong id="ui-mode-audio">Describe your photos</strong><span class="hint" id="ui-mode-audio-hint"></span></label>
-      <label><input type="radio" name="mode" value="eleven"> <strong id="ui-mode-eleven">Typed voice (ElevenLabs)</strong><span class="hint" id="ui-mode-eleven-hint"></span></label>
-    </div>
-  </div>
-
-
   <div class="panel" id="captions-panel" hidden>
     <div id="ui-skip-empty" class="note" style="margin-top:0"></div>
     <div id="caption-list"></div>
   </div>
-  <div class="row" style="margin-top:18px">
+  <div class="row" id="start-row" style="margin-top:18px" hidden>
     <button type="button" class="primary" id="btn-start"><span id="ui-start">Narrate your photos</span></button>
   </div>
+
+  <figure class="example-story">
+    <div class="example-frame">
+      <img src="../assets/photo-story-example.jpg" alt="" width="1600" height="900">
+      <div class="example-captions" aria-hidden="true">
+        <p class="example-cap" id="ui-example-cap1"></p>
+        <p class="example-cap" id="ui-example-cap2"></p>
+      </div>
+    </div>
+    <figcaption class="example-label" id="ui-example-label"></figcaption>
+  </figure>
+
+  <div class="note" id="ui-orientation"></div>
+
   <p class="privacy" id="ui-privacy"></p>
 </main>
 
@@ -846,7 +851,7 @@ const PHOTO_UI = {
     "cameraDenied": "Camera not available or not allowed. Recording your voice only.",
     "privacy": "🔒 Your photos and recording never leave your device.",
     "confirmLeave": "Stop recording and leave?",
-    "orientationNote": "<ul class=\"steps\"><li><strong>Choose photos</strong> — one or many.</li><li><strong>Record your voice</strong>, or type for ElevenLabs.</li><li><strong>Talk through each photo</strong>, then save and download.</li></ul>",
+    "orientationNote": "<ul class=\"steps\"><li><strong>Record your voice</strong>, or type for ElevenLabs.</li><li><strong>Choose photos</strong> — one or many.</li><li><strong>Talk through each photo</strong>, then save and download.</li></ul>",
     "emptyHint": "Add as many photos as you want — from your camera, files, or a folder.",
     "remove": "Remove",
     "modeEleven": "Typed voice (ElevenLabs)",
@@ -918,7 +923,7 @@ const PHOTO_UI = {
     "cameraDenied": "Câmara indisponível ou sem permissão. A gravar só a voz.",
     "privacy": "🔒 As suas fotos e gravação nunca saem do dispositivo.",
     "confirmLeave": "Parar a gravação e sair?",
-    "orientationNote": "<ul class=\"steps\"><li><strong>Escolha as fotos</strong> — uma ou várias.</li><li><strong>Grave a sua voz</strong>, ou escreva para o ElevenLabs.</li><li><strong>Fale sobre cada foto</strong>, depois guarde e descarregue.</li></ul>",
+    "orientationNote": "<ul class=\"steps\"><li><strong>Grave a sua voz</strong>, ou escreva para o ElevenLabs.</li><li><strong>Escolha as fotos</strong> — uma ou várias.</li><li><strong>Fale sobre cada foto</strong>, depois guarde e descarregue.</li></ul>",
     "emptyHint": "Adicione quantas fotos quiser — da câmara, de ficheiros ou de uma pasta.",
     "remove": "Remover",
     "modeEleven": "Voz escrita (ElevenLabs)",
@@ -990,7 +995,7 @@ const PHOTO_UI = {
     "cameraDenied": "Cámara no disponible o sin permiso. Solo se grabará la voz.",
     "privacy": "🔒 Tus fotos y la grabación no salen de tu dispositivo.",
     "confirmLeave": "¿Parar la grabación y salir?",
-    "orientationNote": "<ul class=\"steps\"><li><strong>Elige las fotos</strong> — una o varias.</li><li><strong>Graba tu voz</strong>, o escribe para ElevenLabs.</li><li><strong>Habla sobre cada foto</strong>, luego guarda y descarga.</li></ul>",
+    "orientationNote": "<ul class=\"steps\"><li><strong>Graba tu voz</strong>, o escribe para ElevenLabs.</li><li><strong>Elige las fotos</strong> — una o varias.</li><li><strong>Habla sobre cada foto</strong>, luego guarda y descarga.</li></ul>",
     "emptyHint": "Añade todas las fotos que quieras — de la cámara, archivos o una carpeta.",
     "remove": "Quitar",
     "modeEleven": "Voz escrita (ElevenLabs)",
@@ -1062,7 +1067,7 @@ const PHOTO_UI = {
     "cameraDenied": "Fotocamera non disponibile o non consentita. Si registra solo la voce.",
     "privacy": "🔒 Le tue foto e la registrazione non lasciano mai il dispositivo.",
     "confirmLeave": "Interrompere la registrazione e uscire?",
-    "orientationNote": "<ul class=\"steps\"><li><strong>Scegli le foto</strong> — una o più.</li><li><strong>Registra la voce</strong>, oppure digita per ElevenLabs.</li><li><strong>Racconta ogni foto</strong>, poi salva e scarica.</li></ul>",
+    "orientationNote": "<ul class=\"steps\"><li><strong>Registra la voce</strong>, oppure digita per ElevenLabs.</li><li><strong>Scegli le foto</strong> — una o più.</li><li><strong>Racconta ogni foto</strong>, poi salva e scarica.</li></ul>",
     "emptyHint": "Aggiungi tutte le foto che vuoi — dalla fotocamera, dai file o da una cartella.",
     "remove": "Rimuovi",
     "modeEleven": "Voce scritta (ElevenLabs)",
@@ -1134,7 +1139,7 @@ const PHOTO_UI = {
     "cameraDenied": "Kamera nicht verfügbar oder nicht erlaubt. Es wird nur die Stimme aufgenommen.",
     "privacy": "🔒 Deine Fotos und die Aufnahme verlassen dein Gerät nie.",
     "confirmLeave": "Aufnahme stoppen und verlassen?",
-    "orientationNote": "<ul class=\"steps\"><li><strong>Fotos wählen</strong> — eines oder viele.</li><li><strong>Stimme aufnehmen</strong>, oder für ElevenLabs tippen.</li><li><strong>Zu jedem Foto erzählen</strong>, dann speichern und herunterladen.</li></ul>",
+    "orientationNote": "<ul class=\"steps\"><li><strong>Stimme aufnehmen</strong>, oder für ElevenLabs tippen.</li><li><strong>Fotos wählen</strong> — eines oder viele.</li><li><strong>Zu jedem Foto erzählen</strong>, dann speichern und herunterladen.</li></ul>",
     "emptyHint": "Füge so viele Fotos hinzu, wie du willst — von Kamera, Dateien oder einem Ordner.",
     "remove": "Entfernen",
     "modeEleven": "Getippte Stimme (ElevenLabs)",
@@ -1206,7 +1211,7 @@ const PHOTO_UI = {
     "cameraDenied": "الكاميرا غير متاحة أو غير مسموح بها. سيتم تسجيل صوتك فقط.",
     "privacy": "🔒 صورك وتسجيلك لا يغادران جهازك أبداً.",
     "confirmLeave": "إيقاف التسجيل والمغادرة؟",
-    "orientationNote": "<ul class=\"steps\"><li><strong>اختر الصور</strong> — واحدة أو أكثر.</li><li><strong>سجّل صوتك</strong>، أو اكتب لـ ElevenLabs.</li><li><strong>تحدث عن كل صورة</strong> ثم احفظ وحمّل.</li></ul>",
+    "orientationNote": "<ul class=\"steps\"><li><strong>سجّل صوتك</strong>، أو اكتب لـ ElevenLabs.</li><li><strong>اختر الصور</strong> — واحدة أو أكثر.</li><li><strong>تحدث عن كل صورة</strong> ثم احفظ وحمّل.</li></ul>",
     "emptyHint": "أضف أي عدد من الصور — من الكاميرا أو الملفات أو مجلد.",
     "remove": "إزالة",
     "modeEleven": "صوت مكتوب (ElevenLabs)",
@@ -1278,7 +1283,7 @@ const PHOTO_UI = {
     "cameraDenied": "相机不可用或未获许可。将只录制声音。",
     "privacy": "🔒 你的照片和录音永远不会离开你的设备。",
     "confirmLeave": "停止录制并离开？",
-    "orientationNote": "<ul class=\"steps\"><li><strong>选择照片</strong> — 一张或多张。</li><li><strong>录制你的声音</strong>，或为 ElevenLabs 输入文字。</li><li><strong>逐张讲述</strong>，然后保存并下载。</li></ul>",
+    "orientationNote": "<ul class=\"steps\"><li><strong>录制你的声音</strong>，或为 ElevenLabs 输入文字。</li><li><strong>选择照片</strong> — 一张或多张。</li><li><strong>逐张讲述</strong>，然后保存并下载。</li></ul>",
     "emptyHint": "想加多少张就加多少张 — 可用相机、文件或文件夹。",
     "remove": "移除",
     "modeEleven": "文字配音（ElevenLabs）",
@@ -1350,7 +1355,7 @@ const PHOTO_UI = {
     "cameraDenied": "कैमरा उपलब्ध नहीं या अनुमति नहीं. केवल आवाज़ रिकॉर्ड होगी.",
     "privacy": "🔒 आपकी फ़ोटो और रिकॉर्डिंग आपके डिवाइस से कभी बाहर नहीं जातीं.",
     "confirmLeave": "रिकॉर्डिंग रोककर बाहर जाएँ?",
-    "orientationNote": "<ul class=\"steps\"><li><strong>तस्वीरें चुनें</strong> — एक या कई।</li><li><strong>अपनी आवाज़ रिकॉर्ड करें</strong>, या ElevenLabs के लिए टाइप करें।</li><li><strong>हर तस्वीर पर बोलें</strong>, फिर सहेजें और डाउनलोड करें।</li></ul>",
+    "orientationNote": "<ul class=\"steps\"><li><strong>अपनी आवाज़ रिकॉर्ड करें</strong>, या ElevenLabs के लिए टाइप करें।</li><li><strong>तस्वीरें चुनें</strong> — एक या कई।</li><li><strong>हर तस्वीर पर बोलें</strong>, फिर सहेजें और डाउनलोड करें।</li></ul>",
     "emptyHint": "जितनी चाहें तस्वीरें जोड़ें — कैमरा, फ़ाइलें या फ़ोल्डर से।",
     "remove": "हटाएँ",
     "modeEleven": "टाइप की आवाज़ (ElevenLabs)",
@@ -1422,7 +1427,7 @@ const PHOTO_UI = {
     "cameraDenied": "Ceamara nach bhfuil ar fáil nó gan chead. Do ghuth amháin a thaifeadfar.",
     "privacy": "🔒 Ní fhágann do ghrianghraif ná do thaifeadadh do ghléas riamh.",
     "confirmLeave": "Stop an taifeadadh agus fág?",
-    "orientationNote": "<ul class=\"steps\"><li><strong>Roghnaigh grianghraif</strong> — ceann amháin nó níos mó.</li><li><strong>Taifead do ghuth</strong>, nó clóscríobh do ElevenLabs.</li><li><strong>Labhair faoi gach grianghraf</strong>, ansin sábháil agus íoslódáil.</li></ul>",
+    "orientationNote": "<ul class=\"steps\"><li><strong>Taifead do ghuth</strong>, nó clóscríobh do ElevenLabs.</li><li><strong>Roghnaigh grianghraif</strong> — ceann amháin nó níos mó.</li><li><strong>Labhair faoi gach grianghraf</strong>, ansin sábháil agus íoslódáil.</li></ul>",
     "emptyHint": "Cuir isteach an oiread grianghraf agus is mian leat — ón gceamara, ó chomhaid, nó ó fhillteán.",
     "remove": "Bain",
     "modeEleven": "Guth clóscríofa (ElevenLabs)",
@@ -1473,10 +1478,10 @@ let micStream = null, camStream = null;
 let recorder = null, recChunks = [], isRecording = false, recStartMs = 0, recPausedMs = 0;
 let drawTimer = null, canvasW = 1280, canvasH = 720;
 var latestRecBlob = null, latestRecUrl = null, latestRecFilename = 'photo-story.webm';
-let albumCoverUntil = 0;
+let onAlbumCover = false;
 let albumAudioCtx = null, albumDest = null, albumMicSource = null, pageFlipBuffer = null, pageFlipGain = null;
 const PAGE_TURN_URL = '../assets/page-turn.wav';
-const ALBUM_COVER_MS = 1600;
+const ALBUM_COVER_MS = 2400;
 
 function ui(key) {
   const pack = PHOTO_UI[currentLang] || PHOTO_UI.english;
@@ -1758,7 +1763,7 @@ async function setupAlbumAudioGraph(mic) {
   albumMicSource.connect(albumDest);
   if (!pageFlipGain) {
     pageFlipGain = albumAudioCtx.createGain();
-    pageFlipGain.gain.value = 0.7;
+    pageFlipGain.gain.value = 0.38;
   }
   try { pageFlipGain.disconnect(); } catch (e) {}
   pageFlipGain.connect(albumDest);
@@ -1782,54 +1787,119 @@ function playPageTurn() {
     src.start(0);
   } catch (e) {}
 }
-function drawAlbumCover(ctx, W, H) {
-  // Bound photo-book cover
-  ctx.fillStyle = '#1a1420';
-  ctx.fillRect(0, 0, W, H);
-  const margin = Math.round(Math.min(W, H) * 0.06);
-  const spine = Math.round(W * 0.045);
-  // cover board
-  const x = margin, y = margin, cw = W - margin * 2, ch = H - margin * 2;
-  const grd = ctx.createLinearGradient(x, y, x + cw, y + ch);
-  grd.addColorStop(0, '#3a2a1c');
-  grd.addColorStop(0.45, '#5a3f28');
-  grd.addColorStop(1, '#2c1e14');
-  ctx.fillStyle = grd;
-  roundRectPath(ctx, x, y, cw, ch, Math.round(Math.min(cw, ch) * 0.03));
-  ctx.fill();
-  // spine
-  ctx.fillStyle = 'rgba(0,0,0,0.35)';
-  ctx.fillRect(x, y, spine, ch);
-  ctx.fillStyle = 'rgba(244,213,141,0.35)';
-  ctx.fillRect(x + spine - 2, y + 8, 2, ch - 16);
-  // photo window
-  const inset = Math.round(Math.min(cw, ch) * 0.1);
-  const px = x + spine + inset, py = y + inset;
-  const pw = cw - spine - inset * 2, ph = ch - inset * 2 - Math.round(H * 0.12);
-  ctx.fillStyle = '#f3ead7';
-  ctx.fillRect(px - 6, py - 6, pw + 12, ph + 12);
-  const p = photos[0];
-  if (p && p.img) {
-    const iw = p.img.naturalWidth || p.img.width, ih = p.img.naturalHeight || p.img.height;
-    const fit = Math.max(pw / iw, ph / ih);
-    const dw = iw * fit, dh = ih * fit;
-    ctx.save();
-    ctx.beginPath(); ctx.rect(px, py, pw, ph); ctx.clip();
-    ctx.drawImage(p.img, px + (pw - dw) / 2, py + (ph - dh) / 2, dw, dh);
-    ctx.restore();
-  } else {
-    ctx.fillStyle = '#cfc3a8';
-    ctx.fillRect(px, py, pw, ph);
+let coverLeather = null;
+function getLeather(w, h) {
+  w = Math.max(2, w); h = Math.max(2, h);
+  if (coverLeather && coverLeather.width === w && coverLeather.height === h) return coverLeather;
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  const g = c.getContext('2d');
+  const grd = g.createLinearGradient(0, 0, w, h);
+  grd.addColorStop(0, '#6d3b32');
+  grd.addColorStop(0.42, '#4a2824');
+  grd.addColorStop(1, '#2a1513');
+  g.fillStyle = grd;
+  g.fillRect(0, 0, w, h);
+  for (let i = 0; i < 2200; i++) {
+    const x = Math.abs(Math.sin(i * 12.9898) * 43758.5453) % w;
+    const y = Math.abs(Math.sin(i * 78.233) * 24634.6345) % h;
+    g.fillStyle = i % 3 ? 'rgba(0,0,0,0.07)' : 'rgba(255,214,170,0.045)';
+    g.fillRect(x, y, i % 5 === 0 ? 3 : 1, 1);
   }
-  // title band (album chrome, not photo captions)
-  ctx.fillStyle = 'rgba(243,234,215,0.95)';
-  const bandY = py + ph + 10;
-  ctx.fillRect(px - 6, bandY, pw + 12, Math.round(H * 0.09));
-  ctx.fillStyle = '#2a1c12';
-  ctx.font = '600 ' + Math.round(H * 0.045) + 'px Georgia, serif';
+  coverLeather = c;
+  return c;
+}
+function drawAlbumCover(ctx, W, H) {
+  ctx.fillStyle = '#0c0908';
+  ctx.fillRect(0, 0, W, H);
+  const vg = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.15, W / 2, H * 0.55, Math.max(W, H) * 0.75);
+  vg.addColorStop(0, '#322820');
+  vg.addColorStop(1, '#0c0908');
+  ctx.fillStyle = vg;
+  ctx.fillRect(0, 0, W, H);
+
+  const m = Math.round(Math.min(W, H) * 0.075);
+  const bx = m, by = m;
+  const bw = W - m * 2, bh = H - m * 2;
+  ctx.fillStyle = 'rgba(0,0,0,0.5)';
+  ctx.fillRect(bx + 18, by + 20, bw - 8, bh - 6);
+
+  ctx.fillStyle = '#f3ead8';
+  ctx.fillRect(bx + 8, by + 7, bw - 4, bh - 12);
+  ctx.fillStyle = '#cfc3aa';
+  for (let i = 0; i < 6; i++) ctx.fillRect(bx + bw - 10 - i * 2, by + 14, 1, bh - 28);
+
+  const coverW = bw - 16, coverH = bh - 10;
+  ctx.save();
+  roundRectPath(ctx, bx, by, coverW, coverH, 8);
+  ctx.clip();
+  ctx.drawImage(getLeather(coverW, coverH), bx, by, coverW, coverH);
+  ctx.restore();
+
+  const spine = Math.max(18, Math.round(coverW * 0.07));
+  ctx.fillStyle = 'rgba(0,0,0,0.32)';
+  ctx.fillRect(bx, by, spine, coverH);
+  ctx.strokeStyle = 'rgba(214,176,96,0.7)';
+  ctx.lineWidth = Math.max(1.5, Math.round(Math.min(W, H) * 0.003));
+  for (let i = 1; i <= 4; i++) {
+    const yy = by + coverH * (i / 5);
+    ctx.beginPath();
+    ctx.moveTo(bx + 5, yy);
+    ctx.lineTo(bx + spine - 5, yy);
+    ctx.stroke();
+  }
+
+  const fx = bx + spine + Math.round(coverW * 0.07);
+  const fy = by + Math.round(coverH * 0.07);
+  const fw = coverW - spine - Math.round(coverW * 0.13);
+  const fh = coverH - Math.round(coverH * 0.14);
+  ctx.strokeStyle = 'rgba(214,176,96,0.9)';
+  ctx.lineWidth = Math.max(2, Math.round(Math.min(W, H) * 0.0045));
+  ctx.strokeRect(fx, fy, fw, fh);
+  ctx.strokeStyle = 'rgba(214,176,96,0.4)';
+  ctx.lineWidth = Math.max(1, ctx.lineWidth * 0.6);
+  ctx.strokeRect(fx + 7, fy + 7, fw - 14, fh - 14);
+
+  const plateW = fw * 0.58;
+  const plateH = fh * 0.46;
+  const px = fx + (fw - plateW) / 2;
+  const py = fy + fh * 0.07;
+  ctx.fillStyle = '#f7f1e6';
+  ctx.fillRect(px - 8, py - 8, plateW + 16, plateH + 16);
+  ctx.strokeStyle = 'rgba(168,128,58,0.95)';
+  ctx.lineWidth = Math.max(2, Math.round(Math.min(W, H) * 0.004));
+  ctx.strokeRect(px - 8, py - 8, plateW + 16, plateH + 16);
+  const photo = photos[0];
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(px, py, plateW, plateH);
+  ctx.clip();
+  if (photo && photo.img) {
+    const iw = photo.img.naturalWidth || photo.img.width, ih = photo.img.naturalHeight || photo.img.height;
+    const fit = Math.max(plateW / iw, plateH / ih);
+    const dw = iw * fit, dh = ih * fit;
+    ctx.drawImage(photo.img, px + (plateW - dw) / 2, py + (plateH - dh) / 2, dw, dh);
+  } else {
+    ctx.fillStyle = '#d9cdb6';
+    ctx.fillRect(px, py, plateW, plateH);
+  }
+  ctx.restore();
+
+  const title = ui('albumCoverTitle');
+  let size = Math.round(H * 0.052);
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText(ui('albumCoverTitle'), px + pw / 2, bandY + Math.round(H * 0.045));
+  ctx.font = '600 ' + size + 'px Georgia, "Times New Roman", serif';
+  while (size > 18 && ctx.measureText(title).width > fw * 0.88) {
+    size -= 2;
+    ctx.font = '600 ' + size + 'px Georgia, "Times New Roman", serif';
+  }
+  const titleY = py + plateH + Math.round(H * 0.055);
+  ctx.fillStyle = '#e8cb8c';
+  ctx.fillText(title, fx + fw / 2, titleY);
+  ctx.fillStyle = 'rgba(232,203,140,0.78)';
+  ctx.font = '400 ' + Math.round(H * 0.028) + 'px Georgia, "Times New Roman", serif';
+  ctx.fillText(ui('albumCoverHint'), fx + fw / 2, titleY + Math.round(H * 0.042));
 }
 function roundRectPath(ctx, x, y, w, h, rad) {
   const r = Math.min(rad, w / 2, h / 2);
@@ -1848,7 +1918,7 @@ function drawFrame() {
   const W = canvas.width, H = canvas.height;
   ctx.fillStyle = '#000';
   ctx.fillRect(0, 0, W, H);
-  if (performance.now() < albumCoverUntil) {
+  if (onAlbumCover) {
     drawAlbumCover(ctx, W, H);
     return;
   }
@@ -1858,6 +1928,12 @@ function drawFrame() {
 function updatePhotoOf() {
   const el = document.getElementById('ui-photo-of');
   if (!el) return;
+  if (onAlbumCover) {
+    el.textContent = ui('albumCoverTitle');
+    document.getElementById('btn-back-photo').disabled = true;
+    document.getElementById('btn-next-photo').disabled = !isRecording || !photos.length;
+    return;
+  }
   el.textContent = photos.length ? fmt(ui('photoOf'), { n: currentIndex + 1, total: photos.length }) : '';
   document.getElementById('btn-back-photo').disabled = !isRecording || currentIndex <= 0;
   document.getElementById('btn-next-photo').disabled = !isRecording || currentIndex >= photos.length - 1;
@@ -1876,8 +1952,9 @@ async function startRecording() {
   chooseOutputSize();
   const canvas = document.getElementById('live-canvas');
   canvas.width = canvasW; canvas.height = canvasH;
-  currentIndex = 0; updatePhotoOf();
-  albumCoverUntil = performance.now() + ALBUM_COVER_MS;
+  currentIndex = 0;
+  onAlbumCover = true;
+  updatePhotoOf();
   drawFrame();
   let track = null;
   const fps = 24;
@@ -1913,7 +1990,7 @@ async function finishRecording() {
   if (drawTimer) { clearInterval(drawTimer); drawTimer = null; }
   releaseAV();
   releaseAlbumAudioGraph();
-  albumCoverUntil = 0;
+  onAlbumCover = false;
   document.getElementById('view-record').classList.remove('show');
   document.body.style.overflow = '';
   document.getElementById('view-setup').style.display = '';
@@ -1964,8 +2041,14 @@ async function saveIosRecording() {
   document.getElementById('btn-done').hidden = false;
 }
 document.getElementById('btn-start').onclick = () => { void startRecording(); };
-document.getElementById('btn-next-photo').onclick = () => { if (currentIndex < photos.length - 1) { currentIndex++; albumCoverUntil = 0; playPageTurn(); updatePhotoOf(); drawFrame(); } };
-document.getElementById('btn-back-photo').onclick = () => { if (currentIndex > 0) { currentIndex--; albumCoverUntil = 0; playPageTurn(); updatePhotoOf(); drawFrame(); } };
+document.getElementById('btn-next-photo').onclick = () => {
+  if (onAlbumCover) { onAlbumCover = false; playPageTurn(); updatePhotoOf(); drawFrame(); return; }
+  if (currentIndex < photos.length - 1) { currentIndex++; playPageTurn(); updatePhotoOf(); drawFrame(); }
+};
+document.getElementById('btn-back-photo').onclick = () => {
+  if (!onAlbumCover && currentIndex === 0) { onAlbumCover = true; playPageTurn(); updatePhotoOf(); drawFrame(); return; }
+  if (currentIndex > 0) { currentIndex--; playPageTurn(); updatePhotoOf(); drawFrame(); }
+};
 document.getElementById('btn-finish').onclick = () => stopRecording();
 document.getElementById('btn-save').onclick = () => { void saveIosRecording(); };
 document.getElementById('btn-done').onclick = () => { document.getElementById('overlay-save').classList.remove('show'); };
@@ -1985,13 +2068,22 @@ var elevenPending = false;
 var elevenAudioCtx = null;
 
 function getSelectedMode() {
-  return (document.querySelector('input[name="mode"]:checked') || {}).value || 'audio';
+  const el = document.querySelector('input[name="mode"]:checked');
+  return el ? el.value : '';
 }
 function syncModeUi() {
-  const eleven = getSelectedMode() === 'eleven';
+  const mode = getSelectedMode();
+  const picked = mode === 'audio' || mode === 'eleven';
+  const pick = document.getElementById('pick-panel');
+  const start = document.getElementById('start-row');
+  const wasHidden = !!(pick && pick.hidden);
+  if (pick) pick.hidden = !picked;
+  if (start) start.hidden = !picked;
+  const eleven = mode === 'eleven';
   const panel = document.getElementById('captions-panel');
   if (panel) panel.hidden = !eleven;
   if (eleven) renderCaptions();
+  if (picked && wasHidden && pick) pick.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 document.querySelectorAll('input[name="mode"]').forEach(r => r.addEventListener('change', syncModeUi));
 
@@ -2245,8 +2337,7 @@ async function recordElevenSlideshow(clips) {
   const canvas = document.getElementById('live-canvas');
   canvas.width = canvasW; canvas.height = canvasH;
   currentIndex = clips[0].photoIndex;
-  updatePhotoOf();
-  albumCoverUntil = performance.now() + ALBUM_COVER_MS;
+  onAlbumCover = true;
   drawFrame();
 
   let track = null;
@@ -2267,7 +2358,7 @@ async function recordElevenSlideshow(clips) {
   await ensurePageFlipAudio();
   const dest = elevenAudioCtx.createMediaStreamDestination();
   if (!pageFlipGain) pageFlipGain = elevenAudioCtx.createGain();
-  pageFlipGain.gain.value = 0.7;
+  pageFlipGain.gain.value = 0.38;
   try { pageFlipGain.disconnect(); } catch (e) {}
   pageFlipGain.connect(dest);
   let currentSource = null;
@@ -2293,16 +2384,24 @@ async function recordElevenSlideshow(clips) {
   document.getElementById('view-setup').style.display = 'none';
   document.getElementById('view-record').classList.add('show');
   document.body.style.overflow = 'hidden';
+  updatePhotoOf();
   // Auto slideshow: disable manual next/back during ElevenLabs play
   document.getElementById('btn-back-photo').disabled = true;
   document.getElementById('btn-next-photo').disabled = true;
+
+  await sleep(ALBUM_COVER_MS);
+  if (isRecording) {
+    onAlbumCover = false;
+    playPageTurn();
+    updatePhotoOf();
+    drawFrame();
+  }
 
   try {
     for (let n = 0; n < clips.length; n++) {
       if (!isRecording) break;
       const clip = clips[n];
       currentIndex = clip.photoIndex;
-      albumCoverUntil = 0;
       if (n > 0) playPageTurn();
       updatePhotoOf();
       drawFrame();
