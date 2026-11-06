@@ -141,6 +141,7 @@ button.danger { background: rgba(224,128,106,0.22); }
   .example-story { grid-column: 1; grid-row: 2; width: min(100%, 240px); }
   .example-notes { grid-column: 1; grid-row: 3; }
 }
+body.is-recording [id^="kofi-widget-overlay-"] { display: none !important; }
 #view-record { display:none; position:fixed; inset:0; z-index:200; background:#000; }
 #view-record.show { display:flex; flex-direction:column; }
 .stage-wrap {
@@ -619,7 +620,7 @@ html[data-theme="light"] .privacy {
 }
 #camera-video {
   width: 100%;
-  max-height: 68vh;
+  max-height: 54vh;
   min-height: 220px;
   background: #000;
   object-fit: contain;
@@ -656,6 +657,25 @@ html[data-theme="light"] .privacy {
   0% { opacity: 0.9; }
   100% { opacity: 0; }
 }
+#scanner-review {
+  width: 100%;
+  max-height: 54vh;
+  min-height: 220px;
+  object-fit: contain;
+  display: block;
+  background: #000;
+}
+#scanner-review[hidden],
+.scanner-verdict[hidden] { display: none !important; }
+.scanner-frame.is-hidden,
+.scanner-line.is-hidden { display: none; }
+.scanner-verdict {
+  margin: 10px 0 0;
+  text-align: center;
+  font-weight: 700;
+}
+.scanner-verdict.good { color: #d7ecc4; }
+.scanner-verdict.warn { color: #f0c9a0; }
 .camera-overlay-actions {
   display: flex; flex-wrap: wrap; gap: 10px;
   margin-top: 12px; justify-content: center;
@@ -783,7 +803,7 @@ html[data-theme="light"] .camera-overlay-box {
         <span id="ui-pick-folder">Choose folder</span>
         <input id="folder-input" type="file" accept="image/*" multiple webkitdirectory directory hidden>
       </label>
-      <button type="button" class="file-btn" id="ui-camera-label"><span id="ui-take-photo">Scan photo</span></button>
+      <button type="button" class="file-btn" id="ui-camera-label"><span id="ui-take-photo">Scan photos</span></button>
       <input id="camera-input" type="file" accept="image/*" capture="environment" hidden>
       <button type="button" id="btn-clear" class="danger" hidden><span id="ui-clear">Clear</span></button>
       <span class="note" id="ui-count" style="margin:0"></span>
@@ -835,15 +855,19 @@ html[data-theme="light"] .camera-overlay-box {
   <div class="camera-overlay-box">
     <div class="scanner-stage">
       <video id="camera-video" playsinline autoplay muted></video>
+      <img id="scanner-review" alt="" hidden>
       <div class="scanner-frame" aria-hidden="true">
         <span></span><span></span><span></span><span></span>
         <i class="scanner-line"></i>
       </div>
       <div class="scanner-flash" id="scanner-flash"></div>
     </div>
-    <p class="note" id="camera-overlay-hint">Hold the album page flat. A click means the page is saved.</p>
+    <p class="scanner-verdict" id="scanner-verdict" hidden></p>
+    <p class="note" id="camera-overlay-hint">Hold the album page flat. Check the scan before the next one.</p>
     <div class="camera-overlay-actions">
       <button type="button" class="primary" id="camera-snap">Scan photo</button>
+      <button type="button" class="primary" id="scan-use" hidden>Use this photo</button>
+      <button type="button" id="scan-retry" hidden>Try again</button>
       <button type="button" id="camera-done">Done</button>
     </div>
   </div>
@@ -945,9 +969,15 @@ const PHOTO_UI = {
     "elevenLabsVoicePlaceholder": "Voice ID",
     "elevenLabsGuideSummary": "How to find these",
     "elevenLabsGuideHtml": "<ol><li><strong>API key</strong><ol><li>Open <a href=\"https://elevenlabs.io/app/settings/api-keys\" target=\"_blank\" rel=\"noopener\">API Keys</a>.</li><li>Click <strong>Create key</strong>.</li><li>Set <strong>Text to Speech</strong> to <strong>Access</strong>.</li><li>Copy the key (starts with <code>sk_</code>) and paste it here.</li></ol></li><li><strong>Voice ID</strong><ol><li>Open <a href=\"https://elevenlabs.io/app/voice-lab\" target=\"_blank\" rel=\"noopener\">My Voices</a>.</li><li>Click <strong>More actions</strong> (⋯) on your voice.</li><li>Click <strong>Copy voice ID</strong>.</li><li>Paste it here.</li></ol></li></ol>",
-    "takePhoto": "Scan photo",
+    "takePhoto": "Scan photos",
     "scanPage": "Scan photo",
-    "scanHint": "Hold the album page flat. A click means the page is saved.",
+    "scanHint": "Hold the album page flat. Check the scan before the next one.",
+    "scanGood": "This scan looks good.",
+    "scanBlur": "This looks blurry. Hold the page steadier.",
+    "scanDark": "This looks too dark.",
+    "scanBright": "This looks washed out.",
+    "scanUse": "Use this photo",
+    "scanRetry": "Try again",
     "finishing": "Finishing…",
     "introTitle": "Keep the story with the photos",
     "exampleLabel": "Example — captions appear only here, not in your video",
@@ -1021,9 +1051,15 @@ const PHOTO_UI = {
     "elevenLabsVoicePlaceholder": "ID da voz",
     "elevenLabsGuideSummary": "Como encontrar estes dados",
     "elevenLabsGuideHtml": "<ol><li><strong>Chave da API</strong><ol><li>Abra <a href=\"https://elevenlabs.io/app/settings/api-keys\" target=\"_blank\" rel=\"noopener\">API Keys</a>.</li><li>Clique em <strong>Create key</strong>.</li><li>Defina <strong>Text to Speech</strong> como <strong>Access</strong>.</li><li>Copie a chave (começa por <code>sk_</code>) e cole-a aqui.</li></ol></li><li><strong>ID da voz</strong><ol><li>Abra <a href=\"https://elevenlabs.io/app/voice-lab\" target=\"_blank\" rel=\"noopener\">My Voices</a>.</li><li>Clique em <strong>More actions</strong> (⋯) na sua voz.</li><li>Clique em <strong>Copy voice ID</strong>.</li><li>Cole-o aqui.</li></ol></li></ol>",
-    "takePhoto": "Digitalizar foto",
+    "takePhoto": "Digitalizar fotos",
     "scanPage": "Digitalizar foto",
-    "scanHint": "Mantenha a página do álbum plana. Um clique significa que a página ficou guardada.",
+    "scanHint": "Mantenha a página do álbum plana. Confira a digitalização antes da próxima.",
+    "scanGood": "Esta digitalização está boa.",
+    "scanBlur": "Está desfocada. Segure a página mais firme.",
+    "scanDark": "Está escura demais.",
+    "scanBright": "Está clara demais.",
+    "scanUse": "Usar esta foto",
+    "scanRetry": "Tentar de novo",
     "finishing": "A terminar…",
     "introTitle": "Guarde a história com as fotos",
     "exampleLabel": "Exemplo — as legendas aparecem só aqui, não no seu vídeo",
@@ -1097,9 +1133,15 @@ const PHOTO_UI = {
     "elevenLabsVoicePlaceholder": "ID de voz",
     "elevenLabsGuideSummary": "Cómo encontrarlos",
     "elevenLabsGuideHtml": "<ol><li><strong>Clave de API</strong><ol><li>Abre <a href=\"https://elevenlabs.io/app/settings/api-keys\" target=\"_blank\" rel=\"noopener\">API Keys</a>.</li><li>Haz clic en <strong>Create key</strong>.</li><li>Pon <strong>Text to Speech</strong> en <strong>Access</strong>.</li><li>Copia la clave (empieza por <code>sk_</code>) y pégala aquí.</li></ol></li><li><strong>ID de voz</strong><ol><li>Abre <a href=\"https://elevenlabs.io/app/voice-lab\" target=\"_blank\" rel=\"noopener\">My Voices</a>.</li><li>Haz clic en <strong>More actions</strong> (⋯) en tu voz.</li><li>Haz clic en <strong>Copy voice ID</strong>.</li><li>Pégalo aquí.</li></ol></li></ol>",
-    "takePhoto": "Escanear foto",
+    "takePhoto": "Escanear fotos",
     "scanPage": "Escanear foto",
-    "scanHint": "Mantén la página del álbum plana. Un clic significa que la página quedó guardada.",
+    "scanHint": "Mantén la página del álbum plana. Revisa el escaneo antes del siguiente.",
+    "scanGood": "Este escaneo se ve bien.",
+    "scanBlur": "Se ve borroso. Sujeta la página con más firmeza.",
+    "scanDark": "Se ve demasiado oscuro.",
+    "scanBright": "Se ve demasiado claro.",
+    "scanUse": "Usar esta foto",
+    "scanRetry": "Intentar de nuevo",
     "finishing": "Terminando…",
     "introTitle": "Guarda la historia con las fotos",
     "exampleLabel": "Ejemplo — los subtítulos solo aquí, no en tu vídeo",
@@ -1175,7 +1217,13 @@ const PHOTO_UI = {
     "elevenLabsGuideHtml": "<ol><li><strong>Chiave API</strong><ol><li>Apri <a href=\"https://elevenlabs.io/app/settings/api-keys\" target=\"_blank\" rel=\"noopener\">API Keys</a>.</li><li>Clicca su <strong>Create key</strong>.</li><li>Imposta <strong>Text to Speech</strong> su <strong>Access</strong>.</li><li>Copia la chiave (inizia con <code>sk_</code>) e incollala qui.</li></ol></li><li><strong>ID voce</strong><ol><li>Apri <a href=\"https://elevenlabs.io/app/voice-lab\" target=\"_blank\" rel=\"noopener\">My Voices</a>.</li><li>Clicca su <strong>More actions</strong> (⋯) sulla tua voce.</li><li>Clicca su <strong>Copy voice ID</strong>.</li><li>Incollalo qui.</li></ol></li></ol>",
     "takePhoto": "Scansiona foto",
     "scanPage": "Scansiona foto",
-    "scanHint": "Tieni la pagina dell’album piatta. Un clic significa che la pagina è salvata.",
+    "scanHint": "Tieni la pagina dell’album piatta. Controlla la scansione prima della prossima.",
+    "scanGood": "Questa scansione è buona.",
+    "scanBlur": "È sfocata. Tieni la pagina più ferma.",
+    "scanDark": "È troppo scura.",
+    "scanBright": "È troppo chiara.",
+    "scanUse": "Usa questa foto",
+    "scanRetry": "Riprova",
     "finishing": "Completamento…",
     "introTitle": "Conserva la storia con le foto",
     "exampleLabel": "Esempio — i sottotitoli solo qui, non nel tuo video",
@@ -1249,9 +1297,15 @@ const PHOTO_UI = {
     "elevenLabsVoicePlaceholder": "Stimm-ID",
     "elevenLabsGuideSummary": "So findest du diese Angaben",
     "elevenLabsGuideHtml": "<ol><li><strong>API-Schlüssel</strong><ol><li>Öffne <a href=\"https://elevenlabs.io/app/settings/api-keys\" target=\"_blank\" rel=\"noopener\">API Keys</a>.</li><li>Klicke auf <strong>Create key</strong>.</li><li>Setze <strong>Text to Speech</strong> auf <strong>Access</strong>.</li><li>Kopiere den Schlüssel (beginnt mit <code>sk_</code>) und füge ihn hier ein.</li></ol></li><li><strong>Stimm-ID</strong><ol><li>Öffne <a href=\"https://elevenlabs.io/app/voice-lab\" target=\"_blank\" rel=\"noopener\">My Voices</a>.</li><li>Klicke bei deiner Stimme auf <strong>More actions</strong> (⋯).</li><li>Klicke auf <strong>Copy voice ID</strong>.</li><li>Füge sie hier ein.</li></ol></li></ol>",
-    "takePhoto": "Foto scannen",
+    "takePhoto": "Fotos scannen",
     "scanPage": "Foto scannen",
-    "scanHint": "Halte die Albumseite flach. Ein Klick heißt, die Seite ist gespeichert.",
+    "scanHint": "Halte die Albumseite flach. Prüf den Scan, bevor du weitergehst.",
+    "scanGood": "Dieser Scan sieht gut aus.",
+    "scanBlur": "Das wirkt unscharf. Halt die Seite ruhiger.",
+    "scanDark": "Das ist zu dunkel.",
+    "scanBright": "Das ist zu hell.",
+    "scanUse": "Dieses Foto nehmen",
+    "scanRetry": "Nochmal",
     "finishing": "Wird fertig…",
     "introTitle": "Bewahre die Geschichte zu den Fotos",
     "exampleLabel": "Beispiel — Untertitel nur hier, nicht in deinem Video",
@@ -1325,9 +1379,15 @@ const PHOTO_UI = {
     "elevenLabsVoicePlaceholder": "معرّف الصوت",
     "elevenLabsGuideSummary": "كيف تجد هذه البيانات",
     "elevenLabsGuideHtml": "<ol><li><strong>مفتاح API</strong><ol><li>افتح <a href=\"https://elevenlabs.io/app/settings/api-keys\" target=\"_blank\" rel=\"noopener\">API Keys</a>.</li><li>انقر على <strong>Create key</strong>.</li><li>اضبط <strong>Text to Speech</strong> على <strong>Access</strong>.</li><li>انسخ المفتاح (يبدأ بـ <code>sk_</code>) والصقه هنا.</li></ol></li><li><strong>معرّف الصوت</strong><ol><li>افتح <a href=\"https://elevenlabs.io/app/voice-lab\" target=\"_blank\" rel=\"noopener\">My Voices</a>.</li><li>انقر على <strong>More actions</strong> (⋯) على صوتك.</li><li>انقر على <strong>Copy voice ID</strong>.</li><li>الصقه هنا.</li></ol></li></ol>",
-    "takePhoto": "امسح الصورة",
+    "takePhoto": "امسح الصور",
     "scanPage": "امسح الصورة",
-    "scanHint": "أبقِ صفحة الألبوم مستوية. النقرة تعني أن الصفحة حُفظت.",
+    "scanHint": "أبقِ صفحة الألبوم مستوية. راجع المسح قبل التالي.",
+    "scanGood": "هذا المسح جيد.",
+    "scanBlur": "الصورة غير واضحة. ثبّت الصفحة أكثر.",
+    "scanDark": "الصورة داكنة جداً.",
+    "scanBright": "الصورة ساطعة جداً.",
+    "scanUse": "استخدم هذه الصورة",
+    "scanRetry": "أعد المحاولة",
     "finishing": "جارٍ الإنهاء…",
     "introTitle": "احفظ القصة مع الصور",
     "exampleLabel": "مثال — التسميات تظهر هنا فقط، وليس في فيديوك",
@@ -1403,7 +1463,13 @@ const PHOTO_UI = {
     "elevenLabsGuideHtml": "<ol><li><strong>API 密钥</strong><ol><li>打开 <a href=\"https://elevenlabs.io/app/settings/api-keys\" target=\"_blank\" rel=\"noopener\">API Keys</a>。</li><li>点击 <strong>Create key</strong>。</li><li>将 <strong>Text to Speech</strong> 设为 <strong>Access</strong>。</li><li>复制密钥（以 <code>sk_</code> 开头）并粘贴到这里。</li></ol></li><li><strong>声音 ID</strong><ol><li>打开 <a href=\"https://elevenlabs.io/app/voice-lab\" target=\"_blank\" rel=\"noopener\">My Voices</a>。</li><li>在你的声音上点击 <strong>More actions</strong>（⋯）。</li><li>点击 <strong>Copy voice ID</strong>。</li><li>粘贴到这里。</li></ol></li></ol>",
     "takePhoto": "扫描照片",
     "scanPage": "扫描照片",
-    "scanHint": "把相册页放平。听到咔嗒一声就表示这一页已保存。",
+    "scanHint": "把相册页放平。先看清这一张，再扫下一张。",
+    "scanGood": "这一张看起来清楚。",
+    "scanBlur": "有点模糊。请把页面拿稳。",
+    "scanDark": "太暗了。",
+    "scanBright": "太亮了。",
+    "scanUse": "使用这张照片",
+    "scanRetry": "再试一次",
     "finishing": "正在结束…",
     "introTitle": "让故事与照片同在",
     "exampleLabel": "示例 — 字幕仅在此处显示，不会出现在你的视频中",
@@ -1477,9 +1543,15 @@ const PHOTO_UI = {
     "elevenLabsVoicePlaceholder": "वॉइस ID",
     "elevenLabsGuideSummary": "ये कैसे खोजें",
     "elevenLabsGuideHtml": "<ol><li><strong>API कुंजी</strong><ol><li><a href=\"https://elevenlabs.io/app/settings/api-keys\" target=\"_blank\" rel=\"noopener\">API Keys</a> खोलें।</li><li><strong>Create key</strong> पर क्लिक करें।</li><li><strong>Text to Speech</strong> को <strong>Access</strong> पर सेट करें।</li><li>कुंजी कॉपी करें (<code>sk_</code> से शुरू) और यहाँ पेस्ट करें।</li></ol></li><li><strong>वॉइस ID</strong><ol><li><a href=\"https://elevenlabs.io/app/voice-lab\" target=\"_blank\" rel=\"noopener\">My Voices</a> खोलें।</li><li>अपनी आवाज़ पर <strong>More actions</strong> (⋯) क्लिक करें।</li><li><strong>Copy voice ID</strong> पर क्लिक करें।</li><li>यहाँ पेस्ट करें।</li></ol></li></ol>",
-    "takePhoto": "फ़ोटो स्कैन करें",
+    "takePhoto": "तस्वीरें स्कैन करें",
     "scanPage": "फ़ोटो स्कैन करें",
-    "scanHint": "एल्बम का पन्ना सीधा रखें। क्लिक का मतलब है कि पन्ना सहेज लिया गया।",
+    "scanHint": "एल्बम का पन्ना सीधा रखें। अगली से पहले इस स्कैन को देख लें।",
+    "scanGood": "यह स्कैन अच्छा है।",
+    "scanBlur": "यह धुंधला है। पन्ना और स्थिर रखें।",
+    "scanDark": "यह बहुत गहरा है।",
+    "scanBright": "यह बहुत चमकदार है।",
+    "scanUse": "यह फ़ोटो रखें",
+    "scanRetry": "फिर से कोशिश करें",
     "finishing": "समाप्त हो रहा है…",
     "introTitle": "तस्वीरों के साथ कहानी संजोएँ",
     "exampleLabel": "उदाहरण — कैप्शन सिर्फ यहाँ दिखते हैं, आपके वीडियो में नहीं",
@@ -1553,9 +1625,15 @@ const PHOTO_UI = {
     "elevenLabsVoicePlaceholder": "Aitheantas gutha",
     "elevenLabsGuideSummary": "Conas iad seo a aimsiú",
     "elevenLabsGuideHtml": "<ol><li><strong>Eochair API</strong><ol><li>Oscail <a href=\"https://elevenlabs.io/app/settings/api-keys\" target=\"_blank\" rel=\"noopener\">API Keys</a>.</li><li>Cliceáil <strong>Create key</strong>.</li><li>Socraigh <strong>Text to Speech</strong> go <strong>Access</strong>.</li><li>Cóipeáil an eochair (tosaíonn le <code>sk_</code>) agus greamaigh anseo í.</li></ol></li><li><strong>Aitheantas gutha</strong><ol><li>Oscail <a href=\"https://elevenlabs.io/app/voice-lab\" target=\"_blank\" rel=\"noopener\">My Voices</a>.</li><li>Cliceáil <strong>More actions</strong> (⋯) ar do ghuth.</li><li>Cliceáil <strong>Copy voice ID</strong>.</li><li>Greamaigh anseo é.</li></ol></li></ol>",
-    "takePhoto": "Scan grianghraf",
+    "takePhoto": "Scan grianghraif",
     "scanPage": "Scan grianghraf",
-    "scanHint": "Coinnigh leathanach an albaim cothrom. Ciallaíonn cliceáil go bhfuil an leathanach sábháilte.",
+    "scanHint": "Coinnigh leathanach an albaim cothrom. Seiceáil an scan sula dtéann tú ar aghaidh.",
+    "scanGood": "Tá an scan seo go maith.",
+    "scanBlur": "Tá sé doiléir. Coinnigh an leathanach níos socra.",
+    "scanDark": "Tá sé ró-dhorcha.",
+    "scanBright": "Tá sé ró-gheal.",
+    "scanUse": "Úsáid an grianghraf seo",
+    "scanRetry": "Bain triail eile as",
     "finishing": "Ag críochnú…",
     "introTitle": "Coinnigh an scéal leis na grianghraif",
     "exampleLabel": "Sampla — taispeántar fotheidil anseo amháin, ní i d’fhíseán",
@@ -1636,6 +1714,8 @@ function updateUi() {
   set('ui-example-cap1', ui('exampleCap1'));
   set('ui-example-cap2', ui('exampleCap2'));
   set('camera-snap', ui('scanPage'));
+  set('scan-use', ui('scanUse'));
+  set('scan-retry', ui('scanRetry'));
   set('camera-done', ui('done'));
   set('camera-overlay-hint', ui('scanHint'));
   if (typeof updateElevenLabsModalLabels === 'function') updateElevenLabsModalLabels();
@@ -1731,6 +1811,8 @@ function stopCameraStream() {
   if (video) video.srcObject = null;
 }
 async function closeCameraOverlay() {
+  if (pendingScan) { URL.revokeObjectURL(pendingScan.url); pendingScan = null; }
+  showScanLive();
   stopCameraStream();
   const ov = document.getElementById('camera-overlay');
   if (ov) ov.hidden = true;
@@ -1774,9 +1856,56 @@ function playShutterClick() {
     tone(720, t + 0.06, 0.08, 0.12);
   } catch (e) {}
 }
+let pendingScan = null;
+function showScanLive() {
+  const review = document.getElementById('scanner-review');
+  const verdict = document.getElementById('scanner-verdict');
+  if (review) { review.hidden = true; review.removeAttribute('src'); }
+  if (verdict) verdict.hidden = true;
+  document.querySelector('.scanner-frame')?.classList.remove('is-hidden');
+  const snap = document.getElementById('camera-snap');
+  const useBtn = document.getElementById('scan-use');
+  const retry = document.getElementById('scan-retry');
+  const hint = document.getElementById('camera-overlay-hint');
+  if (snap) snap.hidden = false;
+  if (useBtn) useBtn.hidden = true;
+  if (retry) retry.hidden = true;
+  if (hint) hint.hidden = false;
+}
+function judgeScan(canvas) {
+  const w = 160;
+  const h = Math.max(1, Math.round(canvas.height * (w / canvas.width)));
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  const g = c.getContext('2d', { willReadFrequently: true });
+  g.drawImage(canvas, 0, 0, w, h);
+  const data = g.getImageData(0, 0, w, h).data;
+  const gray = new Float32Array(w * h);
+  let sum = 0;
+  for (let i = 0, p = 0; i < data.length; i += 4, p++) {
+    const y = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
+    gray[p] = y;
+    sum += y;
+  }
+  const mean = sum / gray.length;
+  let lap = 0, n = 0;
+  for (let y = 1; y < h - 1; y++) {
+    for (let x = 1; x < w - 1; x++) {
+      const i = y * w + x;
+      const v = gray[i - w] + gray[i + w] + gray[i - 1] + gray[i + 1] - 4 * gray[i];
+      lap += v * v;
+      n++;
+    }
+  }
+  const variance = n ? lap / n : 0;
+  if (mean < 40) return 'dark';
+  if (mean > 230) return 'bright';
+  if (variance < 28) return 'blur';
+  return 'good';
+}
 async function snapFromCamera() {
   const video = document.getElementById('camera-video');
-  if (!video || !video.videoWidth) return;
+  if (!video || !video.videoWidth || pendingScan) return;
   playShutterClick();
   const flash = document.getElementById('scanner-flash');
   if (flash) {
@@ -1788,10 +1917,43 @@ async function snapFromCamera() {
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
   canvas.getContext('2d').drawImage(video, 0, 0);
+  const kind = judgeScan(canvas);
   const blob = await new Promise((res) => canvas.toBlob(res, 'image/jpeg', 0.92));
   if (!blob) return;
   const file = new File([blob], 'scan-' + Date.now() + '.jpg', { type: 'image/jpeg' });
+  const url = URL.createObjectURL(blob);
+  pendingScan = { file, url, kind };
+  const review = document.getElementById('scanner-review');
+  if (review) { review.src = url; review.hidden = false; }
+  document.querySelector('.scanner-frame')?.classList.add('is-hidden');
+  const verdict = document.getElementById('scanner-verdict');
+  const key = { good: 'scanGood', blur: 'scanBlur', dark: 'scanDark', bright: 'scanBright' }[kind] || 'scanGood';
+  if (verdict) {
+    verdict.textContent = ui(key);
+    verdict.className = 'scanner-verdict ' + (kind === 'good' ? 'good' : 'warn');
+    verdict.hidden = false;
+  }
+  const snap = document.getElementById('camera-snap');
+  const useBtn = document.getElementById('scan-use');
+  const retry = document.getElementById('scan-retry');
+  const hint = document.getElementById('camera-overlay-hint');
+  if (snap) snap.hidden = true;
+  if (useBtn) { useBtn.hidden = false; useBtn.classList.toggle('primary', kind === 'good'); }
+  if (retry) { retry.hidden = false; retry.classList.toggle('primary', kind !== 'good'); }
+  if (hint) hint.hidden = true;
+}
+async function acceptScan() {
+  if (!pendingScan) return;
+  const file = pendingScan.file;
+  URL.revokeObjectURL(pendingScan.url);
+  pendingScan = null;
+  showScanLive();
   await addFiles([file]);
+}
+function retryScan() {
+  if (pendingScan) URL.revokeObjectURL(pendingScan.url);
+  pendingScan = null;
+  showScanLive();
 }
 function openCameraFileFallback() {
   const input = document.getElementById('camera-input');
@@ -1828,6 +1990,8 @@ document.getElementById('camera-input').addEventListener('change', async (e) => 
   setTimeout(() => { try { openCameraFileFallback(); } catch (err) {} }, 120);
 });
 document.getElementById('camera-snap')?.addEventListener('click', () => { snapFromCamera(); });
+document.getElementById('scan-use')?.addEventListener('click', () => { void acceptScan(); });
+document.getElementById('scan-retry')?.addEventListener('click', () => { retryScan(); });
 document.getElementById('camera-done')?.addEventListener('click', () => { closeCameraOverlay(); });
 
 document.getElementById('btn-clear').onclick = () => { photos = []; renderThumbs(); refreshCount(); };
@@ -2165,6 +2329,7 @@ async function startRecording() {
   if (recStatus) recStatus.textContent = ui('recording');
   document.getElementById('view-setup').style.display = 'none';
   document.getElementById('view-record').classList.add('show');
+  document.body.classList.add('is-recording');
   document.body.style.overflow = 'hidden';
   updatePhotoOf();
 }
@@ -2190,6 +2355,7 @@ async function finishRecording() {
   releaseAlbumAudioGraph();
   coverFramesLeft = -1;
   document.getElementById('view-record').classList.remove('show');
+  document.body.classList.remove('is-recording');
   document.body.style.overflow = '';
   document.getElementById('view-setup').style.display = '';
   if (!recChunks.length) return;
@@ -2602,6 +2768,7 @@ async function recordElevenSlideshow(clips) {
   if (recStatus) recStatus.textContent = ui('recording');
   document.getElementById('view-setup').style.display = 'none';
   document.getElementById('view-record').classList.add('show');
+  document.body.classList.add('is-recording');
   document.body.style.overflow = 'hidden';
   updatePhotoOf();
   // Auto slideshow: disable manual next/back during ElevenLabs play
