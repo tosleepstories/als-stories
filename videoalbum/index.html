@@ -605,6 +605,8 @@ html[data-theme="light"] .privacy {
 .camera-overlay[hidden] { display: none !important; }
 .camera-overlay-box {
   width: min(560px, 100%);
+  max-height: calc(100vh - 32px);
+  overflow: auto;
   background: #12100e;
   border: 1px solid rgba(244,213,141,0.28);
   border-radius: 18px;
@@ -665,8 +667,19 @@ html[data-theme="light"] .privacy {
   display: block;
   background: #000;
 }
+#camera-video[hidden],
 #scanner-review[hidden],
-.scanner-verdict[hidden] { display: none !important; }
+.scanner-verdict[hidden],
+#camera-snap[hidden],
+#scan-use[hidden],
+#scan-retry[hidden] { display: none !important; }
+.scanner-stage.is-review #camera-video,
+.scanner-stage.is-review .scanner-frame { display: none !important; }
+#scan-use {
+  background: #2f8f4e;
+  color: #fff;
+}
+#scan-use:hover { background: #277a42; }
 .scanner-frame.is-hidden,
 .scanner-line.is-hidden { display: none; }
 .scanner-verdict {
@@ -677,8 +690,12 @@ html[data-theme="light"] .privacy {
 .scanner-verdict.good { color: #d7ecc4; }
 .scanner-verdict.warn { color: #f0c9a0; }
 .camera-overlay-actions {
-  display: flex; flex-wrap: wrap; gap: 10px;
+  display: flex; flex-wrap: wrap; gap: 8px;
   margin-top: 12px; justify-content: center;
+}
+.camera-overlay-actions button {
+  padding: 10px 14px;
+  font-size: 0.9rem;
 }
 .camera-overlay .note { color: #d9cbb4; margin: 10px 0 0; text-align: center; }
 html[data-theme="light"] .camera-overlay-box {
@@ -866,8 +883,8 @@ html[data-theme="light"] .camera-overlay-box {
     <p class="note" id="camera-overlay-hint">Hold the album page flat. Check the scan before the next one.</p>
     <div class="camera-overlay-actions">
       <button type="button" class="primary" id="camera-snap">Scan photo</button>
-      <button type="button" class="primary" id="scan-use" hidden>Use this photo</button>
-      <button type="button" id="scan-retry" hidden>Try again</button>
+      <button type="button" id="scan-use" hidden>Capture another</button>
+      <button type="button" id="scan-retry" hidden>Repeat</button>
       <button type="button" id="camera-done">Done</button>
     </div>
   </div>
@@ -976,8 +993,8 @@ const PHOTO_UI = {
     "scanBlur": "This looks blurry. Hold the page steadier.",
     "scanDark": "This looks too dark.",
     "scanBright": "This looks washed out.",
-    "scanUse": "Use this photo",
-    "scanRetry": "Try again",
+    "scanUse": "Capture another",
+    "scanRetry": "Repeat",
     "finishing": "Finishing…",
     "introTitle": "Keep the story with the photos",
     "exampleLabel": "Example — captions appear only here, not in your video",
@@ -1058,8 +1075,8 @@ const PHOTO_UI = {
     "scanBlur": "Está desfocada. Segure a página mais firme.",
     "scanDark": "Está escura demais.",
     "scanBright": "Está clara demais.",
-    "scanUse": "Usar esta foto",
-    "scanRetry": "Tentar de novo",
+    "scanUse": "Capturar outra",
+    "scanRetry": "Repetir",
     "finishing": "A terminar…",
     "introTitle": "Guarde a história com as fotos",
     "exampleLabel": "Exemplo — as legendas aparecem só aqui, não no seu vídeo",
@@ -1140,8 +1157,8 @@ const PHOTO_UI = {
     "scanBlur": "Se ve borroso. Sujeta la página con más firmeza.",
     "scanDark": "Se ve demasiado oscuro.",
     "scanBright": "Se ve demasiado claro.",
-    "scanUse": "Usar esta foto",
-    "scanRetry": "Intentar de nuevo",
+    "scanUse": "Capturar otra",
+    "scanRetry": "Repetir",
     "finishing": "Terminando…",
     "introTitle": "Guarda la historia con las fotos",
     "exampleLabel": "Ejemplo — los subtítulos solo aquí, no en tu vídeo",
@@ -1222,8 +1239,8 @@ const PHOTO_UI = {
     "scanBlur": "È sfocata. Tieni la pagina più ferma.",
     "scanDark": "È troppo scura.",
     "scanBright": "È troppo chiara.",
-    "scanUse": "Usa questa foto",
-    "scanRetry": "Riprova",
+    "scanUse": "Cattura un'altra",
+    "scanRetry": "Ripeti",
     "finishing": "Completamento…",
     "introTitle": "Conserva la storia con le foto",
     "exampleLabel": "Esempio — i sottotitoli solo qui, non nel tuo video",
@@ -1304,7 +1321,7 @@ const PHOTO_UI = {
     "scanBlur": "Das wirkt unscharf. Halt die Seite ruhiger.",
     "scanDark": "Das ist zu dunkel.",
     "scanBright": "Das ist zu hell.",
-    "scanUse": "Dieses Foto nehmen",
+    "scanUse": "Noch eine",
     "scanRetry": "Nochmal",
     "finishing": "Wird fertig…",
     "introTitle": "Bewahre die Geschichte zu den Fotos",
@@ -1386,8 +1403,8 @@ const PHOTO_UI = {
     "scanBlur": "الصورة غير واضحة. ثبّت الصفحة أكثر.",
     "scanDark": "الصورة داكنة جداً.",
     "scanBright": "الصورة ساطعة جداً.",
-    "scanUse": "استخدم هذه الصورة",
-    "scanRetry": "أعد المحاولة",
+    "scanUse": "التقط أخرى",
+    "scanRetry": "أعد",
     "finishing": "جارٍ الإنهاء…",
     "introTitle": "احفظ القصة مع الصور",
     "exampleLabel": "مثال — التسميات تظهر هنا فقط، وليس في فيديوك",
@@ -1468,8 +1485,8 @@ const PHOTO_UI = {
     "scanBlur": "有点模糊。请把页面拿稳。",
     "scanDark": "太暗了。",
     "scanBright": "太亮了。",
-    "scanUse": "使用这张照片",
-    "scanRetry": "再试一次",
+    "scanUse": "再拍一张",
+    "scanRetry": "重拍",
     "finishing": "正在结束…",
     "introTitle": "让故事与照片同在",
     "exampleLabel": "示例 — 字幕仅在此处显示，不会出现在你的视频中",
@@ -1550,8 +1567,8 @@ const PHOTO_UI = {
     "scanBlur": "यह धुंधला है। पन्ना और स्थिर रखें।",
     "scanDark": "यह बहुत गहरा है।",
     "scanBright": "यह बहुत चमकदार है।",
-    "scanUse": "यह फ़ोटो रखें",
-    "scanRetry": "फिर से कोशिश करें",
+    "scanUse": "एक और लें",
+    "scanRetry": "फिर से",
     "finishing": "समाप्त हो रहा है…",
     "introTitle": "तस्वीरों के साथ कहानी संजोएँ",
     "exampleLabel": "उदाहरण — कैप्शन सिर्फ यहाँ दिखते हैं, आपके वीडियो में नहीं",
@@ -1632,8 +1649,8 @@ const PHOTO_UI = {
     "scanBlur": "Tá sé doiléir. Coinnigh an leathanach níos socra.",
     "scanDark": "Tá sé ró-dhorcha.",
     "scanBright": "Tá sé ró-gheal.",
-    "scanUse": "Úsáid an grianghraf seo",
-    "scanRetry": "Bain triail eile as",
+    "scanUse": "Ceann eile",
+    "scanRetry": "Arís",
     "finishing": "Ag críochnú…",
     "introTitle": "Coinnigh an scéal leis na grianghraif",
     "exampleLabel": "Sampla — taispeántar fotheidil anseo amháin, ní i d’fhíseán",
@@ -1811,11 +1828,14 @@ function stopCameraStream() {
   if (video) video.srcObject = null;
 }
 async function closeCameraOverlay() {
-  if (pendingScan) { URL.revokeObjectURL(pendingScan.url); pendingScan = null; }
-  showScanLive();
-  stopCameraStream();
+  const file = pendingScan ? pendingScan.file : null;
+  if (pendingScan) URL.revokeObjectURL(pendingScan.url);
+  pendingScan = null;
   const ov = document.getElementById('camera-overlay');
   if (ov) ov.hidden = true;
+  showScanLive();
+  stopCameraStream();
+  if (file) await addFiles([file]);
 }
 async function openCameraOverlay() {
   const ov = document.getElementById('camera-overlay');
@@ -1860,8 +1880,12 @@ let pendingScan = null;
 function showScanLive() {
   const review = document.getElementById('scanner-review');
   const verdict = document.getElementById('scanner-verdict');
+  const video = document.getElementById('camera-video');
+  const stage = document.querySelector('.scanner-stage');
   if (review) { review.hidden = true; review.removeAttribute('src'); }
   if (verdict) verdict.hidden = true;
+  if (video) video.hidden = false;
+  if (stage) stage.classList.remove('is-review');
   document.querySelector('.scanner-frame')?.classList.remove('is-hidden');
   const snap = document.getElementById('camera-snap');
   const useBtn = document.getElementById('scan-use');
@@ -1925,6 +1949,8 @@ async function snapFromCamera() {
   pendingScan = { file, url, kind };
   const review = document.getElementById('scanner-review');
   if (review) { review.src = url; review.hidden = false; }
+  video.hidden = true;
+  document.querySelector('.scanner-stage')?.classList.add('is-review');
   document.querySelector('.scanner-frame')?.classList.add('is-hidden');
   const verdict = document.getElementById('scanner-verdict');
   const key = { good: 'scanGood', blur: 'scanBlur', dark: 'scanDark', bright: 'scanBright' }[kind] || 'scanGood';
@@ -1938,8 +1964,8 @@ async function snapFromCamera() {
   const retry = document.getElementById('scan-retry');
   const hint = document.getElementById('camera-overlay-hint');
   if (snap) snap.hidden = true;
-  if (useBtn) { useBtn.hidden = false; useBtn.classList.toggle('primary', kind === 'good'); }
-  if (retry) { retry.hidden = false; retry.classList.toggle('primary', kind !== 'good'); }
+  if (useBtn) useBtn.hidden = false;
+  if (retry) retry.hidden = false;
   if (hint) hint.hidden = true;
 }
 async function acceptScan() {
