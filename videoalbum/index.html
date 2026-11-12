@@ -187,8 +187,10 @@ body.is-recording [id^="kofi-widget-overlay-"] { display: none !important; }
 }
 .caption-card textarea:focus { outline:none; border-color:rgba(244,213,141,0.55); }
 .eleven-modal { display:none; position:fixed; inset:0; z-index:600; background:rgba(8,11,28,0.88); align-items:center; justify-content:center; padding:18px; }
-.eleven-modal.show { display:flex; }
-.eleven-modal-box { width:min(420px,100%); background:linear-gradient(180deg,var(--night-700) 0%,var(--night-800) 100%); border:1px solid rgba(244,213,141,0.2); border-radius:18px; padding:20px; }
+.eleven-modal.show { display:flex; overflow:hidden; overscroll-behavior:contain; }
+html:has(.eleven-modal.show),
+html:has(.eleven-modal.show) body { overflow:hidden; }
+.eleven-modal-box { width:min(420px,100%); max-height:calc(100dvh - 36px); overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; background:linear-gradient(180deg,var(--night-700) 0%,var(--night-800) 100%); border:1px solid rgba(244,213,141,0.2); border-radius:18px; padding:20px; }
 .eleven-modal-box h2 { font-family:var(--font-display); font-size:1.35rem; color:var(--cream); margin:0 0 14px; }
 .eleven-modal-box label { display:block; font-size:0.78rem; font-weight:700; letter-spacing:0.04em; color:var(--muted); }
 .eleven-field-row { display:flex; gap:8px; align-items:stretch; margin-top:6px; margin-bottom:12px; }
@@ -922,6 +924,23 @@ html[data-theme="light"] .camera-overlay-box {
     </div>
   </div>
 </div>
+<script>
+(function () {
+  var modal = document.getElementById('eleven-modal');
+  var box = modal && modal.querySelector('.eleven-modal-box');
+  if (!modal || !box) return;
+  modal.addEventListener('wheel', function (e) {
+    if (!modal.classList.contains('show')) return;
+    var dy = e.deltaY;
+    if (e.deltaMode === 1) dy *= 16;
+    else if (e.deltaMode === 2) dy *= box.clientHeight || 400;
+    if (!dy) return;
+    var max = box.scrollHeight - box.clientHeight;
+    if (max > 0) box.scrollTop = Math.max(0, Math.min(max, box.scrollTop + dy));
+    e.preventDefault();
+  }, { passive: false });
+})();
+</script>
 <script>
 const PHOTO_UI = {
   "english": {

@@ -475,9 +475,15 @@
       justify-content: center;
       padding: 24px;
     }
-    .eleven-modal.show { display: flex; }
+    .eleven-modal.show { display: flex; overflow: hidden; overscroll-behavior: contain; }
+    html:has(.eleven-modal.show),
+    html:has(.eleven-modal.show) body { overflow: hidden; }
     .eleven-modal-box {
       width: min(420px, 100%);
+      max-height: calc(100dvh - 36px);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
       background: linear-gradient(180deg, var(--night-700) 0%, var(--night-800) 100%);
       border: 1px solid rgba(247, 239, 223, 0.14);
       border-radius: 18px;
@@ -1734,6 +1740,23 @@
     </div>
   </div>
 </div>
+<script>
+(function () {
+  var modal = document.getElementById('eleven-modal');
+  var box = modal && modal.querySelector('.eleven-modal-box');
+  if (!modal || !box) return;
+  modal.addEventListener('wheel', function (e) {
+    if (!modal.classList.contains('show')) return;
+    var dy = e.deltaY;
+    if (e.deltaMode === 1) dy *= 16;
+    else if (e.deltaMode === 2) dy *= box.clientHeight || 400;
+    if (!dy) return;
+    var max = box.scrollHeight - box.clientHeight;
+    if (max > 0) box.scrollTop = Math.max(0, Math.min(max, box.scrollTop + dy));
+    e.preventDefault();
+  }, { passive: false });
+})();
+</script>
 
 <!-- NAV -->
 <nav>
